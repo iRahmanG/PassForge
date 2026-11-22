@@ -4,12 +4,10 @@ import path from 'node:path';
 import { render } from '@hyper-elements/react';
 import { renderPdf } from '@hyper-elements/react/pdf';
 import { renderImage } from '@hyper-elements/react/image';
-import { TicketData, RenderResult, OutputFormat } from '@passforge/shared';
+import { TicketData, RenderResult, OutputFormat, TicketDesignId, BrandingConfig } from '@passforge/shared';
 
-import { TicketEmail } from '../../templates/email/TicketEmail.js';
-import { TicketPage } from '../../templates/page/TicketPage.js';
-import { TicketDocument } from '../../templates/document/TicketDocument.js';
-import { TicketCanvas } from '../../templates/canvas/TicketCanvas.js';
+import { getDesign } from '../../templates/designs/registry.js';
+import { designService } from '../../modules/design/design.service.js';
 import { FONTS_DIR, OUTPUT_DIR } from '../../config/constants.js';
 
 let cachedRegularFont: Buffer | null = null;
@@ -30,12 +28,48 @@ function getFonts() {
   };
 }
 
+export interface RenderOptions {
+  designId?: TicketDesignId;
+  branding?: BrandingConfig;
+}
+
 export class TicketRendererService {
+  private resolveOptions(options?: RenderOptions): { designId: TicketDesignId; branding: BrandingConfig } {
+    const current = designService.getCurrentConfig();
+    const designId = options?.designId || current.designId;
+    const branding: BrandingConfig = {
+      ...current.branding,
+      ...(options?.branding || {}),
+    };
+    return { designId, branding };
+  }
+
+  private resolveImages(ticket: TicketData, branding?: BrandingConfig): Record<string, Uint8Array | Buffer> | undefined {
+    const images: Record<string, Uint8Array | Buffer> = {};
+
+    if (ticket.qrBuffer) {
+      images[ticket.qrCodeDataUrl] = ticket.qrBuffer;
+    }
+
+    const logoBuffer = branding?.logoBuffer || designService.getLogoBuffer();
+    if (logoBuffer && branding?.logoUrl) {
+      images[branding.logoUrl] = logoBuffer;
+    }
+
+    return Object.keys(images).length > 0 ? images : undefined;
+  }
+
   /**
    * Render personalized confirmation email HTML using Hyper Elements <Email> and render()
    */
-  async renderEmail(ticket: TicketData): Promise<{ html: string; text: string; diagnostics: any[] }> {
-    const element = React.createElement(TicketEmail, { ticket });
+  async renderEmail(
+    ticket: TicketData,
+    options?: RenderOptions
+  ): Promise<{ html: string; text: string; diagnostics: any[] }> {
+    const { designId, branding } = this.resolveOptions(options);
+    const { templates } = getDesign(designId);
+
+    const element = React.createElement(templates.email, { ticket, branding });
     const { html, text, diagnostics } = await render(element);
     return { html, text, diagnostics };
   }
@@ -43,8 +77,14 @@ export class TicketRendererService {
   /**
    * Render responsive digital web ticket HTML using Hyper Elements <Page> and render()
    */
-  async renderPage(ticket: TicketData): Promise<{ html: string; text: string; diagnostics: any[] }> {
-    const element = React.createElement(TicketPage, { ticket });
+  async renderPage(
+    ticket: TicketData,
+    options?: RenderOptions
+  ): Promise<{ html: string; text: string; diagnostics: any[] }> {
+    const { designId, branding } = this.resolveOptions(options);
+    const { templates } = getDesign(designId);
+
+    const element = React.createElement(templates.page, { ticket, branding });
     const { html, text, diagnostics } = await render(element);
     return { html, text, diagnostics };
   }
@@ -52,24 +92,32 @@ export class TicketRendererService {
   /**
    * Render printable ticket PDF using Hyper Elements <Document> and renderPdf()
    */
-  async renderPdf(ticket: TicketData): Promise<{ pdf: Uint8Array; diagnostics: any[] }> {
-    const element = React.createElement(TicketDocument, { ticket });
-    const { pdf, diagnostics } = await renderPdf(element, {
-      images: ticket.qrBuffer
-        ? {
-            [ticket.qrCodeDataUrl]: ticket.qrBuffer,
-          }
-        : undefined,
-    });
+  async renderPdf(
+    ticket: TicketData,
+    options?: RenderOptions
+  ): Promise<{ pdf: Uint8Array; diagnostics: any[] }> {
+    const { designId, branding } = this.resolveOptions(options);
+    const { templates } = getDesign(designId);
+    const images = this.resolveImages(ticket, branding);
+
+    const element = React.createElement(templates.document, { ticket, branding });
+    const { pdf, diagnostics } = await renderPdf(element, { images });
     return { pdf, diagnostics };
   }
 
   /**
    * Render ticket PNG image using Hyper Elements <Canvas> and renderImage()
    */
-  async renderCanvas(ticket: TicketData): Promise<{ image: Uint8Array; width: number; height: number; diagnostics: any[] }> {
+  async renderCanvas(
+    ticket: TicketData,
+    options?: RenderOptions
+  ): Promise<{ image: Uint8Array; width: number; height: number; diagnostics: any[] }> {
     const fonts = getFonts();
-    const element = React.createElement(TicketCanvas, { ticket });
+    const { designId, branding } = this.resolveOptions(options);
+    const { templates } = getDesign(designId);
+    const images = this.resolveImages(ticket, branding);
+
+    const element = React.createElement(templates.canvas, { ticket, branding });
     const { image, width, height, diagnostics } = await renderImage(element, {
       format: 'png',
       scale: 2, // 2x retina output
@@ -77,11 +125,7 @@ export class TicketRendererService {
         { family: 'Arial', src: fonts.regular, weight: 400 },
         { family: 'Arial', src: fonts.bold, weight: 700 },
       ],
-      images: ticket.qrBuffer
-        ? {
-            [ticket.qrCodeDataUrl]: ticket.qrBuffer,
-          }
-        : undefined,
+      images,
     });
     return { image, width, height, diagnostics };
   }
@@ -89,14 +133,18 @@ export class TicketRendererService {
   /**
    * Render all 4 formats and save outputs to designated directory
    */
-  async renderAll(ticket: TicketData, outputDir = OUTPUT_DIR): Promise<Record<OutputFormat, RenderResult>> {
+  async renderAll(
+    ticket: TicketData,
+    outputDir = OUTPUT_DIR,
+    options?: RenderOptions
+  ): Promise<Record<OutputFormat, RenderResult>> {
     fs.mkdirSync(outputDir, { recursive: true });
     const results: Partial<Record<OutputFormat, RenderResult>> = {};
 
     // 1. Email HTML
     const emailStart = performance.now();
     try {
-      const { html, diagnostics } = await this.renderEmail(ticket);
+      const { html, diagnostics } = await this.renderEmail(ticket, options);
       const emailPath = path.join(outputDir, `ticket-${ticket.ticketId}-email.html`);
       fs.writeFileSync(emailPath, html, 'utf-8');
       results.email = {
@@ -122,7 +170,7 @@ export class TicketRendererService {
     // 2. Responsive Page HTML
     const pageStart = performance.now();
     try {
-      const { html, diagnostics } = await this.renderPage(ticket);
+      const { html, diagnostics } = await this.renderPage(ticket, options);
       const pagePath = path.join(outputDir, `ticket-${ticket.ticketId}-web.html`);
       fs.writeFileSync(pagePath, html, 'utf-8');
       results.page = {
@@ -148,7 +196,7 @@ export class TicketRendererService {
     // 3. Document PDF
     const pdfStart = performance.now();
     try {
-      const { pdf, diagnostics } = await this.renderPdf(ticket);
+      const { pdf, diagnostics } = await this.renderPdf(ticket, options);
       const pdfPath = path.join(outputDir, `ticket-${ticket.ticketId}.pdf`);
       fs.writeFileSync(pdfPath, Buffer.from(pdf));
       results.pdf = {
@@ -174,7 +222,7 @@ export class TicketRendererService {
     // 4. Canvas PNG
     const pngStart = performance.now();
     try {
-      const { image, width, height, diagnostics } = await this.renderCanvas(ticket);
+      const { image, width, height, diagnostics } = await this.renderCanvas(ticket, options);
       const pngPath = path.join(outputDir, `ticket-${ticket.ticketId}.png`);
       fs.writeFileSync(pngPath, Buffer.from(image));
       results.png = {

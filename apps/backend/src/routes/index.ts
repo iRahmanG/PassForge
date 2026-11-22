@@ -2,6 +2,8 @@ import { Router } from 'express';
 import eventRoutes from './event.routes.js';
 import attendeeRoutes from './attendee.routes.js';
 import ticketRoutes from './ticket.routes.js';
+import designRoutes from './design.routes.js';
+import brandingRoutes from './branding.routes.js';
 
 const router = Router();
 
@@ -20,6 +22,12 @@ router.use('/events', eventRoutes);
 
 // Attendee import & listing endpoints
 router.use('/attendees', attendeeRoutes);
+
+// Design management & presets endpoints
+router.use('/designs', designRoutes);
+
+// Branding customization endpoints
+router.use('/branding', brandingRoutes);
 
 // Ticket generation & rendering endpoints
 router.use('/tickets', ticketRoutes);

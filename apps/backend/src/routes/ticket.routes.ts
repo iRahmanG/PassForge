@@ -2,15 +2,184 @@ import { Router, Request, Response } from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
 import { ticketService } from '../modules/ticket/ticket.service.js';
+import { attendeeService } from '../modules/attendee/attendee.service.js';
 import { ticketRenderer } from '../services/rendering/ticketRenderer.service.js';
 import { runFullVerification } from '../cli/verifyAll.js';
 import { OUTPUT_DIR } from '../config/constants.js';
-import { OutputFormat } from '@passforge/shared';
+import {
+  OutputFormat,
+  ticketPreviewRequestSchema,
+  TicketPreviewResponse,
+  TicketDesignId,
+  BrandingConfig,
+} from '@passforge/shared';
+import { designService } from '../modules/design/design.service.js';
 
 const router = Router();
 
 // State cache
 let lastRenderResults: Record<string, any> = {};
+
+// POST /api/tickets/preview (and /api/preview)
+router.post('/preview', async (req: Request, res: Response) => {
+  try {
+    const parseResult = ticketPreviewRequestSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid preview request payload',
+        details: parseResult.error.format(),
+      });
+    }
+
+    const { attendeeId, attendee: attendeeInput, designId, branding: brandingInput, format } = parseResult.data;
+
+    // Resolve attendee
+    let attendee = attendeeInput;
+    if (!attendee && attendeeId) {
+      attendee = attendeeService.getAttendeeById(attendeeId);
+    }
+    if (!attendee) {
+      const attendees = attendeeService.getAllAttendees();
+      attendee = attendees.length > 0 ? attendees[0] : undefined;
+    }
+
+    const ticket = await ticketService.createTicketData(attendee);
+
+    // Resolve design and branding
+    const currentConfig = designService.getCurrentConfig();
+    const effectiveDesignId: TicketDesignId = designId || currentConfig.designId;
+    const effectiveBranding: BrandingConfig = {
+      ...currentConfig.branding,
+      ...(brandingInput || {}),
+    };
+
+    const renderOpts = {
+      designId: effectiveDesignId,
+      branding: effectiveBranding,
+    };
+
+    const responsePayload: TicketPreviewResponse = {
+      success: true,
+      designId: effectiveDesignId,
+      branding: effectiveBranding,
+      ticket,
+      results: {},
+    };
+
+    if (format === 'all') {
+      const results = await ticketRenderer.renderAll(ticket, OUTPUT_DIR, renderOpts);
+      lastRenderResults = results;
+      responsePayload.results = results;
+
+      // Also attach in-memory base64 previews for fast UI rendering
+      const pngPath = path.join(OUTPUT_DIR, `ticket-${ticket.ticketId}.png`);
+      let pngDataUrl: string | undefined;
+      if (fs.existsSync(pngPath)) {
+        const pngBuf = fs.readFileSync(pngPath);
+        pngDataUrl = `data:image/png;base64,${pngBuf.toString('base64')}`;
+      }
+
+      const emailPath = path.join(OUTPUT_DIR, `ticket-${ticket.ticketId}-email.html`);
+      const emailHtml = fs.existsSync(emailPath) ? fs.readFileSync(emailPath, 'utf-8') : undefined;
+
+      const pagePath = path.join(OUTPUT_DIR, `ticket-${ticket.ticketId}-web.html`);
+      const pageHtml = fs.existsSync(pagePath) ? fs.readFileSync(pagePath, 'utf-8') : undefined;
+
+      return res.json({
+        ...responsePayload,
+        previews: {
+          pngDataUrl,
+          emailHtml,
+          pageHtml,
+          pdfUrl: `/api/preview/pdf?ticketId=${ticket.ticketId}`,
+        },
+      });
+    }
+
+    if (format === 'email') {
+      const { html, diagnostics } = await ticketRenderer.renderEmail(ticket, renderOpts);
+      const filePath = path.join(OUTPUT_DIR, `ticket-${ticket.ticketId}-email.html`);
+      fs.writeFileSync(filePath, html, 'utf-8');
+      const result = {
+        format: 'email' as OutputFormat,
+        success: true,
+        outputPath: filePath,
+        html,
+        sizeBytes: Buffer.byteLength(html),
+        diagnostics,
+      };
+      return res.json({
+        ...responsePayload,
+        result,
+        html,
+      });
+    }
+
+    if (format === 'page') {
+      const { html, diagnostics } = await ticketRenderer.renderPage(ticket, renderOpts);
+      const filePath = path.join(OUTPUT_DIR, `ticket-${ticket.ticketId}-web.html`);
+      fs.writeFileSync(filePath, html, 'utf-8');
+      const result = {
+        format: 'page' as OutputFormat,
+        success: true,
+        outputPath: filePath,
+        html,
+        sizeBytes: Buffer.byteLength(html),
+        diagnostics,
+      };
+      return res.json({
+        ...responsePayload,
+        result,
+        html,
+      });
+    }
+
+    if (format === 'pdf') {
+      const { pdf, diagnostics } = await ticketRenderer.renderPdf(ticket, renderOpts);
+      const filePath = path.join(OUTPUT_DIR, `ticket-${ticket.ticketId}.pdf`);
+      fs.writeFileSync(filePath, Buffer.from(pdf));
+      const pdfBase64 = Buffer.from(pdf).toString('base64');
+      const result = {
+        format: 'pdf' as OutputFormat,
+        success: true,
+        outputPath: filePath,
+        sizeBytes: pdf.length,
+        diagnostics,
+      };
+      return res.json({
+        ...responsePayload,
+        result,
+        pdfBase64,
+        pdfUrl: `/api/preview/pdf?ticketId=${ticket.ticketId}`,
+      });
+    }
+
+    if (format === 'png') {
+      const { image, diagnostics } = await ticketRenderer.renderCanvas(ticket, renderOpts);
+      const filePath = path.join(OUTPUT_DIR, `ticket-${ticket.ticketId}.png`);
+      fs.writeFileSync(filePath, Buffer.from(image));
+      const pngBase64 = Buffer.from(image).toString('base64');
+      const pngDataUrl = `data:image/png;base64,${pngBase64}`;
+      const result = {
+        format: 'png' as OutputFormat,
+        success: true,
+        outputPath: filePath,
+        sizeBytes: image.length,
+        diagnostics,
+      };
+      return res.json({
+        ...responsePayload,
+        result,
+        pngDataUrl,
+      });
+    }
+
+    return res.status(400).json({ success: false, error: `Invalid format '${format}'` });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // GET /api/ticket-data
 router.get('/ticket-data', async (_req: Request, res: Response) => {

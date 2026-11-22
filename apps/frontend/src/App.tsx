@@ -9,6 +9,7 @@ import { CsvUploader } from './features/attendees/CsvUploader.js';
 import { CsvColumnMapper } from './features/attendees/CsvColumnMapper.js';
 import { ImportSummary } from './features/attendees/ImportSummary.js';
 import { AttendeeTable } from './features/attendees/AttendeeTable.js';
+import { TicketDesigner } from './features/tickets/TicketDesigner.js';
 import { TicketFormatCards } from './features/tickets/TicketFormatCards.js';
 import { TicketPreviewModal } from './features/tickets/TicketPreviewModal.js';
 import { BatchExportCard } from './features/exports/BatchExportCard.js';
@@ -20,7 +21,7 @@ import { ActiveTab } from './types/index.js';
 import { Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('import');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('tickets');
   const [serverOnline, setServerOnline] = useState<boolean>(true);
 
   // Core Hooks
@@ -204,50 +205,12 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 4: HYPER ELEMENTS RENDERING POC */}
+        {/* TAB 4: TICKET DESIGNER & LIVE PREVIEW */}
         {activeTab === 'tickets' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-slate-900 border border-slate-800">
-              <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-indigo-400" />
-                  Hyper Elements 0.5.2 SSR Rendering Pipelines
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Single React ticket model rendered to Email HTML, Responsive Page, Document PDF, and Canvas PNG.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => runLongNameTest()}
-                  disabled={renderLoading}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all"
-                >
-                  🧪 Test Long Name Stress
-                </button>
-                <button
-                  onClick={() => renderAllFormats()}
-                  disabled={renderLoading}
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-all flex items-center gap-1.5"
-                >
-                  {renderLoading ? 'Rendering...' : '⚡ Re-render All 4 Formats'}
-                </button>
-              </div>
-            </div>
-
-            <TicketFormatCards
-              results={ticketResults || undefined}
-              onPreviewFormat={format => {
-                if (attendees.length > 0) {
-                  setModalAttendee(attendees[0]);
-                  setIsModalOpen(true);
-                }
-              }}
-            />
-
-            <BatchExportCard attendeeCount={attendeeCount} />
-          </div>
+          <TicketDesigner
+            attendees={attendees}
+            eventName={event.name}
+          />
         )}
       </main>
 

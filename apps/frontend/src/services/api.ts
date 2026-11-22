@@ -6,6 +6,10 @@ import {
   TicketData,
   RenderResult,
   OutputFormat,
+  DesignMetadata,
+  DesignConfig,
+  TicketPreviewRequest,
+  TicketPreviewResponse,
 } from '@passforge/shared';
 
 const API_BASE = '/api';
@@ -126,4 +130,72 @@ export async function testLongName(): Promise<{ success: boolean; results: any; 
   const data = await res.json();
   if (!res.ok || !data.success) throw new Error(data.error || 'Stress test failed');
   return data;
+}
+
+// ==========================================
+// Milestone 3: Design & Branding API Methods
+// ==========================================
+
+export async function fetchDesigns(): Promise<DesignMetadata[]> {
+  const res = await fetch(`${API_BASE}/designs`);
+  if (!res.ok) throw new Error('Failed to fetch ticket designs');
+  const data = await res.json();
+  return data.designs;
+}
+
+export async function fetchCurrentDesignConfig(): Promise<DesignConfig> {
+  const res = await fetch(`${API_BASE}/designs/current`);
+  if (!res.ok) throw new Error('Failed to fetch current design configuration');
+  const data = await res.json();
+  return data.config;
+}
+
+export async function saveDesignConfig(config: Partial<DesignConfig>): Promise<DesignConfig> {
+  const res = await fetch(`${API_BASE}/designs/current`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(config),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || 'Failed to save design configuration');
+  }
+  return data.config;
+}
+
+export async function fetchTicketPreview(
+  payload: TicketPreviewRequest
+): Promise<TicketPreviewResponse & { previews?: { pngDataUrl?: string; emailHtml?: string; pageHtml?: string; pdfUrl?: string } }> {
+  const res = await fetch(`${API_BASE}/tickets/preview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || 'Failed to render live ticket preview');
+  }
+  return data;
+}
+
+export async function uploadLogo(dataUrl: string): Promise<{ config: DesignConfig; logoUrl: string }> {
+  const res = await fetch(`${API_BASE}/branding/logo`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ dataUrl }),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || 'Failed to upload event logo');
+  }
+  return data;
+}
+
+export async function resetBranding(): Promise<DesignConfig> {
+  const res = await fetch(`${API_BASE}/branding/reset`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || 'Failed to reset branding');
+  }
+  return data.config;
 }

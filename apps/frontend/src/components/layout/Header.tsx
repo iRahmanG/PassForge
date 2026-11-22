@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-base tracking-tight text-white">PassForge</span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-700/40 uppercase tracking-wider">
-                  Milestone 2
+                  Milestone 3
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 font-medium">Bulk Personalized Event Ticket Generator</p>
@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <Sparkles className="w-4 h-4" />
-            <span>Hyper Elements Rendering POC</span>
+            <span>Ticket Designer & Preview</span>
           </button>
         </div>
       </div>
