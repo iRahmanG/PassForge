@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsx src/server.ts",
+    "dev": "tsx src/server.ts",
+    "render": "tsx src/cli/renderTest.ts",
+    "verify": "tsx src/cli/verifyAll.ts",
+    "test": "tsx src/cli/verifyAll.ts"
   },
   "keywords": [],
   "author": "",
