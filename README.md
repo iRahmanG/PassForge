@@ -1,125 +1,154 @@
-# PassForge — Milestone 1: Hyper Elements Rendering POC
+# PassForge — Milestone 2: Architecture Separation & CSV Import
 
 > Bulk personalized event ticket generation application for the **Hyper Elements Template Challenge**.
 
 ---
 
-## 🎯 Product Vision
+## 🎯 Project Overview
 
-PassForge allows event organizers to upload attendee data through CSV, select a ticket design, and generate personalized tickets in four formats:
-1. **Email HTML** — Personalized confirmation email for attendees
-2. **Responsive Web Ticket** — Mobile-friendly digital wallet pass
-3. **Printable PDF** — Print-ready admission pass on standard A4 paper
-4. **PNG Ticket** — Visual ticket badge image for social sharing and offline storage
+PassForge enables event organizers to configure an event, upload attendee rosters via CSV with flexible column mapping, and generate high-fidelity personalized tickets in four distinct formats powered by **Hyper Elements**:
 
-**Scope for Milestone 1:** Before implementing CSV bulk uploads, authentication, or dashboards, this proof of concept proves that **Hyper Elements** reliably renders a personalized ticket in all four formats from a single typed ticket model.
-
----
-
-## 🏛️ Hyper Elements Version & Exact APIs Used
-
-- **Package:** `@hyper-elements/react` (`v0.5.2`)
-- **Peer Dependencies:**
-  - `@react-pdf/renderer` (`^4.9.0`) — Required by `@hyper-elements/react/pdf`
-  - `satori` (`^0.33.5`) and `@resvg/resvg-js` (`^2.6.2`) — Required by `@hyper-elements/react/image`
-  - `qrcode` (`^1.5.4`) — Fast QR code matrix generation
-
-### Exact APIs Implemented:
-| Format | Hyper Elements Root | Rendering Function | Module Path | Output |
-|---|---|---|---|---|
-| **Email** | `<Email width={600} previewText="..." />` | `render(element)` | `@hyper-elements/react` | Email-safe table-based HTML |
-| **Page** | `<Page width={680} breakpoints={{ mobile: 560 }} />` | `render(element)` | `@hyper-elements/react` | Responsive Web HTML with mobile breakpoints |
-| **Document** | `<Document size="A4" orientation="portrait" margin={32} />` | `renderPdf(element, options)` | `@hyper-elements/react/pdf` | Valid Binary PDF (`%PDF-`) |
-| **Canvas** | `<Canvas width={1000} height={520} />` | `renderImage(element, options)` | `@hyper-elements/react/image` | Crisp 2x Retina PNG (`\x89PNG`) |
+1. **Personalized Confirmation Email** (`<Email>`)
+2. **Responsive Digital Web Ticket** (`<Page>`)
+3. **Printable Admission Pass PDF** (`<Document>`)
+4. **Visual Ticket Badge PNG** (`<Canvas>`)
 
 ---
 
-## 🎫 Sample Event & Attendee Data
+## 🏛️ Monorepo Architecture
 
-- **Event:** KIET TechFest 2027
-- **Date:** 15 February 2027 (09:00 AM - 06:00 PM IST)
-- **Venue:** KIET Group of Institutions, Delhi-NCR, Ghaziabad, UP
-- **Organizer:** KIET Technical Team
-- **Attendee:** Maksud Rahman
-- **Email:** `maksud@example.com`
-- **Ticket Type:** VIP
-- **Seat:** A-104
-- **Ticket ID:** `KTF27-VIP-84920`
-- **QR Code:** Generated dynamically encoding ticket identification URL
-
----
-
-## 📂 Project Structure
+The project is structured as an **npm-workspaces monorepo**:
 
 ```
 PassForge/
-├── assets/
-│   └── fonts/
-│       ├── arial.ttf            # Local TrueType font for Canvas/PDF rendering
-│       └── arialbd.ttf          # Local Bold TrueType font
-├── output/                      # Generated ticket artifacts
-│   ├── ticket-KTF27-VIP-84920-email.html
-│   ├── ticket-KTF27-VIP-84920-web.html
-│   ├── ticket-KTF27-VIP-84920.pdf
-│   └── ticket-KTF27-VIP-84920.png
-├── src/
-│   ├── cli/
-│   │   ├── renderTest.ts        # CLI script to generate all 4 formats
-│   │   └── verifyAll.ts         # 19-assertion automated verification suite
-│   ├── data/
-│   │   └── sampleTicket.ts      # Sample event, attendee, and QR generator
-│   ├── services/
-│   │   └── ticketRenderer.ts    # Unified Hyper Elements SSR rendering service
-│   ├── templates/
-│   │   ├── theme.ts             # Shared Hyper Elements theme
-│   │   ├── TicketCanvas.tsx     # <Canvas> template for PNG badge
-│   │   ├── TicketDocument.tsx   # <Document> template for printable PDF
-│   │   ├── TicketEmail.tsx      # <Email> template for confirmation email
-│   │   └── TicketPage.tsx       # <Page> template for responsive web pass
-│   ├── types/
-│   │   └── ticket.ts            # Shared TypeScript ticket data contract
-│   └── server.ts                # Express development preview server
-├── package.json
-├── tsconfig.json
-└── README.md
+├── apps/
+│   ├── frontend/         # React 19 + TypeScript + Vite Single Page Application
+│   │   ├── src/
+│   │   │   ├── components/layout/   # Header & Footer
+│   │   │   ├── components/ui/       # Design system primitives (Button, Card, Badge, Modal, Alert, Input)
+│   │   │   ├── features/event/      # Event configuration form & summary card
+│   │   │   ├── features/attendees/  # CSV drag-and-drop uploader, column mapper, import summary, table
+│   │   │   ├── features/tickets/    # 4-format ticket preview modal & format cards
+│   │   │   ├── features/exports/    # Export pipeline readiness card
+│   │   │   ├── hooks/               # useEvent, useAttendees, useTicketRender
+│   │   │   ├── services/api.ts      # REST API client
+│   │   │   ├── App.tsx              # Main application shell
+│   │   │   └── main.tsx             # React entrypoint
+│   │   ├── vite.config.ts           # Vite proxy configuration (/api -> http://localhost:3000)
+│   │   └── package.json
+│   │
+│   └── backend/          # Node.js 24 + Express 5 + Hyper Elements SSR Service
+│       ├── src/
+│       │   ├── config/              # Constants and sample event/attendee data
+│       │   ├── modules/event/       # In-memory event service and controller
+│       │   ├── modules/attendee/    # Papa Parse ingestion, Zod validator, duplicate email filter
+│       │   ├── modules/ticket/      # TicketData synthesizer with QR code generation
+│       │   ├── templates/           # Hyper Elements templates (Email, Page, Document, Canvas)
+│       │   ├── services/rendering/  # Unified SSR service for all 4 output formats
+│       │   ├── routes/              # Express API routers
+│       │   ├── middleware/          # Multer file upload & validation middleware
+│       │   ├── cli/                 # CLI renderer and 25-assertion automated test suite
+│       │   └── server.ts            # Express server (Port 3000)
+│       ├── assets/fonts/            # Local TrueType fonts for offline rendering
+│       ├── output/                  # Generated ticket artifacts
+│       └── package.json
+│
+├── packages/
+│   └── shared/           # Shared TypeScript domain contracts & Zod validation schemas
+│       ├── src/
+│       │   ├── types/               # EventInfo, AttendeeInfo, TicketData, CsvImportResult
+│       │   ├── schemas/             # eventSchema, attendeeSchema, csvColumnMappingSchema
+│       │   └── index.ts
+│       └── package.json
+│
+├── docs/                 # architecture.md and development.md
+├── package.json          # Root workspace configuration
+└── tsconfig.base.json    # Shared TypeScript compiler options
 ```
 
 ---
 
-## 🚀 How to Run
+## 🚀 Running the Project
 
-### 1. Run Automated Verification Suite
-Runs the 19 test assertions covering generation, byte signatures, attendee data consistency, and long name layout resilience:
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Start Development Servers (Concurrent Frontend + Backend)
+```bash
+npm run dev
+```
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3000
+
+Or run each independently:
+```bash
+npm run dev:backend   # Backend on port 3000
+npm run dev:frontend  # Frontend on port 5173
+```
+
+### 3. Run Automated Verification Suite
+Runs the 25-assertion test suite verifying Hyper Elements SSR, magic bytes, event persistence, and CSV validation:
 ```bash
 npm test
 ```
 
-### 2. Generate Files via CLI
-Generates all 4 ticket formats into the `output/` directory:
+### 4. Build for Production
 ```bash
-npm run render
-```
-
-### 3. Start the Interactive Preview Server
-Starts the interactive preview UI at `http://localhost:3000`:
-```bash
-npm run dev
-# or
-npm start
+npm run build
 ```
 
 ---
 
-## 📊 Verification Results
+## 📊 Verification Test Results
 
-| Output Format | Output File | Size | Render Time | Status |
-|---|---|---|---|---|
-| **Email HTML** | `output/ticket-KTF27-VIP-84920-email.html` | ~18.2 KB | 23 ms | ✅ Verified |
-| **Responsive Web** | `output/ticket-KTF27-VIP-84920-web.html` | ~9.9 KB | 8 ms | ✅ Verified |
-| **Printable PDF** | `output/ticket-KTF27-VIP-84920.pdf` | ~10.9 KB | 78 ms | ✅ Verified |
-| **PNG Ticket** | `output/ticket-KTF27-VIP-84920.png` | ~125.7 KB | 195 ms | ✅ Verified |
+```
+===============================================================
+   PassForge Milestone 2: Automated Verification Suite
+===============================================================
 
-### Stress Testing & Design Resilience:
-- Tested with extended attendee names (`Prof. Dr. Alexandrina Montgomery-Fitzgerald III`) and long seat identifiers (`ZONE-A-ROW-04-SEAT-112`).
-- Flex and column wrapping constraints preserve visual hierarchy without layout overflow.
-- QR code is rendered both as an inline base64 data URI for HTML/Page formats and as raw PNG binary buffers for Satori Canvas and React-PDF Document pipelines.
+✅ PASS | Render EMAIL successfully
+✅ PASS | Render PAGE successfully
+✅ PASS | Render PDF successfully
+✅ PASS | Render PNG successfully
+✅ PASS | PDF Magic Bytes validation (%PDF-)
+✅ PASS | PNG Magic Bytes validation (\x89PNG)
+✅ PASS | Field "Maksud Rahman" present in Email & Web HTML
+✅ PASS | Field "KIET TechFest 2027" present in Email & Web HTML
+✅ PASS | Field "VIP" present in Email & Web HTML
+✅ PASS | Field "A-104" present in Email & Web HTML
+✅ PASS | Field "15 February 2027" present in Email & Web HTML
+✅ PASS | Field "KIET Group of Institutions" present in Email & Web HTML
+✅ PASS | Field "KTF27-VIP-84920" present in Email & Web HTML
+✅ PASS | QR Code Data URL format
+✅ PASS | QR Code Raw Buffer PNG signature
+✅ PASS | Long Name: Render EMAIL without breaking
+✅ PASS | Long Name: Render PAGE without breaking
+✅ PASS | Long Name: Render PDF without breaking
+✅ PASS | Long Name: Render PNG without breaking
+✅ PASS | Event update validation and persistence
+✅ PASS | Import valid CSV with column auto-detection (3/3 attendees)
+✅ PASS | Validate missing name and invalid email format
+✅ PASS | Detect duplicate email in CSV batch
+✅ PASS | Skip empty lines and whitespace rows gracefully
+✅ PASS | Custom CSV column mapping
+===============================================================
+🎉 ALL 25 ASSERTIONS PASSED! Monorepo & CSV Import verified.
+===============================================================
+```
+
+---
+
+## 📑 CSV Import Capabilities
+
+- **Drag-and-Drop & File Picker:** Supports `.csv` and `.txt` files up to 5MB.
+- **Header Auto-Detection:** Automatically maps typical column names (e.g. `Full Name`, `Email Address`, `Ticket Type`, `Seat Number`).
+- **Interactive Mapping:** UI enables selecting custom columns when CSV headers differ from defaults.
+- **Validation:**
+  - Name: Required string.
+  - Email: Required RFC 5322 format; duplicate emails in batch are flagged.
+  - Ticket Category: Required (defaults to `General` if omitted).
+  - Seat: Optional (defaults to `General Admission` or `Unassigned`).
+  - Empty rows are safely skipped.
+- **Detailed Error Reporting:** Shows row numbers and specific field validation errors.

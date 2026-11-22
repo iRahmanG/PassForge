@@ -1,0 +1,37 @@
+{
+  "name": "@passforge/backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "start": "tsx src/server.ts",
+    "render": "tsx src/cli/renderTest.ts",
+    "test": "tsx src/cli/verifyAll.ts"
+  },
+  "dependencies": {
+    "@hyper-elements/react": "^0.5.2",
+    "@passforge/shared": "*",
+    "@react-pdf/renderer": "^4.9.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "multer": "^1.4.5-lts.1",
+    "papaparse": "^5.7.1",
+    "qrcode": "^1.5.4",
+    "satori": "^0.33.5",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^26.6.6",
+    "@types/papaparse": "^5.5.2",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

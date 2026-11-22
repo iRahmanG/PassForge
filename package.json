@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "start": "tsx src/server.ts",
-    "dev": "tsx src/server.ts",
-    "render": "tsx src/cli/renderTest.ts",
-    "verify": "tsx src/cli/verifyAll.ts",
-    "test": "tsx src/cli/verifyAll.ts"
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --workspace=@passforge/backend run dev",
+    "dev:frontend": "npm --workspace=@passforge/frontend run dev",
+    "build": "npm --workspace=@passforge/frontend run build",
+    "test": "npm --workspace=@passforge/backend test",
+    "render": "npm --workspace=@passforge/backend run render"
   },
   "keywords": [],
   "author": "",
@@ -19,9 +24,11 @@
     "@react-pdf/renderer": "^4.9.0",
     "@resvg/resvg-js": "^2.6.2",
     "archiver": "^8.0.0",
+    "concurrently": "^10.0.7",
     "cors": "^2.8.6",
     "express": "^5.3.0",
     "lucide-react": "^1.77.0",
+    "multer": "^2.5.0",
     "papaparse": "^5.7.1",
     "qrcode": "^1.5.4",
     "satori": "^0.33.5",
@@ -31,11 +38,14 @@
     "@types/archiver": "^8.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/multer": "^2.3.0",
     "@types/papaparse": "^5.5.2",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
   }
 }

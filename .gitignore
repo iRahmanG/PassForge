@@ -1,4 +1,7 @@
 node_modules
 scratch
 output
+apps/backend/output
+apps/frontend/dist
+dist
 .DS_Store
