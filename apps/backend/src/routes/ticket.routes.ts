@@ -36,7 +36,21 @@ router.post('/preview', async (req: Request, res: Response) => {
 
     // Resolve attendee
     let attendee = attendeeInput;
-    if (!attendee && attendeeId) {
+    if (!attendee && attendeeId === 'test-long-name') {
+      attendee = {
+        name: 'Prof. Dr. Alexandrina Montgomery-Fitzgerald III',
+        email: 'alexandrina.montgomery.fitzgerald.iii@longdomainexample.org',
+        ticketType: 'VIP DELEGATE',
+        seat: 'SECTION-A-ROW-02-SEAT-104',
+      };
+    } else if (!attendee && attendeeId === 'test-open-seating') {
+      attendee = {
+        name: 'Priya Sundaram',
+        email: 'priya@example.com',
+        ticketType: 'General',
+        seat: '',
+      };
+    } else if (!attendee && attendeeId) {
       attendee = attendeeService.getAttendeeById(attendeeId);
     }
     if (!attendee) {

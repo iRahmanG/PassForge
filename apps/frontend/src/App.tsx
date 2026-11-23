@@ -209,7 +209,7 @@ export default function App() {
         {activeTab === 'tickets' && (
           <TicketDesigner
             attendees={attendees}
-            eventName={event.name}
+            eventName={event?.name || 'KIET TechFest 2027'}
           />
         )}
       </main>
