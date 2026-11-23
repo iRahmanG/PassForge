@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "skills": {
+    "hyper-elements": {
+      "source": "hyper-elements/hyper-elements",
+      "commit": "8c8f09e2c651116d83c22079b53b8d56abba72ae",
+      "sourceType": "github",
+      "skillPath": "skills/hyper-elements/SKILL.md",
+      "computedHash": "381051074540e5e4dad451d72b332a04ea93c969d550a978056d47fedbe81186"
+    }
+  }
+}

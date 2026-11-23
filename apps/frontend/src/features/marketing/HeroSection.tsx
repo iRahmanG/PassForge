@@ -17,18 +17,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
         {/* Main Hero Header */}
         <div className="text-center max-w-4xl mx-auto space-y-6">
           {/* Release & Engine Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5] border border-[#DDD8CD] shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-[#B86E52] animate-pulse" />
-            <span className="text-xs font-semibold text-[#4A4641]">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-[#FAF8F5] border border-[#DDD8CD] shadow-xs max-w-full justify-center">
+            <span className="w-2 h-2 rounded-full bg-[#B86E52] animate-pulse shrink-0" />
+            <span className="text-[11px] sm:text-xs font-semibold text-[#4A4641]">
               Powered by Hyper Elements 0.5.2
             </span>
-            <span className="text-[#C5BFB2]">|</span>
-            <span className="text-xs text-[#77736C]">Four Formats • Single Source</span>
+            <span className="text-[#C5BFB2] hidden sm:inline">|</span>
+            <span className="text-[11px] sm:text-xs text-[#77736C] hidden sm:inline">Four Formats • Single Source</span>
           </div>
 
           {/* Primary Editorial Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#252525] font-serif leading-tight">
-            One event. Hundreds of tickets.{' '}
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#252525] font-serif leading-tight">
+            <span>One event.</span> <br className="sm:hidden" />
+            <span>Hundreds of tickets.</span> <br className="sm:hidden" />
             <span className="text-[#B86E52] italic font-normal">Every one personal.</span>
           </h1>
 

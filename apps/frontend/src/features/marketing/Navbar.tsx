@@ -31,22 +31,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
 
   return (
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#E9E5DC] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18">
           {/* Brand Logo */}
           <button
             onClick={() => onNavigate('/')}
-            className="flex items-center gap-3 text-left cursor-pointer group"
+            className="flex items-center gap-2 sm:gap-3 text-left cursor-pointer group shrink-0"
           >
-            <div className="h-9 w-9 rounded-xl bg-[#B86E52] text-white flex items-center justify-center shadow-sm group-hover:bg-[#A15D43] transition-colors shrink-0">
-              <Ticket className="w-5 h-5" />
+            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#B86E52] text-white flex items-center justify-center shadow-sm group-hover:bg-[#A15D43] transition-colors shrink-0">
+              <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="font-extrabold text-base tracking-tight text-[#252525] font-sans">
                   PassForge
                 </span>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] uppercase tracking-wider">
+                <span className="hidden sm:inline text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] uppercase tracking-wider">
                   Open Engine
                 </span>
               </div>
@@ -86,16 +86,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-1.5 md:hidden">
             <button
               onClick={() => onNavigate('/app')}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#B86E52] shrink-0"
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#B86E52] shrink-0"
             >
-              Open Studio
+              Studio
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[#4A4641] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+              className="p-1.5 text-[#4A4641] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
