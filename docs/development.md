@@ -19,15 +19,27 @@ This installs all dependencies across `apps/frontend`, `apps/backend`, and `pack
 
 ---
 
+## Routing & Application Structure
+
+PassForge features two primary user-facing experiences:
+
+1. **Public Marketing Website (`/`, `/features`, `/how-it-works`, `/designs`, `/use-cases`, `/faq`):**
+   - Warm, editorial presentation showcasing the product vision, capabilities, and dual design systems.
+   - Deep links directly to workflow and features sections.
+2. **PassForge Studio (`/app`):**
+   - Interactive organizer workflow: Event Settings, CSV Import, Attendee Directory, and Ticket Designer with live multi-format preview.
+
+---
+
 ## Available Root Scripts
 
 | Command | Description |
 |---|---|
 | `npm run dev` | Concurrently starts both Express backend (`:3000`) and Vite frontend (`:5173`) |
 | `npm run dev:backend` | Starts Express backend server in development mode using `tsx` |
-| `npm run dev:frontend` | Starts Vite development server with proxying |
+| `npm run dev:frontend` | Starts Vite development server with hot-module reload |
 | `npm run build` | Compiles frontend production bundle into `apps/frontend/dist` |
-| `npm test` | Runs the 25-assertion automated backend test suite |
+| `npm test` | Runs the automated backend test suite (28 assertions) |
 | `npm run render` | Generates all 4 Hyper Elements ticket formats to `apps/backend/output/` |
 
 ---
@@ -50,6 +62,20 @@ Custom column mappings can also be specified interactively via the frontend or p
 4. **Seat Number:** Optional (default: `General Admission` or `Unassigned`).
 5. **Empty Rows:** Empty lines or rows consisting solely of whitespace or commas are skipped automatically.
 6. **Limits:** Max file size 5MB; max row count 5,000 rows.
+
+---
+
+## Hyper Elements 0.5.2 Reference
+
+The ticket rendering engine compiles React JSX elements into 4 formats:
+- Documentation guide is located at: `node_modules/@hyper-elements/react/GUIDE.md`
+- Complete API reference is located at: `node_modules/@hyper-elements/react/REFERENCE.md`
+
+Supported Roots:
+- `<Page>`: Responsive HTML Web Ticket
+- `<Email>`: Compatible Table-based Email HTML
+- `<Document>`: Vector PDF Admission Pass
+- `<Canvas>`: High-Resolution PNG Graphic (via `renderImage`)
 
 ---
 

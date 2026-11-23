@@ -11,3 +11,6 @@ export const OUTPUT_DIR = path.resolve(BACKEND_ROOT, 'output');
 export const MAX_UPLOAD_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB limit
 export const MAX_CSV_ROWS = 5000; // Limit row count for memory safety
 export const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+export const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+export const FRONTEND_DIST = path.resolve(BACKEND_ROOT, '..', 'frontend', 'dist');
+

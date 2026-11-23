@@ -1,10 +1,11 @@
 import React from 'react';
 import { ActiveTab } from '../../types/index.js';
-import { Ticket, Calendar, UploadCloud, Users, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Ticket, Calendar, UploadCloud, Users, Sparkles, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: ActiveTab;
   onSelectTab: (tab: ActiveTab) => void;
+  onNavigateHome?: () => void;
   eventName?: string;
   attendeeCount?: number;
   serverOnline?: boolean;
@@ -13,6 +14,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   onSelectTab,
+  onNavigateHome,
   eventName = 'KIET TechFest 2027',
   attendeeCount = 1,
   serverOnline = true,
@@ -48,26 +50,43 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-15 sm:h-16 border-b border-[#F0EDE6]">
           {/* Logo & PassForge Wordmark */}
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-[#B86E52] text-white flex items-center justify-center shadow-sm shrink-0">
-              <Ticket className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base tracking-tight text-[#252525] font-sans">
-                  PassForge
-                </span>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] uppercase tracking-wider">
-                  Ticket Studio
-                </span>
+            <button
+              onClick={onNavigateHome}
+              className="flex items-center gap-3 text-left cursor-pointer group"
+              title="Return to Public Website"
+            >
+              <div className="h-9 w-9 rounded-xl bg-[#B86E52] text-white flex items-center justify-center shadow-sm group-hover:bg-[#A15D43] transition-colors shrink-0">
+                <Ticket className="w-5 h-5" />
               </div>
-              <p className="text-[11px] text-[#77736C] hidden sm:block">
-                Personalized bulk event ticket publishing platform
-              </p>
-            </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-base tracking-tight text-[#252525] font-sans">
+                    PassForge
+                  </span>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] uppercase tracking-wider">
+                    Ticket Studio
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#77736C] hidden sm:block">
+                  Personalized bulk event ticket publishing platform
+                </p>
+              </div>
+            </button>
           </div>
 
           {/* Context Badges & System Health */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {onNavigateHome && (
+              <button
+                onClick={onNavigateHome}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#DDD8CD] bg-white text-xs font-semibold text-[#4A4641] hover:text-[#252525] hover:bg-[#FAF8F5] transition-all cursor-pointer shadow-xs"
+                title="Return to PassForge website"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline sm:inline">Website</span>
+              </button>
+            )}
+
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E9E5DC] text-xs text-[#4A4641]">
               <Calendar className="w-3.5 h-3.5 text-[#B86E52] shrink-0" />
               <span className="font-semibold text-[#252525] truncate max-w-[220px]">{eventName}</span>

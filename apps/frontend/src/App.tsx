@@ -3,6 +3,7 @@ import Papa from 'papaparse';
 import { AttendeeInfo, CsvColumnMapping, CsvImportResult, OutputFormat } from '@passforge/shared';
 import { Header } from './components/layout/Header.js';
 import { Footer } from './components/layout/Footer.js';
+import { LandingPage } from './features/marketing/LandingPage.js';
 import { EventForm } from './features/event/EventForm.js';
 import { EventSummaryCard } from './features/event/EventSummaryCard.js';
 import { CsvUploader } from './features/attendees/CsvUploader.js';
@@ -20,8 +21,35 @@ import { ActiveTab } from './types/index.js';
 import { Sparkles, CheckCircle2, AlertCircle, Calendar } from 'lucide-react';
 
 export default function App() {
+  const [routePath, setRoutePath] = useState<string>(() => {
+    return window.location.pathname || '/';
+  });
+
   const [activeTab, setActiveTab] = useState<ActiveTab>('tickets');
   const [serverOnline, setServerOnline] = useState<boolean>(true);
+
+  // Synchronize route with browser history
+  useEffect(() => {
+    const handlePopState = () => {
+      setRoutePath(window.location.pathname || '/');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigate = (path: string) => {
+    if (path.startsWith('#')) {
+      const id = path.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+    window.history.pushState({}, '', path);
+    setRoutePath(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Core Hooks
   const { event, updateEvent } = useEvent();
@@ -139,11 +167,24 @@ export default function App() {
     setIsModalOpen(true);
   };
 
+  // If viewing public landing page or public marketing sections
+  if (!routePath.startsWith('/app')) {
+    let initialSection: string | undefined = undefined;
+    if (routePath.includes('features')) initialSection = 'features';
+    else if (routePath.includes('how-it-works')) initialSection = 'how-it-works';
+    else if (routePath.includes('designs')) initialSection = 'designs';
+    else if (routePath.includes('faq')) initialSection = 'faq';
+    else if (routePath.includes('use-cases')) initialSection = 'use-cases';
+
+    return <LandingPage onNavigate={navigate} initialSection={initialSection} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#252525]">
       <Header
         activeTab={activeTab}
         onSelectTab={setActiveTab}
+        onNavigateHome={() => navigate('/')}
         eventName={event?.name}
         attendeeCount={attendeeCount}
         serverOnline={serverOnline}
