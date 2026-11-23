@@ -31,25 +31,25 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 text-slate-100">
-          <div className="max-w-lg w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <div className="flex items-center gap-3 mb-4 text-rose-400">
-              <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20">
+        <div className="min-h-screen bg-[#F7F5F0] flex items-center justify-center p-6 text-[#252525]">
+          <div className="max-w-lg w-full bg-white border border-[#E9E5DC] rounded-2xl p-6 shadow-xl">
+            <div className="flex items-center gap-3 mb-4 text-[#A83232]">
+              <div className="p-2.5 rounded-xl bg-[#FDF0F0] border border-[#F5CCCC]">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-white">Application Render Error</h2>
-                <p className="text-xs text-slate-400">A component encountered an unexpected error</p>
+                <h2 className="text-base font-bold text-[#252525]">Application Render Notice</h2>
+                <p className="text-xs text-[#77736C]">A component encountered an unexpected error</p>
               </div>
             </div>
 
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 mb-5 font-mono text-xs text-rose-300 break-words">
+            <div className="bg-[#FDF0F0] border border-[#F5CCCC] rounded-xl p-3 mb-5 font-mono text-xs text-[#A83232] break-words">
               {this.state.error?.message || 'Unknown error'}
             </div>
 
             <button
               onClick={this.handleReload}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-md shadow-indigo-600/20"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#B86E52] hover:bg-[#A15D43] text-white font-semibold text-xs transition-all shadow-sm cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Reload Application</span>

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AttendeeInfo } from '@passforge/shared';
 import { useDesignSystem } from '../../hooks/useDesignSystem.js';
 import { DesignGallery } from './DesignGallery.js';
 import { BrandingControls } from './BrandingControls.js';
 import { PreviewToolbar } from './PreviewToolbar.js';
 import { TicketPreview } from './TicketPreview.js';
-import { Sparkles, CheckCircle2, AlertTriangle, Layers } from 'lucide-react';
+import { TicketFormatCards } from './TicketFormatCards.js';
+import { Sparkles, AlertTriangle, Sliders, Check } from 'lucide-react';
 
 interface TicketDesignerProps {
   attendees: AttendeeInfo[];
@@ -44,103 +45,127 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
   } = useDesignSystem(attendees[0]?.id);
 
   const activeDesign = designs.find((d) => d.id === selectedDesignId);
-  const designName = activeDesign ? activeDesign.name : 'Tech / Hackathon';
+  const designName = activeDesign ? activeDesign.name : 'Cyber Tech';
 
   return (
     <div className="space-y-6">
-      {/* Overview Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      {/* Top Title & Studio Status Banner */}
+      <div className="bg-white border border-[#E9E5DC] rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
-              Design System & Live Preview
+          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] uppercase tracking-wider flex items-center gap-1.5">
+              <Sliders className="w-3 h-3" />
+              Design Studio
             </span>
             {isDirty && (
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse">
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FDF6E8] text-[#945B0E] border border-[#F3E0BA]">
                 ● Unsaved Changes
               </span>
             )}
             {saveSuccess && (
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                ✓ Saved to Backend State
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#EEF6F0] text-[#2E683E] border border-[#C6E2CD]">
+                ✓ Saved to Backend
               </span>
             )}
           </div>
-          <h1 className="text-xl font-extrabold text-white tracking-tight">
-            Ticket Design & Branding System
+          <h1 className="text-xl sm:text-2xl font-bold text-[#252525] tracking-tight font-sans">
+            Ticket Design Studio
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5 max-w-2xl">
-            Choose a visual design architecture, customize event branding accents, and preview personalized passes live across all four Hyper Elements formats.
+          <p className="text-xs sm:text-sm text-[#77736C] mt-0.5 max-w-2xl leading-relaxed">
+            Choose a ticket layout, customize event branding, and preview personalized tickets across four output formats.
           </p>
         </div>
 
         <button
           onClick={saveConfig}
           disabled={saving}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-lg shrink-0 ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer ${
             saveSuccess
-              ? 'bg-emerald-600 text-white border border-emerald-500 shadow-emerald-900/30'
+              ? 'bg-[#EEF6F0] text-[#2E683E] border border-[#C6E2CD]'
               : isDirty
-              ? 'bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400 shadow-indigo-900/40'
-              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+              ? 'bg-[#B86E52] hover:bg-[#A15D43] text-white shadow-sm'
+              : 'bg-[#FAF8F5] hover:bg-[#F0EDE6] text-[#4A4641] border border-[#DDD8CD]'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-indigo-200" />
-          <span>{saving ? 'Saving...' : saveSuccess ? 'Saved Successfully!' : isDirty ? 'Save Design Configuration' : 'Design Config Up-to-Date'}</span>
+          {saveSuccess ? (
+            <>
+              <Check className="w-4 h-4 text-[#2E683E]" />
+              <span>Configuration Saved</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4" />
+              <span>{saving ? 'Saving...' : isDirty ? 'Save Design Configuration' : 'Design Config Saved'}</span>
+            </>
+          )}
         </button>
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-800/80 text-rose-300 text-xs flex items-center gap-2">
+        <div className="p-4 rounded-xl bg-[#FDF0F0] border border-[#F5CCCC] text-[#A83232] text-xs flex items-center gap-2.5 shadow-xs">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      {/* 1. Design Gallery: Choose between Tech vs Editorial */}
-      <DesignGallery
-        designs={designs}
-        selectedDesignId={selectedDesignId}
-        onSelectDesign={selectDesign}
-      />
+      {/* 3-PART STUDIO EDITOR LAYOUT (Canva / Figma style) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* LEFT COLUMN: Layout Selection (3 cols) */}
+        <div className="lg:col-span-3 space-y-4">
+          <DesignGallery
+            designs={designs}
+            selectedDesignId={selectedDesignId}
+            onSelectDesign={selectDesign}
+          />
+        </div>
 
-      {/* 2. Branding Controls: Accent color & Logo upload */}
-      <BrandingControls
-        branding={branding}
-        defaultAccentColor={activeDesign?.defaultAccentColor || '#06b6d4'}
-        onColorChange={setAccentColor}
-        onLogoUpload={handleLogoUpload}
-        onClearLogo={clearLogo}
-        onReset={resetBrandingDefaults}
-      />
+        {/* CENTER COLUMN: Live Preview Stage & Toolbar (6 cols) */}
+        <div className="lg:col-span-6 space-y-4">
+          <PreviewToolbar
+            attendees={attendees}
+            selectedAttendeeId={activeAttendeeId}
+            onSelectAttendee={(id) => {
+              setActiveAttendeeId(id);
+            }}
+            activeFormat={activeFormat}
+            onSelectFormat={setActiveFormat}
+            isMobileView={isMobileView}
+            onToggleMobileView={setIsMobileView}
+            onRefresh={() =>
+              refreshPreview(selectedDesignId, branding, activeFormat, activeAttendeeId)
+            }
+            onSaveConfig={saveConfig}
+            isDirty={isDirty}
+            saving={saving}
+            saveSuccess={saveSuccess}
+            loading={previewLoading}
+          />
 
-      {/* 3. Live Preview Section with Toolbar */}
-      <div className="space-y-4">
-        <PreviewToolbar
-          attendees={attendees}
-          selectedAttendeeId={activeAttendeeId}
-          onSelectAttendee={(id) => {
-            setActiveAttendeeId(id);
-          }}
-          activeFormat={activeFormat}
-          onSelectFormat={setActiveFormat}
-          isMobileView={isMobileView}
-          onToggleMobileView={setIsMobileView}
-          onRefresh={() => refreshPreview(selectedDesignId, branding, activeFormat, activeAttendeeId)}
-          onSaveConfig={saveConfig}
-          isDirty={isDirty}
-          saving={saving}
-          saveSuccess={saveSuccess}
-          loading={previewLoading}
-        />
+          <TicketPreview
+            activeFormat={activeFormat}
+            isMobileView={isMobileView}
+            loading={previewLoading}
+            previewData={previewData}
+            designName={designName}
+          />
 
-        <TicketPreview
-          activeFormat={activeFormat}
-          isMobileView={isMobileView}
-          loading={previewLoading}
-          previewData={previewData}
-          designName={designName}
-        />
+          <TicketFormatCards
+            results={previewData?.results}
+            onPreviewFormat={setActiveFormat}
+          />
+        </div>
+
+        {/* RIGHT COLUMN: Brand Styling Controls (3 cols) */}
+        <div className="lg:col-span-3 space-y-4">
+          <BrandingControls
+            branding={branding}
+            defaultAccentColor={activeDesign?.defaultAccentColor || '#B86E52'}
+            onColorChange={setAccentColor}
+            onLogoUpload={handleLogoUpload}
+            onClearLogo={clearLogo}
+            onReset={resetBrandingDefaults}
+          />
+        </div>
       </div>
     </div>
   );

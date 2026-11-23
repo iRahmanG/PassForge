@@ -6,6 +6,7 @@ interface CardProps {
   title?: React.ReactNode;
   subtitle?: React.ReactNode;
   action?: React.ReactNode;
+  headerIcon?: React.ReactNode;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -14,19 +15,35 @@ export const Card: React.FC<CardProps> = ({
   title,
   subtitle,
   action,
+  headerIcon,
 }) => {
   return (
-    <div className={`bg-slate-900/90 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur-sm ${className}`}>
+    <div
+      className={`bg-white border border-[#E9E5DC] rounded-2xl shadow-sm overflow-hidden ${className}`}
+    >
       {(title || action) && (
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-5">
-          <div>
-            {title && <h3 className="text-base font-bold text-slate-100">{title}</h3>}
-            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E9E5DC] px-6 py-4 gap-3 bg-[#FAF8F5]">
+          <div className="flex items-center gap-3 min-w-0">
+            {headerIcon && (
+              <div className="w-8 h-8 rounded-xl bg-[#FBF2EE] border border-[#F0D5C9] text-[#B86E52] flex items-center justify-center shrink-0">
+                {headerIcon}
+              </div>
+            )}
+            <div className="min-w-0">
+              {title && (
+                <h3 className="text-base font-bold text-[#252525] tracking-tight truncate font-sans">
+                  {title}
+                </h3>
+              )}
+              {subtitle && (
+                <p className="text-xs text-[#77736C] mt-0.5 truncate">{subtitle}</p>
+              )}
+            </div>
           </div>
-          {action && <div>{action}</div>}
+          {action && <div className="shrink-0 flex items-center gap-2">{action}</div>}
         </div>
       )}
-      {children}
+      <div className="p-6">{children}</div>
     </div>
   );
 };

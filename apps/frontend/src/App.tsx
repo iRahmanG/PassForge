@@ -10,7 +10,6 @@ import { CsvColumnMapper } from './features/attendees/CsvColumnMapper.js';
 import { ImportSummary } from './features/attendees/ImportSummary.js';
 import { AttendeeTable } from './features/attendees/AttendeeTable.js';
 import { TicketDesigner } from './features/tickets/TicketDesigner.js';
-import { TicketFormatCards } from './features/tickets/TicketFormatCards.js';
 import { TicketPreviewModal } from './features/tickets/TicketPreviewModal.js';
 import { BatchExportCard } from './features/exports/BatchExportCard.js';
 import { useEvent } from './hooks/useEvent.js';
@@ -18,7 +17,7 @@ import { useAttendees } from './hooks/useAttendees.js';
 import { useTicketRender } from './hooks/useTicketRender.js';
 import { fetchHealth } from './services/api.js';
 import { ActiveTab } from './types/index.js';
-import { Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Sparkles, CheckCircle2, AlertCircle, Calendar } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('tickets');
@@ -141,7 +140,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#252525]">
       <Header
         activeTab={activeTab}
         onSelectTab={setActiveTab}
@@ -166,7 +165,35 @@ export default function App() {
         {/* TAB 2: CSV ATTENDEE IMPORT */}
         {activeTab === 'import' && (
           <div className="space-y-6">
-            {event && <EventSummaryCard event={event} onEditClick={() => setActiveTab('event')} />}
+            {event && (
+              <div className="bg-white border border-[#E9E5DC] rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] flex items-center justify-center shrink-0">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#77736C]">
+                        Importing Roster For
+                      </span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2E683E]" />
+                    </div>
+                    <p className="text-sm font-bold text-[#252525] truncate">
+                      {event.name}{' '}
+                      <span className="text-xs font-normal text-[#77736C]">
+                        • {event.date} • {event.venue}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setActiveTab('event')}
+                  className="text-xs font-semibold text-[#B86E52] hover:text-[#A15D43] self-start sm:self-auto cursor-pointer"
+                >
+                  Edit Event Details →
+                </button>
+              </div>
+            )}
 
             {importResult ? (
               <ImportSummary

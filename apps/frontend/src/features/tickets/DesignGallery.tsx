@@ -15,24 +15,22 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({
   onSelectDesign,
 }) => {
   return (
-    <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center">
-            <Layers className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-base font-bold text-white tracking-tight">
-              1. Choose Ticket Layout
-            </h2>
-            <p className="text-xs text-slate-400">
-              Select between two distinct visual architectures — both render into all 4 Hyper Elements formats.
-            </p>
-          </div>
+    <div className="bg-white border border-[#E9E5DC] rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+      <div className="flex items-center gap-2.5 pb-3 border-b border-[#E9E5DC]">
+        <div className="w-8 h-8 rounded-xl bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] flex items-center justify-center shrink-0">
+          <Layers className="w-4 h-4" />
+        </div>
+        <div>
+          <h2 className="text-sm font-bold text-[#252525] tracking-tight">
+            1. Ticket Layout
+          </h2>
+          <p className="text-[11px] text-[#77736C]">
+            Select template architecture
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="flex flex-col gap-3.5">
         {designs.map((design) => (
           <DesignCard
             key={design.id}

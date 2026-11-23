@@ -2,7 +2,16 @@ import React from 'react';
 import { CsvImportResult } from '@passforge/shared';
 import { Card } from '../../components/ui/Card.js';
 import { Button } from '../../components/ui/Button.js';
-import { CheckCircle2, AlertTriangle, Users, FileSpreadsheet, ArrowRight, RotateCcw } from 'lucide-react';
+import {
+  CheckCircle2,
+  AlertTriangle,
+  Users,
+  FileSpreadsheet,
+  ArrowRight,
+  RotateCcw,
+  AlertCircle,
+  Sparkles,
+} from 'lucide-react';
 
 interface ImportSummaryProps {
   result: CsvImportResult;
@@ -18,116 +27,158 @@ export const ImportSummary: React.FC<ImportSummaryProps> = ({
   const isPerfect = result.invalidCount === 0 && result.validCount > 0;
 
   return (
-    <Card
-      title="CSV Import Summary"
-      subtitle={`Processing complete • ${result.validCount} valid record${result.validCount === 1 ? '' : 's'} added`}
-      action={
+    <div className="space-y-6">
+      {/* Workflow Step Bar */}
+      <div className="bg-white border border-[#E9E5DC] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-start">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FAF8F5] text-[#77736C] border border-[#E9E5DC] font-medium">
+            <CheckCircle2 className="w-4 h-4 text-[#2E683E]" />
+            <span>1. Uploaded CSV</span>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-[#9E9A90] shrink-0 hidden sm:block" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FAF8F5] text-[#77736C] border border-[#E9E5DC] font-medium">
+            <CheckCircle2 className="w-4 h-4 text-[#2E683E]" />
+            <span>2. Mapped Columns</span>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-[#9E9A90] shrink-0 hidden sm:block" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#EEF6F0] text-[#2E683E] border border-[#C6E2CD] font-bold">
+            <CheckCircle2 className="w-4 h-4 text-[#2E683E]" />
+            <span>3. Complete</span>
+          </div>
+        </div>
+
         <Button variant="outline" size="sm" onClick={onReset} icon={<RotateCcw className="w-3.5 h-3.5" />}>
           Import Another CSV
         </Button>
-      }
-    >
-      <div className="space-y-6">
-        {/* Metric Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col">
-            <span className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
-              <FileSpreadsheet className="w-3.5 h-3.5 text-slate-400" /> Total Rows
-            </span>
-            <span className="text-2xl font-bold text-white mt-1">{result.totalRows}</span>
+      </div>
+
+      <Card
+        headerIcon={<CheckCircle2 className="w-4 h-4 text-[#2E683E]" />}
+        title="CSV Import Summary Report"
+        subtitle={`Processing finished • ${result.validCount} valid record${
+          result.validCount === 1 ? '' : 's'
+        } registered into in-memory store`}
+      >
+        <div className="space-y-6">
+          {/* Key Metric Highlights */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="bg-[#FAF8F5] p-4 rounded-xl border border-[#E9E5DC] flex flex-col">
+              <span className="text-xs text-[#77736C] font-medium flex items-center gap-1.5">
+                <FileSpreadsheet className="w-4 h-4 text-[#9E9A90]" /> Total Rows
+              </span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#252525] mt-1.5">
+                {result.totalRows}
+              </span>
+            </div>
+
+            <div className="bg-[#EEF6F0] p-4 rounded-xl border border-[#C6E2CD] flex flex-col">
+              <span className="text-xs text-[#2E683E] font-medium flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-[#2E683E]" /> Valid Attendees
+              </span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#2E683E] mt-1.5">
+                {result.validCount}
+              </span>
+            </div>
+
+            <div
+              className={`p-4 rounded-xl border flex flex-col ${
+                result.invalidCount > 0
+                  ? 'bg-[#FDF0F0] border-[#F5CCCC]'
+                  : 'bg-[#FAF8F5] border-[#E9E5DC]'
+              }`}
+            >
+              <span
+                className={`text-xs font-medium flex items-center gap-1.5 ${
+                  result.invalidCount > 0 ? 'text-[#A83232]' : 'text-[#77736C]'
+                }`}
+              >
+                <AlertTriangle className="w-4 h-4 text-[#A83232]" /> Invalid Rows
+              </span>
+              <span
+                className={`text-2xl sm:text-3xl font-extrabold mt-1.5 ${
+                  result.invalidCount > 0 ? 'text-[#A83232]' : 'text-[#77736C]'
+                }`}
+              >
+                {result.invalidCount}
+              </span>
+            </div>
+
+            <div className="bg-[#FAF8F5] p-4 rounded-xl border border-[#E9E5DC] flex flex-col">
+              <span className="text-xs text-[#77736C] font-medium">Skipped Empty Rows</span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#77736C] mt-1.5">
+                {result.skippedEmptyRows}
+              </span>
+            </div>
           </div>
 
-          <div className="bg-emerald-950/20 p-4 rounded-xl border border-emerald-600/30 flex flex-col">
-            <span className="text-xs text-emerald-400 font-medium flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Valid Attendees
-            </span>
-            <span className="text-2xl font-bold text-emerald-300 mt-1">{result.validCount}</span>
-          </div>
+          {/* Success Callout Banner */}
+          {isPerfect ? (
+            <div className="p-5 rounded-2xl bg-[#EEF6F0] border border-[#C6E2CD] text-[#2E683E] text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-xl bg-white border border-[#C6E2CD] text-[#2E683E] shrink-0">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-[#252525]">
+                    All Attendee Records Verified
+                  </h4>
+                  <p className="text-[#55684D] mt-0.5">
+                    100% of rows passed Zod schema validation without formatting errors or duplicate emails.
+                  </p>
+                </div>
+              </div>
+              <Button size="md" onClick={onGoToDirectory} icon={<Users className="w-4 h-4" />}>
+                View Attendee Directory
+              </Button>
+            </div>
+          ) : result.errors.length > 0 ? (
+            /* Error Diagnosis Table */
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#A83232] flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-[#A83232]" />
+                  Validation Diagnoses ({result.errors.length})
+                </h4>
+                <span className="text-[11px] text-[#77736C]">
+                  Correct these entries in your CSV and re-upload
+                </span>
+              </div>
 
-          <div className={`p-4 rounded-xl border flex flex-col ${
-            result.invalidCount > 0
-              ? 'bg-rose-950/20 border-rose-600/30'
-              : 'bg-slate-950 border-slate-800'
-          }`}>
-            <span className={`text-xs font-medium flex items-center gap-1.5 ${
-              result.invalidCount > 0 ? 'text-rose-400' : 'text-slate-400'
-            }`}>
-              <AlertTriangle className="w-3.5 h-3.5 text-rose-400" /> Invalid Rows
-            </span>
-            <span className={`text-2xl font-bold mt-1 ${
-              result.invalidCount > 0 ? 'text-rose-300' : 'text-slate-400'
-            }`}>
-              {result.invalidCount}
-            </span>
-          </div>
-
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col">
-            <span className="text-xs text-slate-400 font-medium">Skipped Empty Rows</span>
-            <span className="text-2xl font-bold text-slate-400 mt-1">{result.skippedEmptyRows}</span>
-          </div>
-        </div>
-
-        {/* Status Callout Banner */}
-        {isPerfect ? (
-          <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-emerald-200 text-xs flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-              <div>
-                <p className="font-bold text-sm text-emerald-100">All Rows Successfully Imported</p>
-                <p className="text-emerald-300/80">Every row passed validation and has been registered in the attendee store.</p>
+              <div className="overflow-x-auto rounded-xl border border-[#E9E5DC] bg-white">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-[#FAF8F5] text-[#77736C] border-b border-[#E9E5DC] font-mono text-[11px]">
+                    <tr>
+                      <th className="p-3 w-20">Row #</th>
+                      <th className="p-3 w-36">Field</th>
+                      <th className="p-3">Error Diagnosis</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E9E5DC] font-mono">
+                    {result.errors.map((err, idx) => (
+                      <tr key={idx} className="hover:bg-[#FAF8F5]">
+                        <td className="p-3 text-[#77736C] font-bold">Line {err.row}</td>
+                        <td className="p-3 text-[#A83232] font-semibold">{err.field}</td>
+                        <td className="p-3 text-[#4A4641]">{err.message}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-            <Button size="sm" onClick={onGoToDirectory} icon={<Users className="w-4 h-4" />}>
-              View Attendee Directory
+          ) : null}
+
+          {/* Bottom Action Footer */}
+          <div className="pt-4 border-t border-[#E9E5DC] flex items-center justify-between">
+            <span className="text-xs text-[#77736C]">
+              Ready to design passes for {result.validCount} attendee
+              {result.validCount === 1 ? '' : 's'}
+            </span>
+            <Button size="md" onClick={onGoToDirectory} icon={<Users className="w-4 h-4" />}>
+              Open Attendee Directory
             </Button>
           </div>
-        ) : result.errors.length > 0 ? (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
-                <AlertTriangle className="w-4 h-4 text-rose-400" />
-                Validation Errors ({result.errors.length})
-              </h4>
-              <span className="text-xs text-slate-500">Fix these rows in your CSV and re-import if needed</span>
-            </div>
-
-            <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950">
-              <table className="w-full text-xs text-left">
-                <thead className="bg-slate-900 text-slate-400 border-b border-slate-800 font-mono text-[11px]">
-                  <tr>
-                    <th className="p-3 w-20">Row #</th>
-                    <th className="p-3 w-32">Field</th>
-                    <th className="p-3">Error Message</th>
-                    <th className="p-3">Row Content</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/80 font-sans">
-                  {result.errors.map((err, idx) => (
-                    <tr key={idx} className="hover:bg-slate-900/40">
-                      <td className="p-3 font-mono font-bold text-rose-400">Line {err.row}</td>
-                      <td className="p-3 font-mono text-slate-300 uppercase text-[11px]">{err.field}</td>
-                      <td className="p-3 text-rose-300 font-medium">{err.message}</td>
-                      <td className="p-3 font-mono text-[11px] text-slate-400 max-w-xs truncate">
-                        {err.rawData ? JSON.stringify(err.rawData) : '—'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ) : null}
-
-        {/* Action Bar */}
-        <div className="flex justify-end gap-3 pt-2">
-          <Button variant="outline" onClick={onReset}>
-            Import Another CSV File
-          </Button>
-          <Button onClick={onGoToDirectory} icon={<ArrowRight className="w-4 h-4" />}>
-            Go to Attendee Directory ({result.validCount} Ready)
-          </Button>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 };

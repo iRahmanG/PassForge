@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Card } from '../../components/ui/Card.js';
 import { Button } from '../../components/ui/Button.js';
-import { UploadCloud, FileText, Download, Edit3, X } from 'lucide-react';
+import { UploadCloud, FileText, Download, ArrowRight, HelpCircle, CheckCircle2 } from 'lucide-react';
 
 interface CsvUploaderProps {
   onFileLoaded: (file: File, content: string) => void;
@@ -54,7 +54,7 @@ export const CsvUploader: React.FC<CsvUploaderProps> = ({
   const processFile = (file: File) => {
     setSelectedFile(file);
     const reader = new FileReader();
-    reader.onload = ev => {
+    reader.onload = (ev) => {
       const content = ev.target?.result as string;
       onFileLoaded(file, content);
     };
@@ -77,120 +77,167 @@ export const CsvUploader: React.FC<CsvUploaderProps> = ({
   };
 
   return (
-    <Card
-      title="Upload Attendee CSV"
-      subtitle="Upload or paste attendee data to generate bulk personalized tickets"
-      action={
+    <div className="space-y-6">
+      {/* Workflow Step Bar */}
+      <div className="bg-white border border-[#E9E5DC] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center sm:justify-start">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] font-bold">
+            <span className="w-5 h-5 rounded-full bg-[#B86E52] text-white flex items-center justify-center text-[10px]">
+              1
+            </span>
+            <span>Upload CSV</span>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-[#9E9A90] shrink-0 hidden sm:block" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FAF8F5] text-[#77736C] border border-[#E9E5DC] font-medium">
+            <span className="w-5 h-5 rounded-full bg-[#EAE6DC] text-[#77736C] flex items-center justify-center text-[10px]">
+              2
+            </span>
+            <span>Map Columns</span>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-[#9E9A90] shrink-0 hidden sm:block" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FAF8F5] text-[#77736C] border border-[#E9E5DC] font-medium">
+            <span className="w-5 h-5 rounded-full bg-[#EAE6DC] text-[#77736C] flex items-center justify-center text-[10px]">
+              3
+            </span>
+            <span>Validate & Import</span>
+          </div>
+        </div>
+
         <Button
           variant="outline"
           size="sm"
           onClick={handleDownloadSample}
-          icon={<Download className="w-3.5 h-3.5" />}
+          icon={<Download className="w-3.5 h-3.5 text-[#B86E52]" />}
         >
-          Sample CSV
+          Download Sample CSV
         </Button>
-      }
-    >
-      <div className="space-y-4">
-        {/* Toggle between File Upload and Direct Text Paste */}
-        <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-800">
-          <span className="text-slate-400">Supported columns: Full Name, Email, Ticket Category, Seat Number</span>
-          <button
-            type="button"
-            onClick={() => setPasteMode(!pasteMode)}
-            className="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1"
-          >
-            <Edit3 className="w-3 h-3" />
-            {pasteMode ? 'Switch to File Drag & Drop' : 'Or Paste CSV Raw Text'}
-          </button>
-        </div>
-
-        {pasteMode ? (
-          <div className="space-y-3">
-            <textarea
-              className="w-full h-44 bg-slate-950 font-mono text-xs p-3 rounded-lg border border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
-              placeholder="Paste comma-separated values with headers here (e.g. Name,Email,Ticket Type,Seat)..."
-              value={rawText}
-              onChange={e => setRawText(e.target.value)}
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setRawText(SAMPLE_CSV)}
-              >
-                Insert Sample Data
-              </Button>
-              <Button
-                size="sm"
-                onClick={handlePasteSubmit}
-                disabled={!rawText.trim() || loading}
-                loading={loading}
-              >
-                Parse CSV Text
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
-              isDragging
-                ? 'border-indigo-500 bg-indigo-950/20'
-                : selectedFile
-                ? 'border-emerald-600/60 bg-emerald-950/10'
-                : 'border-slate-800 hover:border-slate-700 bg-slate-950/40 hover:bg-slate-950/70'
-            }`}
-          >
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileInput}
-              accept=".csv,.txt,text/csv,text/plain"
-              className="hidden"
-            />
-
-            <div className="flex flex-col items-center justify-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-indigo-400 shadow-md">
-                {selectedFile ? <FileText className="w-6 h-6 text-emerald-400" /> : <UploadCloud className="w-6 h-6" />}
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold text-slate-200">
-                  {selectedFile ? selectedFile.name : 'Click to upload or drag & drop CSV file'}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  {selectedFile
-                    ? `${(selectedFile.size / 1024).toFixed(1)} KB • Click to change file`
-                    : 'CSV or plain text up to 5MB (max 5,000 rows)'}
-                </p>
-              </div>
-
-              {selectedFile && (
-                <div className="flex items-center gap-2 pt-2">
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-600/30">
-                    File Ready for Mapping
-                  </span>
-                  <button
-                    type="button"
-                    onClick={e => {
-                      e.stopPropagation();
-                      setSelectedFile(null);
-                      if (fileInputRef.current) fileInputRef.current.value = '';
-                    }}
-                    className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1"
-                  >
-                    <X className="w-3 h-3" /> Clear
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
-    </Card>
+
+      <Card
+        headerIcon={<UploadCloud className="w-4 h-4 text-[#B86E52]" />}
+        title="Upload Attendee Roster"
+        subtitle="Ingest bulk attendee records with flexible column auto-detection and validation"
+      >
+        <div className="space-y-6">
+          {/* Method Selector Tabs */}
+          <div className="flex items-center justify-between border-b border-[#E9E5DC] pb-3">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPasteMode(false)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  !pasteMode
+                    ? 'bg-[#B86E52] text-white shadow-sm'
+                    : 'text-[#77736C] hover:text-[#252525] hover:bg-[#F0EDE6]'
+                }`}
+              >
+                File Upload (.csv, .txt)
+              </button>
+              <button
+                type="button"
+                onClick={() => setPasteMode(true)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  pasteMode
+                    ? 'bg-[#B86E52] text-white shadow-sm'
+                    : 'text-[#77736C] hover:text-[#252525] hover:bg-[#F0EDE6]'
+                }`}
+              >
+                Direct Text Input
+              </button>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#77736C]">
+              <HelpCircle className="w-3.5 h-3.5 text-[#9E9A90]" />
+              <span>Comma, tab, or semicolon separated</span>
+            </div>
+          </div>
+
+          {!pasteMode ? (
+            /* Drag and Drop Zone */
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 ${
+                isDragging
+                  ? 'border-[#B86E52] bg-[#FBF2EE]'
+                  : 'border-[#DDD8CD] hover:border-[#B86E52] bg-[#FAF8F5] hover:bg-[#FBF2EE]/60'
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv,.txt"
+                onChange={handleFileInput}
+                className="hidden"
+              />
+
+              <div className="flex flex-col items-center justify-center space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-white border border-[#E9E5DC] flex items-center justify-center text-[#B86E52] shadow-sm">
+                  <UploadCloud className="w-7 h-7" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[#252525]">
+                    Click to browse or drag & drop attendee CSV
+                  </p>
+                  <p className="text-xs text-[#77736C] mt-1">
+                    Supports CSV or TXT up to 10MB • Auto-detects Name, Email, Ticket Type, and Seat
+                  </p>
+                </div>
+
+                <div className="pt-2">
+                  <Button variant="secondary" size="sm" type="button">
+                    Browse Computer
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Paste Raw CSV Area */
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#35332F] mb-1.5">
+                  Paste Raw CSV or TSV Content
+                </label>
+                <textarea
+                  value={rawText}
+                  onChange={(e) => setRawText(e.target.value)}
+                  placeholder={SAMPLE_CSV}
+                  rows={8}
+                  className="w-full bg-[#FAF8F5] border border-[#DDD8CD] rounded-xl p-3.5 text-xs font-mono text-[#252525] placeholder-[#9E9A90] focus:outline-none focus:border-[#B86E52] focus:ring-2 focus:ring-[#B86E52]/15"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="primary"
+                  size="md"
+                  disabled={!rawText.trim() || loading}
+                  onClick={handlePasteSubmit}
+                  loading={loading}
+                >
+                  Parse & Map Columns
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Guidelines Box */}
+          <div className="bg-[#FAF8F5] border border-[#E9E5DC] rounded-xl p-4 text-xs text-[#77736C] space-y-2">
+            <h5 className="font-bold text-[#252525] flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-[#2E683E]" />
+              Attendee Data Formatting Guide
+            </h5>
+            <ul className="list-disc list-inside space-y-1 text-[11px] text-[#4A4641] leading-relaxed pl-1">
+              <li>First row should contain column headers (e.g. <code>Full Name</code>, <code>Email</code>, <code>Ticket Type</code>, <code>Seat</code>).</li>
+              <li>Required fields: <strong>Attendee Name</strong> and <strong>Email Address</strong>.</li>
+              <li>Ticket types default to <code>General</code> if unspecified in the import.</li>
+              <li>Seat number is optional; passes automatically display "Open Seating" when omitted.</li>
+            </ul>
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 };
