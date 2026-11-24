@@ -555,6 +555,44 @@ export async function runMilestone4Verification(): Promise<{ passed: boolean; re
     details: `Safe error recovery: true, Removed: ${safeErrorResult.removedDirs.length}`,
   });
 
+  // --- Test 12: Day 1 Demo Roster & Multi-Tier Personalization Suite ---
+  console.log('Test 12: Day 1 Demo Roster & Personalization Suite...');
+  const demoEvent = eventService.loadDemoEvent();
+  const demoRoster = attendeeService.loadDemoRoster();
+
+  const hasTwelveAttendees = demoRoster.length === 12;
+  const uniqueEmails = new Set(demoRoster.map((a) => a.email.toLowerCase()));
+  const allUniqueEmails = uniqueEmails.size === 12 && demoRoster.every((a) => a.email.endsWith('@example.com'));
+
+  const tiersFound = new Set(demoRoster.map((a) => a.ticketType));
+  const hasAllFourTiers = tiersFound.has('VIP') && tiersFound.has('Speaker') && tiersFound.has('Student') && tiersFound.has('General');
+
+  const allAssignedSeats = demoRoster.every((a) => a.seat && a.seat.length > 0);
+
+  assertions.push({
+    name: 'Day 1 Demo Roster: Successfully populates exactly 12 realistic attendees',
+    passed: hasTwelveAttendees,
+    details: `Attendees count: ${demoRoster.length}`,
+  });
+
+  assertions.push({
+    name: 'Day 1 Demo Tiers: All four ticket tiers (VIP, Speaker, Student, General) represented',
+    passed: hasAllFourTiers,
+    details: `Tiers: ${Array.from(tiersFound).join(', ')}`,
+  });
+
+  assertions.push({
+    name: 'Day 1 Personalization: All 12 attendees have unique fictional example.com emails and seats',
+    passed: allUniqueEmails && allAssignedSeats,
+    details: `Unique emails: ${uniqueEmails.size}/12, All have seats: ${allAssignedSeats}`,
+  });
+
+  assertions.push({
+    name: 'Day 1 Demo Event: Realistic flagship event metadata loaded with venue and schedule',
+    passed: demoEvent.name === 'KIET TechFest 2027' && Boolean(demoEvent.venue) && Boolean(demoEvent.date),
+    details: `Event: "${demoEvent.name}" at "${demoEvent.venue}" on "${demoEvent.date}"`,
+  });
+
   // Final cleanup of test artifacts
   try {
     fs.rmSync(testZipPath, { force: true });

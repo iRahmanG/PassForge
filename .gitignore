@@ -61,3 +61,5 @@ ehthumbs.db
 # --- Test and browser artifacts ---
 playwright-report/
 test-results/
+
+docs/ui-polish-report.md

@@ -1,5 +1,5 @@
 import { EventInfo, eventSchema } from '@passforge/shared';
-import { INITIAL_EVENT } from '../../config/sampleData.js';
+import { INITIAL_EVENT, DEMO_EVENT } from '../../config/sampleData.js';
 
 export class EventService {
   private currentEvent: EventInfo = { ...INITIAL_EVENT };
@@ -20,6 +20,11 @@ export class EventService {
       updatedAt: new Date().toISOString(),
     };
 
+    return { ...this.currentEvent };
+  }
+
+  loadDemoEvent(): EventInfo {
+    this.currentEvent = { ...DEMO_EVENT };
     return { ...this.currentEvent };
   }
 

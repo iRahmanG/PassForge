@@ -20,6 +20,15 @@ export function EditorialCanvas({ ticket, branding }: EditorialCanvasProps) {
   const accent = branding?.accentColor || '#b45309';
   const logoUrl = branding?.logoUrl;
 
+  const getTierBadge = (tier?: string) => {
+    const t = (tier || 'general').toLowerCase();
+    if (t === 'vip') return { label: 'VIP PASS', color: '#991b1b', bg: '#fef2f2', border: '#fecaca' };
+    if (t === 'speaker') return { label: 'SPEAKER PASS', color: '#581c87', bg: '#faf5ff', border: '#e9d5ff' };
+    if (t === 'student') return { label: 'STUDENT PASS', color: '#1e40af', bg: '#eff6ff', border: '#bfdbfe' };
+    return { label: 'GENERAL ADMIT', color: '#374151', bg: '#f9fafb', border: '#e5e7eb' };
+  };
+  const tierBadge = getTierBadge(attendee.ticketType);
+
   return (
     <Canvas
       title={`${event.name} — ${attendee.name}`}
@@ -71,9 +80,9 @@ export function EditorialCanvas({ ticket, branding }: EditorialCanvasProps) {
 
               <Text
                 style={{
-                  color: accent,
-                  backgroundColor: '#fef3c7',
-                  border: `1px solid ${accent}60`,
+                  color: tierBadge.color,
+                  backgroundColor: tierBadge.bg,
+                  border: `1px solid ${tierBadge.border}`,
                   borderRadius: 4,
                   padding: [4, 14],
                   fontSize: 11,
@@ -82,7 +91,7 @@ export function EditorialCanvas({ ticket, branding }: EditorialCanvasProps) {
                   textTransform: 'uppercase',
                 }}
               >
-                {attendee.ticketType} PASS
+                {tierBadge.label}
               </Text>
             </Row>
 

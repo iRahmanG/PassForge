@@ -30,6 +30,12 @@ interface BrandingControlsProps {
   ticketType?: string;
 }
 
+const EVENT_PRESETS = [
+  { name: 'Tech Summit', hex: '#06B6D4', icon: '⚡', desc: 'Electric Cyan' },
+  { name: 'Premium Gala', hex: '#B45309', icon: '✨', desc: 'Terracotta Gold' },
+  { name: 'University Event', hex: '#059669', icon: '🎓', desc: 'Emerald Pine' },
+];
+
 const DESIGN_PRESETS = [
   { name: 'Terracotta Ember', hex: '#B86E52', category: 'Signature' },
   { name: 'Sage Herbal', hex: '#77866F', category: 'Signature' },
@@ -177,6 +183,42 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
                     ? 'JetBrains Mono + Space Grotesk'
                     : 'Lora Serif + Georgia Headings'}
                 </span>
+              </div>
+            </div>
+
+            {/* Event Theme Presets */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#77736C]">
+                Event Theme Presets
+              </span>
+              <div className="grid grid-cols-3 gap-1.5">
+                {EVENT_PRESETS.map((preset) => {
+                  const isSelected = branding.accentColor.toLowerCase() === preset.hex.toLowerCase();
+                  return (
+                    <button
+                      key={preset.name}
+                      onClick={() => onColorChange(preset.hex)}
+                      data-testid={`preset-${preset.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      className={`p-2 rounded-lg border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        isSelected
+                          ? 'border-[#B86E52] bg-[#FBF2EE] shadow-2xs'
+                          : 'border-[#E9E5DC] bg-white hover:bg-[#FAF8F5]'
+                      }`}
+                      title={`${preset.name}: ${preset.desc}`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-xs">{preset.icon}</span>
+                        <span
+                          className="w-2.5 h-2.5 rounded-full border border-black/10"
+                          style={{ backgroundColor: preset.hex }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-bold text-[#252525] mt-1 truncate">
+                        {preset.name}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

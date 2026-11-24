@@ -10,6 +10,7 @@ interface AttendeeTableProps {
   onSelectAttendeeForTicket: (attendee: AttendeeInfo) => void;
   onGoToImport: () => void;
   onResetToDefault?: () => void;
+  onLoadDemo?: () => void;
   loading?: boolean;
 }
 
@@ -18,6 +19,7 @@ export const AttendeeTable: React.FC<AttendeeTableProps> = ({
   onSelectAttendeeForTicket,
   onGoToImport,
   onResetToDefault,
+  onLoadDemo,
   loading = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,6 +63,16 @@ export const AttendeeTable: React.FC<AttendeeTableProps> = ({
       subtitle="Directory of all attendees registered for this event. Click 'Preview Pass' to view individual tickets across all 4 formats."
       action={
         <div className="flex items-center gap-2">
+          {onLoadDemo && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onLoadDemo}
+              icon={<Sparkles className="w-3.5 h-3.5 text-[#B86E52]" />}
+            >
+              Load Demo Event & Attendees
+            </Button>
+          )}
           {onResetToDefault && (
             <Button
               variant="ghost"
@@ -68,7 +80,7 @@ export const AttendeeTable: React.FC<AttendeeTableProps> = ({
               onClick={onResetToDefault}
               icon={<RefreshCw className="w-3.5 h-3.5" />}
             >
-              Reset Sample
+              Reset 1 Sample
             </Button>
           )}
           <Button

@@ -22,10 +22,19 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
   const accent = branding?.accentColor || '#06b6d4';
   const logoUrl = branding?.logoUrl;
 
+  const getTierBadge = (tier?: string) => {
+    const t = (tier || 'general').toLowerCase();
+    if (t === 'vip') return { text: '⭐ VIP ACCESS', color: '#f59e0b', bg: '#451a03', border: '#78350f' };
+    if (t === 'speaker') return { text: '🎤 SPEAKER PASS', color: '#c084fc', bg: '#3b0764', border: '#6b21a8' };
+    if (t === 'student') return { text: '🎓 STUDENT TIER', color: '#38bdf8', bg: '#082f49', border: '#0369a1' };
+    return { text: '● GENERAL ADMIT', color: '#94a3b8', bg: '#1e293b', border: '#334155' };
+  };
+  const tierBadge = getTierBadge(attendee.ticketType);
+
   return (
     <Email
       theme={passforgeTheme}
-      previewText={`Your VIP Pass for ${event.name} — ${attendee.name}`}
+      previewText={`Your ${attendee.ticketType} Pass for ${event.name} — ${attendee.name}`}
       title={`${event.name} Ticket Confirmation`}
       width={600}
       style={{
@@ -91,9 +100,9 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
             </Text>
             <Text
               style={{
-                color: accent,
-                backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                border: `1px solid ${accent}`,
+                color: tierBadge.color,
+                backgroundColor: tierBadge.bg,
+                border: `1px solid ${tierBadge.border}`,
                 borderRadius: 20,
                 padding: [4, 12],
                 fontSize: 11,
@@ -101,7 +110,7 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
                 textTransform: 'uppercase',
               }}
             >
-              ⚡ {attendee.ticketType} ACCESS
+              {tierBadge.text}
             </Text>
           </Row>
 
@@ -146,7 +155,7 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
                   Seat
                 </Text>
                 <Text style={{ color: accent, fontSize: 18, fontWeight: 700 }}>
-                  {attendee.seat || 'General Admission'}
+                  {attendee.seat || 'Open Seating'}
                 </Text>
               </Column>
               <Column style={{ gap: 2 }}>

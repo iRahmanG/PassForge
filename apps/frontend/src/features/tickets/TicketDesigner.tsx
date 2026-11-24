@@ -6,6 +6,7 @@ import { BrandingControls } from './BrandingControls.js';
 import { LiveCanvas } from './LiveCanvas.js';
 import { StudioToolbar } from './StudioToolbar.js';
 import { BulkExportModal } from './BulkExportModal.js';
+import { JudgeQuickGuide } from './JudgeQuickGuide.js';
 import { ActiveTab } from '../../types/index.js';
 import {
   AlertTriangle,
@@ -23,6 +24,7 @@ interface TicketDesignerProps {
   onNavigateHome?: () => void;
   activeTab?: ActiveTab;
   onSelectTab?: (tab: ActiveTab) => void;
+  onLoadDemo?: () => void;
 }
 
 export const TicketDesigner: React.FC<TicketDesignerProps> = ({
@@ -31,6 +33,7 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
   onNavigateHome = () => {},
   activeTab = 'tickets',
   onSelectTab = () => {},
+  onLoadDemo,
 }) => {
   const {
     designs,
@@ -106,6 +109,17 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
   const designName = activeDesign ? activeDesign.name : 'Cyber Tech';
   const ticketId = previewData?.ticket?.ticketId || 'KTF27-VIP-84920';
 
+  // Automatically sync preview attendee when roster changes
+  useEffect(() => {
+    if (attendees.length > 0) {
+      const exists = attendees.some((a) => a.id === activeAttendeeId);
+      if (!exists) {
+        setActiveAttendeeId(attendees[0].id);
+        refreshPreview(selectedDesignId, branding, activeFormat, attendees[0].id);
+      }
+    }
+  }, [attendees]);
+
   return (
     <div className="flex flex-col min-h-screen bg-[#F7F5F0]">
       {/* Studio Compact Top Bar */}
@@ -121,7 +135,11 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
         onSaveConfig={saveConfig}
         ticketId={ticketId}
         onOpenBulkExport={() => setBulkModalOpen(true)}
+        onLoadDemo={onLoadDemo}
       />
+
+      {/* Judge Quick Guide */}
+      <JudgeQuickGuide onLoadDemo={onLoadDemo} attendeeCount={attendees.length} />
 
       {error && (
         <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-[#FDF0F0] border border-[#F5CCCC] text-[#A83232] text-xs flex items-center gap-2.5 shadow-xs">
@@ -334,6 +352,7 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
         eventName={eventName}
         designName={designName}
         designId={selectedDesignId}
+        onLoadDemo={onLoadDemo}
       />
     </div>
   );

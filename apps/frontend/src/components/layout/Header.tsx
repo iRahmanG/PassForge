@@ -9,6 +9,7 @@ interface HeaderProps {
   eventName?: string;
   attendeeCount?: number;
   serverOnline?: boolean;
+  onLoadDemo?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,6 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
   eventName = 'KIET TechFest 2027',
   attendeeCount = 1,
   serverOnline = true,
+  onLoadDemo,
 }) => {
   const steps = [
     {
@@ -92,13 +94,14 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="font-semibold text-[#252525] truncate max-w-[220px]">{eventName}</span>
             </div>
 
+
+
             <button
               onClick={() => onSelectTab('attendees')}
-              className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs transition-colors cursor-pointer ${
-                activeTab === 'attendees'
+              className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs transition-colors cursor-pointer ${activeTab === 'attendees'
                   ? 'bg-[#F2F5F0] border-[#D8E0D4] text-[#2E683E] font-semibold'
                   : 'bg-[#FAF8F5] border-[#E9E5DC] text-[#4A4641] hover:bg-[#F2F5F0]'
-              }`}
+                }`}
               title="View Attendee Directory"
             >
               <Users className="w-3.5 h-3.5 text-[#77866F] shrink-0" />
@@ -107,9 +110,8 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E9E5DC] text-[11px] text-[#77736C]">
               <span
-                className={`w-2 h-2 rounded-full ${
-                  serverOnline ? 'bg-[#2E683E]' : 'bg-[#A83232]'
-                }`}
+                className={`w-2 h-2 rounded-full ${serverOnline ? 'bg-[#2E683E]' : 'bg-[#A83232]'
+                  }`}
               />
               <span className="font-mono">{serverOnline ? 'Live API' : 'Offline'}</span>
             </div>
@@ -125,18 +127,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   key={step.id}
                   onClick={() => onSelectTab(step.id)}
-                  className={`flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
-                    isActive
+                  className={`flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${isActive
                       ? 'bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] shadow-sm'
                       : 'text-[#77736C] hover:text-[#252525] hover:bg-[#FAF8F5] border border-transparent'
-                  }`}
+                    }`}
                 >
                   <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
-                      isActive
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${isActive
                         ? 'bg-[#B86E52] text-white'
                         : 'bg-[#EAE6DC] text-[#77736C]'
-                    }`}
+                      }`}
                   >
                     {step.number}
                   </span>
@@ -168,11 +168,10 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="hidden lg:flex items-center pl-4">
             <button
               onClick={() => onSelectTab('attendees')}
-              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                activeTab === 'attendees'
+              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${activeTab === 'attendees'
                   ? 'text-[#B86E52] bg-[#FBF2EE]'
                   : 'text-[#77736C] hover:text-[#252525] hover:bg-[#FAF8F5]'
-              }`}
+                }`}
             >
               <Users className="w-3.5 h-3.5" />
               <span>Directory</span>

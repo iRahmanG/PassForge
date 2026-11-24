@@ -6,7 +6,7 @@ import {
   CsvRowError,
   attendeeSchema,
 } from '@passforge/shared';
-import { INITIAL_ATTENDEE } from '../../config/sampleData.js';
+import { INITIAL_ATTENDEE, DEMO_ATTENDEES } from '../../config/sampleData.js';
 import { MAX_CSV_ROWS } from '../../config/constants.js';
 
 export class AttendeeService {
@@ -65,6 +65,11 @@ export class AttendeeService {
 
   clearAttendees() {
     this.attendees = [];
+  }
+
+  loadDemoRoster(): AttendeeInfo[] {
+    this.attendees = DEMO_ATTENDEES.map(a => ({ ...a }));
+    return [...this.attendees];
   }
 
   resetToDefault() {

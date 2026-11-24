@@ -20,6 +20,15 @@ export function TechCanvas({ ticket, branding }: TechCanvasProps) {
   const accent = branding?.accentColor || '#06b6d4';
   const logoUrl = branding?.logoUrl;
 
+  const getTierBadge = (tier?: string) => {
+    const t = (tier || 'general').toLowerCase();
+    if (t === 'vip') return { text: '⭐ VIP ACCESS', color: '#f59e0b', bg: '#451a03', border: '#78350f' };
+    if (t === 'speaker') return { text: '🎤 SPEAKER PASS', color: '#c084fc', bg: '#3b0764', border: '#6b21a8' };
+    if (t === 'student') return { text: '🎓 STUDENT TIER', color: '#38bdf8', bg: '#082f49', border: '#0369a1' };
+    return { text: '● GENERAL ADMIT', color: '#94a3b8', bg: '#1e293b', border: '#334155' };
+  };
+  const tierBadge = getTierBadge(attendee.ticketType);
+
   return (
     <Canvas
       title={`${event.name} — ${attendee.name}`}
@@ -70,9 +79,9 @@ export function TechCanvas({ ticket, branding }: TechCanvasProps) {
               )}
               <Text
                 style={{
-                  color: '#f59e0b',
-                  backgroundColor: '#451a03',
-                  border: '1px solid #78350f',
+                  color: tierBadge.color,
+                  backgroundColor: tierBadge.bg,
+                  border: `1px solid ${tierBadge.border}`,
                   borderRadius: 16,
                   padding: [4, 14],
                   fontSize: 12,
@@ -80,7 +89,7 @@ export function TechCanvas({ ticket, branding }: TechCanvasProps) {
                   textTransform: 'uppercase',
                 }}
               >
-                ⭐ {attendee.ticketType} ACCESS
+                {tierBadge.text}
               </Text>
             </Row>
 
@@ -139,7 +148,7 @@ export function TechCanvas({ ticket, branding }: TechCanvasProps) {
                   {event.venue}
                 </Text>
                 <Text style={{ color: '#94a3b8', fontSize: 11 }}>
-                  Seat: {attendee.seat || 'General'} • Gate 2
+                  Seat: {attendee.seat || 'Open Seating'} • Gate 2
                 </Text>
               </Column>
             </Row>

@@ -98,6 +98,23 @@ export async function resetAttendees(): Promise<void> {
   if (!res.ok) throw new Error('Failed to reset attendees');
 }
 
+export async function loadDemoEventAndAttendees(): Promise<{
+  event: EventInfo;
+  attendees: AttendeeInfo[];
+  count: number;
+}> {
+  const res = await fetch(`${API_BASE}/attendees/demo`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || 'Failed to load demo roster');
+  }
+  return {
+    event: data.event,
+    attendees: data.attendees,
+    count: data.count,
+  };
+}
+
 export async function fetchTicketData(): Promise<{
   ticket: TicketData;
   results: Record<OutputFormat, RenderResult>;

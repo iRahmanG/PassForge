@@ -22,6 +22,15 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
   const accent = branding?.accentColor || '#06b6d4';
   const logoUrl = branding?.logoUrl;
 
+  const getTierBadge = (tier?: string) => {
+    const t = (tier || 'general').toLowerCase();
+    if (t === 'vip') return { label: 'VIP PASS', color: '#78350f', bg: '#fef3c7', border: '#d97706' };
+    if (t === 'speaker') return { label: 'SPEAKER PASS', color: '#4c1d95', bg: '#f3e8ff', border: '#9333ea' };
+    if (t === 'student') return { label: 'STUDENT PASS', color: '#0c4a6e', bg: '#e0f2fe', border: '#0284c7' };
+    return { label: 'GENERAL ADMIT', color: '#1e293b', bg: '#f1f5f9', border: '#64748b' };
+  };
+  const tierBadge = getTierBadge(attendee.ticketType);
+
   return (
     <Document
       title={`${event.name} - Official Admission Pass`}
@@ -68,9 +77,17 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
           {/* Top Bar of the Ticket */}
           <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Column style={{ gap: 2 }}>
-              <Text style={{ color: accent, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
-                {event.organizer} PRESENTS
-              </Text>
+              {logoUrl ? (
+                <Image
+                  src={{ src: logoUrl, width: 180, height: 40 }}
+                  alt="Logo"
+                  style={{ width: 130, height: 'auto' }}
+                />
+              ) : (
+                <Text style={{ color: accent, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
+                  {event.organizer} PRESENTS
+                </Text>
+              )}
               <Heading level={1} style={{ color: '#0f172a', fontSize: 24, fontWeight: 700 }}>
                 {event.name}
               </Heading>
@@ -81,18 +98,18 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
 
             <Column
               style={{
-                backgroundColor: '#fef3c7',
-                border: '2px solid #d97706',
+                backgroundColor: tierBadge.bg,
+                border: `2px solid ${tierBadge.border}`,
                 borderRadius: 8,
                 padding: [6, 16],
                 alignItems: 'center',
               }}
             >
-              <Text style={{ color: '#92400e', fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>
+              <Text style={{ color: tierBadge.color, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
                 ACCESS TIER
               </Text>
-              <Text style={{ color: '#78350f', fontSize: 18, fontWeight: 700 }}>
-                {attendee.ticketType} PASS
+              <Text style={{ color: tierBadge.color, fontSize: 16, fontWeight: 700 }}>
+                {tierBadge.label}
               </Text>
             </Column>
           </Row>
@@ -129,7 +146,7 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
                     Seat Allocation
                   </Text>
                   <Text style={{ color: '#0f172a', fontSize: 16, fontWeight: 700 }}>
-                    {attendee.seat || 'General Admission'}
+                    {attendee.seat || 'Open Seating'}
                   </Text>
                 </Column>
 

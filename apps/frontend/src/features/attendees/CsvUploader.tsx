@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Card } from '../../components/ui/Card.js';
 import { Button } from '../../components/ui/Button.js';
-import { UploadCloud, FileText, Download, ArrowRight, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { UploadCloud, FileText, Download, ArrowRight, HelpCircle, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface CsvUploaderProps {
   onFileLoaded: (file: File, content: string) => void;
@@ -103,14 +103,25 @@ export const CsvUploader: React.FC<CsvUploaderProps> = ({
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleDownloadSample}
-          icon={<Download className="w-3.5 h-3.5 text-[#B86E52]" />}
-        >
-          Download Sample CSV
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadSample}
+            icon={<Download className="w-3.5 h-3.5 text-[#B86E52]" />}
+          >
+            Download Sample CSV
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            data-testid="try-sample-csv-btn"
+            onClick={() => onTextLoaded(SAMPLE_CSV)}
+            icon={<Sparkles className="w-3.5 h-3.5" />}
+          >
+            Try Sample CSV
+          </Button>
+        </div>
       </div>
 
       <Card
@@ -119,6 +130,31 @@ export const CsvUploader: React.FC<CsvUploaderProps> = ({
         subtitle="Ingest bulk attendee records with flexible column auto-detection and validation"
       >
         <div className="space-y-6">
+          {/* Quick Demo Helper Box */}
+          <div className="bg-[#FAF8F5] border border-[#E9E5DC] rounded-xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] flex items-center justify-center shrink-0">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#252525]">Demonstration Sample Spreadsheet</span>
+                  <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-[#EEF6F0] text-[#2E683E] uppercase">6 Attendees</span>
+                </div>
+                <p className="text-[11px] text-[#77736C] mt-0.5">
+                  Test our automated column detection, validation, and multi-tier ingestion without preparing a spreadsheet.
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onTextLoaded(SAMPLE_CSV)}
+              icon={<Sparkles className="w-3.5 h-3.5 text-[#B86E52]" />}
+            >
+              Load Sample into Importer →
+            </Button>
+          </div>
           {/* Method Selector Tabs */}
           <div className="flex items-center justify-between border-b border-[#E9E5DC] pb-3">
             <div className="flex items-center gap-2">

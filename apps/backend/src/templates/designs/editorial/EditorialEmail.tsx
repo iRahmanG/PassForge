@@ -21,6 +21,15 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
   const accent = branding?.accentColor || '#b45309';
   const logoUrl = branding?.logoUrl;
 
+  const getTierBadge = (tier?: string) => {
+    const t = (tier || 'general').toLowerCase();
+    if (t === 'vip') return { label: 'VIP PASS', color: '#991b1b', border: '#fecaca', bg: '#fef2f2' };
+    if (t === 'speaker') return { label: 'SPEAKER PASS', color: '#581c87', border: '#e9d5ff', bg: '#faf5ff' };
+    if (t === 'student') return { label: 'STUDENT PASS', color: '#1e40af', border: '#bfdbfe', bg: '#eff6ff' };
+    return { label: 'GENERAL PASS', color: '#374151', border: '#e5e7eb', bg: '#f9fafb' };
+  };
+  const tierBadge = getTierBadge(attendee.ticketType);
+
   return (
     <Email
       previewText={`Invitation & Pass: ${event.name} — ${attendee.name}`}
@@ -71,7 +80,7 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
             <Image
               src={{ src: logoUrl, width: 200, height: 50 }}
               alt="Event Logo"
-              style={{ width: 130, height: 'auto', marginBottom: 8 }}
+              style={{ width: 130, height: 'auto' }}
             />
           ) : null}
 
@@ -121,8 +130,9 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
           <Row style={{ gap: 12, justifyContent: 'center', padding: [8, 0, 0, 0] }}>
             <Text
               style={{
-                color: accent,
-                border: `1px solid ${accent}`,
+                color: tierBadge.color,
+                backgroundColor: tierBadge.bg,
+                border: `1px solid ${tierBadge.border}`,
                 borderRadius: 4,
                 padding: [3, 10],
                 fontSize: 11,
@@ -131,7 +141,7 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
                 letterSpacing: 1,
               }}
             >
-              {attendee.ticketType} PASS
+              {tierBadge.label}
             </Text>
             <Text
               style={{

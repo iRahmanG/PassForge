@@ -22,6 +22,15 @@ export function TechPage({ ticket, branding }: TechPageProps) {
   const accent = branding?.accentColor || '#06b6d4';
   const logoUrl = branding?.logoUrl;
 
+  const getTierBadge = (tier?: string) => {
+    const t = (tier || 'general').toLowerCase();
+    if (t === 'vip') return { text: '⭐ VIP ACCESS', color: '#f59e0b', bg: '#451a03', border: '#78350f' };
+    if (t === 'speaker') return { text: '🎤 SPEAKER PASS', color: '#c084fc', bg: '#3b0764', border: '#6b21a8' };
+    if (t === 'student') return { text: '🎓 STUDENT TIER', color: '#38bdf8', bg: '#082f49', border: '#0369a1' };
+    return { text: '● GENERAL ADMIT', color: '#94a3b8', bg: '#1e293b', border: '#334155' };
+  };
+  const tierBadge = getTierBadge(attendee.ticketType);
+
   return (
     <Page
       theme={passforgeTheme}
@@ -126,9 +135,9 @@ export function TechPage({ ticket, branding }: TechPageProps) {
 
           <Text
             style={{
-              color: '#f59e0b',
-              backgroundColor: '#451a03',
-              border: '1px solid #78350f',
+              color: tierBadge.color,
+              backgroundColor: tierBadge.bg,
+              border: `1px solid ${tierBadge.border}`,
               borderRadius: 20,
               padding: [6, 16],
               fontSize: 13,
@@ -136,7 +145,7 @@ export function TechPage({ ticket, branding }: TechPageProps) {
               textTransform: 'uppercase',
             }}
           >
-            ⚡ {attendee.ticketType} ACCESS
+            {tierBadge.text}
           </Text>
         </Row>
 
@@ -186,7 +195,7 @@ export function TechPage({ ticket, branding }: TechPageProps) {
               Seat
             </Text>
             <Text style={{ color: accent, fontSize: 22, fontWeight: 700 }}>
-              {attendee.seat || 'General'}
+              {attendee.seat || 'Open Seating'}
             </Text>
           </Column>
 

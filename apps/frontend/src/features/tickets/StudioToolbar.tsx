@@ -31,6 +31,7 @@ interface StudioToolbarProps {
   onSaveConfig?: () => void;
   ticketId?: string;
   onOpenBulkExport?: () => void;
+  onLoadDemo?: () => void;
 }
 
 export const StudioToolbar: React.FC<StudioToolbarProps> = ({
@@ -46,6 +47,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
   onSaveConfig,
   ticketId = 'KTF27-VIP-84920',
   onOpenBulkExport,
+  onLoadDemo,
 }) => {
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -118,6 +120,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
           {/* Quick Workspace Switcher */}
           <div className="flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-lg border border-[#E9E5DC]">
             <button
+              data-testid="toolbar-tab-tickets"
               onClick={() => onSelectTab('tickets')}
               className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'tickets'
@@ -129,6 +132,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
               <span className="hidden md:inline">Design Studio</span>
             </button>
             <button
+              data-testid="toolbar-tab-event"
               onClick={() => onSelectTab('event')}
               className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'event'
@@ -140,6 +144,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
               <span className="hidden md:inline">Event</span>
             </button>
             <button
+              data-testid="toolbar-tab-import"
               onClick={() => onSelectTab('import')}
               className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'import'
@@ -172,6 +177,8 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
               {eventName}
             </span>
           </div>
+
+
 
           {/* Session Persistence Status */}
           {saving ? (

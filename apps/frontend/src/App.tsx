@@ -52,13 +52,14 @@ export default function App() {
   };
 
   // Core Hooks
-  const { event, updateEvent } = useEvent();
+  const { event, updateEvent, refreshEvent } = useEvent();
   const {
     attendees,
     count: attendeeCount,
     importFile,
     importText,
     resetAttendees,
+    loadDemo,
   } = useAttendees();
   const {
     results: ticketResults,
@@ -66,6 +67,15 @@ export default function App() {
     runLongNameTest,
     loading: renderLoading,
   } = useTicketRender();
+
+  const handleLoadDemo = async () => {
+    try {
+      await loadDemo();
+      await refreshEvent();
+    } catch (err: any) {
+      alert(`Failed to load demo data: ${err.message}`);
+    }
+  };
 
   // CSV Workflow State
   const [loadedFile, setLoadedFile] = useState<File | null>(null);
@@ -190,6 +200,7 @@ export default function App() {
           eventName={event?.name}
           attendeeCount={attendeeCount}
           serverOnline={serverOnline}
+          onLoadDemo={handleLoadDemo}
         />
       )}
 
@@ -200,6 +211,7 @@ export default function App() {
           onNavigateHome={() => navigate('/')}
           activeTab={activeTab}
           onSelectTab={setActiveTab}
+          onLoadDemo={handleLoadDemo}
         />
       ) : (
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -281,6 +293,7 @@ export default function App() {
                 onSelectAttendeeForTicket={handleOpenTicketModal}
                 onGoToImport={() => setActiveTab('import')}
                 onResetToDefault={resetAttendees}
+                onLoadDemo={handleLoadDemo}
               />
             </div>
           )}

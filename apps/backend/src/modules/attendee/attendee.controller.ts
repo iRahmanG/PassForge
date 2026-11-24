@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { attendeeService } from './attendee.service.js';
+import { eventService } from '../event/event.service.js';
 import { CsvColumnMapping } from '@passforge/shared';
 
 export class AttendeeController {
@@ -51,6 +52,22 @@ export class AttendeeController {
       return res.json({
         success: true,
         result,
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  }
+
+  loadDemo(_req: Request, res: Response) {
+    try {
+      const event = eventService.loadDemoEvent();
+      const attendees = attendeeService.loadDemoRoster();
+      res.json({
+        success: true,
+        message: `Loaded demo event and ${attendees.length} attendees across 4 ticket tiers`,
+        event,
+        attendees,
+        count: attendees.length,
       });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });

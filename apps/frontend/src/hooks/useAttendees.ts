@@ -5,6 +5,7 @@ import {
   importAttendeesCsv,
   importAttendeesCsvText,
   resetAttendees,
+  loadDemoEventAndAttendees,
 } from '../services/api.js';
 
 export function useAttendees() {
@@ -54,6 +55,22 @@ export function useAttendees() {
     await loadAttendees();
   };
 
+  const loadDemo = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await loadDemoEventAndAttendees();
+      setAttendees(data.attendees);
+      setCount(data.count);
+      return data;
+    } catch (err: any) {
+      setError(err.message || 'Failed to load demo roster');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     attendees,
     count,
@@ -63,5 +80,6 @@ export function useAttendees() {
     importFile,
     importText,
     resetAttendees: reset,
+    loadDemo,
   };
 }

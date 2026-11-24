@@ -22,6 +22,15 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
   const accent = branding?.accentColor || '#b45309';
   const logoUrl = branding?.logoUrl;
 
+  const getTierBadge = (tier?: string) => {
+    const t = (tier || 'general').toLowerCase();
+    if (t === 'vip') return { label: 'VIP PASS', color: '#991b1b', bg: '#fef2f2', border: '#fecaca' };
+    if (t === 'speaker') return { label: 'SPEAKER PASS', color: '#581c87', bg: '#faf5ff', border: '#e9d5ff' };
+    if (t === 'student') return { label: 'STUDENT PASS', color: '#1e40af', bg: '#eff6ff', border: '#bfdbfe' };
+    return { label: 'GENERAL ADMIT', color: '#374151', bg: '#f9fafb', border: '#e5e7eb' };
+  };
+  const tierBadge = getTierBadge(attendee.ticketType);
+
   return (
     <Document
       title={`${event.name} — Invitation & Pass`}
@@ -88,7 +97,7 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
                 <Image
                   src={{ src: logoUrl, width: 160, height: 40 }}
                   alt="Event Logo"
-                  style={{ width: 120, height: 'auto', marginBottom: 6 }}
+                  style={{ width: 120, height: 'auto' }}
                 />
               ) : (
                 <Text
@@ -123,17 +132,17 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
             {/* Admission Tier Badge */}
             <Column
               style={{
-                border: `1px solid ${accent}`,
+                border: `1px solid ${tierBadge.border}`,
                 borderRadius: 4,
                 padding: [8, 16],
                 alignItems: 'center',
-                backgroundColor: '#fef3c7',
+                backgroundColor: tierBadge.bg,
                 gap: 2,
               }}
             >
               <Text
                 style={{
-                  color: accent,
+                  color: tierBadge.color,
                   fontSize: 9,
                   fontWeight: 700,
                   letterSpacing: 2,
@@ -144,12 +153,12 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
               </Text>
               <Text
                 style={{
-                  color: '#1c1917',
-                  fontSize: 16,
+                  color: tierBadge.color,
+                  fontSize: 15,
                   fontWeight: 700,
                 }}
               >
-                {attendee.ticketType}
+                {tierBadge.label}
               </Text>
             </Column>
           </Row>

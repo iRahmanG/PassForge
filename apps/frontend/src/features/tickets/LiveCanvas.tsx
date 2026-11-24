@@ -71,6 +71,19 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
   const ticketId = ticket?.ticketId || 'KTF27-VIP-84920';
   const curResult = previewData?.results?.[activeFormat];
 
+  const currentAttendee =
+    attendees.find((a) => a.id === selectedAttendeeId) ||
+    ticket?.attendee ||
+    attendees[0];
+
+  const getTierBadgeStyle = (tier?: string) => {
+    const t = (tier || '').toLowerCase();
+    if (t.includes('vip')) return 'bg-[#FBF2EE] text-[#B86E52] border-[#F0D5C9]';
+    if (t.includes('speaker')) return 'bg-[#F3E8FF] text-[#7E22CE] border-[#E9D5FF]';
+    if (t.includes('student')) return 'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]';
+    return 'bg-[#F1F5F9] text-[#475569] border-[#CBD5E1]';
+  };
+
   // Zoom controls
   const handleZoomIn = () => setZoom((prev) => Math.min(1.5, Number((prev + 0.1).toFixed(1))));
   const handleZoomOut = () => setZoom((prev) => Math.max(0.6, Number((prev - 0.1).toFixed(1))));
@@ -132,7 +145,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
       compute();
 
       if (doc.fonts && doc.fonts.ready) {
-        doc.fonts.ready.then(compute).catch(() => {});
+        doc.fonts.ready.then(compute).catch(() => { });
       }
 
       if (typeof ResizeObserver !== 'undefined' && doc.body) {
@@ -263,7 +276,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (document.fullscreenElement) {
-          document.exitFullscreen().catch(() => {});
+          document.exitFullscreen().catch(() => { });
         } else if (isFullscreen) {
           setIsFullscreen(false);
           setZoom(1.0);
@@ -274,21 +287,20 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen]);
 
-  const formats: { id: OutputFormat; label: string; icon: React.ReactNode }[] = [
-    { id: 'page', label: 'Web Pass', icon: <Globe className="w-3.5 h-3.5" /> },
-    { id: 'email', label: 'Email HTML', icon: <Mail className="w-3.5 h-3.5" /> },
-    { id: 'pdf', label: 'Printable PDF', icon: <FileText className="w-3.5 h-3.5" /> },
-    { id: 'png', label: 'Canvas PNG', icon: <ImageIcon className="w-3.5 h-3.5" /> },
+  const formats: { id: OutputFormat; label: string; tooltip: string; icon: React.ReactNode }[] = [
+    { id: 'page', label: 'Web Page', tooltip: 'Responsive digital ticket', icon: <Globe className="w-3.5 h-3.5" /> },
+    { id: 'email', label: 'Email', tooltip: 'HTML invitation suitable for email delivery', icon: <Mail className="w-3.5 h-3.5" /> },
+    { id: 'pdf', label: 'PDF', tooltip: 'Printable ticket document', icon: <FileText className="w-3.5 h-3.5" /> },
+    { id: 'png', label: 'PNG Image', tooltip: 'High-resolution ticket image', icon: <ImageIcon className="w-3.5 h-3.5" /> },
   ];
 
   return (
     <div
       ref={canvasContainerRef}
-      className={`flex flex-col bg-[#F0EDE6] rounded-2xl border border-[#E9E5DC] overflow-hidden transition-all duration-200 ${
-        isFullscreen
+      className={`flex flex-col bg-[#F0EDE6] rounded-2xl border border-[#E9E5DC] overflow-hidden transition-all duration-200 ${isFullscreen
           ? 'fixed inset-0 z-50 rounded-none border-0 p-4 sm:p-6 bg-[#EFECE4]'
           : 'flex-1 min-h-[600px] shadow-sm'
-      }`}
+        }`}
     >
       {/* Canvas Top Bar: Segmented Format Selector, Attendee Picker & Viewport Controls */}
       <div className="bg-white px-3 sm:px-4 py-2 border-b border-[#E9E5DC] flex flex-wrap items-center justify-between gap-2 shrink-0">
@@ -301,11 +313,11 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 key={f.id}
                 data-testid={`format-tab-${f.id}`}
                 onClick={() => onSelectFormat(f.id)}
-                className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
-                  isActive
+                title={f.tooltip}
+                className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${isActive
                     ? 'bg-[#B86E52] text-white shadow-xs'
                     : 'text-[#77736C] hover:text-[#252525] hover:bg-[#F0EDE6]'
-                }`}
+                  }`}
               >
                 {f.icon}
                 <span className="text-[11px] sm:text-xs">{f.label}</span>
@@ -314,27 +326,49 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
           })}
         </div>
 
-        {/* Center: Attendee Switcher */}
-        <div className="flex items-center gap-1.5 max-w-xs shrink-0">
-          <User className="w-3.5 h-3.5 text-[#B86E52] shrink-0" />
-          <select
-            value={selectedAttendeeId || ''}
-            onChange={(e) => onSelectAttendee(e.target.value || undefined)}
-            className="bg-[#FAF8F5] border border-[#DDD8CD] text-[#252525] text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#B86E52] font-medium truncate max-w-[150px] sm:max-w-[200px] transition-colors cursor-pointer"
-            title="Switch attendee to preview personalization"
-          >
-            {attendees.map((att) => (
-              <option key={att.id || att.name} value={att.id || ''}>
-                {att.name} ({att.ticketType} • {att.seat || 'Open Seating'})
+        {/* Center: Attendee Switcher with Tier & Seat Badges */}
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 bg-[#FAF8F5] border border-[#DDD8CD] rounded-lg pl-2 pr-1 py-1 focus-within:border-[#B86E52] transition-colors">
+            <User className="w-3.5 h-3.5 text-[#B86E52] shrink-0" />
+            <select
+              value={selectedAttendeeId || ''}
+              onChange={(e) => onSelectAttendee(e.target.value || undefined)}
+              className="bg-transparent text-[#252525] text-xs font-semibold focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[180px] truncate"
+              title="Switch attendee to preview personalization"
+            >
+              {attendees.map((att) => (
+                <option key={att.id || att.name} value={att.id || ''}>
+                  {att.name} — [{att.ticketType}]
+                </option>
+              ))}
+              <option value="test-long-name">
+                🧪 Long Name Test (Prof. Dr. Alexandrina...)
               </option>
-            ))}
-            <option value="test-long-name">
-              🧪 Long Name Test (Prof. Dr. Alexandrina...)
-            </option>
-            <option value="test-open-seating">
-              🧪 Fallback Test (Missing Seat Number)
-            </option>
-          </select>
+              <option value="test-open-seating">
+                🧪 Fallback Test (Missing Seat Number)
+              </option>
+            </select>
+          </div>
+
+          {/* Active Attendee Badges (Tier & Seat) */}
+          {currentAttendee && (
+            <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+              <span
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${getTierBadgeStyle(
+                  currentAttendee.ticketType
+                )}`}
+                title={`Ticket Tier: ${currentAttendee.ticketType}`}
+              >
+                {currentAttendee.ticketType || 'General'}
+              </span>
+              <span
+                className="text-[10px] font-mono text-[#555048] bg-white border border-[#E9E5DC] px-2 py-0.5 rounded-md"
+                title={`Assigned Seat: ${currentAttendee.seat || 'Open Seating'}`}
+              >
+                Seat: {currentAttendee.seat || 'Open'}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Right: Viewport Toggle, Zoom & Fullscreen Controls */}
@@ -344,18 +378,16 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
             <div className="flex items-center bg-[#FAF8F5] p-0.5 rounded-lg border border-[#E9E5DC] mr-1 shrink-0">
               <button
                 onClick={() => onToggleMobileView(false)}
-                className={`p-1 rounded text-xs transition-colors cursor-pointer shrink-0 ${
-                  !isMobileView ? 'bg-white text-[#252525] shadow-xs' : 'text-[#77736C]'
-                }`}
+                className={`p-1 rounded text-xs transition-colors cursor-pointer shrink-0 ${!isMobileView ? 'bg-white text-[#252525] shadow-xs' : 'text-[#77736C]'
+                  }`}
                 title="Desktop Viewport"
               >
                 <Monitor className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => onToggleMobileView(true)}
-                className={`p-1 rounded text-xs transition-colors cursor-pointer shrink-0 ${
-                  isMobileView ? 'bg-white text-[#252525] shadow-xs' : 'text-[#77736C]'
-                }`}
+                className={`p-1 rounded text-xs transition-colors cursor-pointer shrink-0 ${isMobileView ? 'bg-white text-[#252525] shadow-xs' : 'text-[#77736C]'
+                  }`}
                 title="Mobile Viewport"
               >
                 <Smartphone className="w-3.5 h-3.5" />

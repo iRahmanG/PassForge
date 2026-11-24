@@ -34,6 +34,7 @@ interface BulkExportModalProps {
   eventName: string;
   designName: string;
   designId?: TicketDesignId;
+  onLoadDemo?: () => void;
 }
 
 type Step = 'config' | 'progress' | 'results';
@@ -45,6 +46,7 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
   eventName,
   designName,
   designId,
+  onLoadDemo,
 }) => {
   // Step state
   const [step, setStep] = useState<Step>('config');
@@ -242,32 +244,32 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
   }[] = [
     {
       id: 'email',
-      label: 'Email HTML',
-      sublabel: 'Universal table markup for Gmail, Outlook & Apple Mail',
+      label: 'Email',
+      sublabel: 'HTML invitation suitable for email delivery',
       ext: '.html',
       icon: <Mail className="w-4 h-4 text-[#B86E52]" />,
       color: 'border-[#F0D5C9]',
     },
     {
       id: 'page',
-      label: 'Web Pass',
-      sublabel: 'Responsive standalone webpage pass with responsive layout',
+      label: 'Web Page',
+      sublabel: 'Responsive digital ticket with wallet actions',
       ext: '.html',
       icon: <Globe className="w-4 h-4 text-[#2E683E]" />,
       color: 'border-[#C6E2CD]',
     },
     {
       id: 'pdf',
-      label: 'Printable PDF',
-      sublabel: 'Clean vector admission document formatted for physical print',
+      label: 'PDF Document',
+      sublabel: 'Printable ticket document formatted for A4 print',
       ext: '.pdf',
       icon: <FileText className="w-4 h-4 text-[#2C3E50]" />,
       color: 'border-[#CBD5E1]',
     },
     {
       id: 'png',
-      label: 'Canvas PNG',
-      sublabel: '2000×1040 high-resolution pass for social and digital wallet',
+      label: 'PNG Image',
+      sublabel: 'High-resolution ticket image (2000×1040)',
       ext: '.png',
       icon: <ImageIcon className="w-4 h-4 text-[#78350F]" />,
       color: 'border-[#FDE68A]',
@@ -405,6 +407,24 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
 
             {/* 2. Attendee Selection */}
             <div>
+              {attendees.length <= 1 && onLoadDemo && (
+                <div className="bg-[#FAF8F5] border border-[#F0D5C9] rounded-xl p-3 mb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#B86E52] shrink-0" />
+                    <p className="text-xs text-[#555048]">
+                      Only 1 attendee loaded. Load the 12-attendee demo roster to test batch generation across all 4 tiers.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onLoadDemo}
+                    className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#B86E52] hover:bg-[#A15D43] text-white shrink-0 cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    Load 12 Demo Attendees
+                  </button>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <h4 className="text-xs font-bold text-[#252525] uppercase tracking-wider">
