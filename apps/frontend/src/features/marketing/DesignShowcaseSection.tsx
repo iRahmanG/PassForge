@@ -8,7 +8,6 @@ import {
   ArrowRight,
   Check,
   Layers,
-  Sparkles,
 } from 'lucide-react';
 
 interface DesignShowcaseSectionProps {
@@ -78,7 +77,7 @@ export const DesignShowcaseSection: React.FC<DesignShowcaseSectionProps> = ({ on
     {
       id: 2,
       format: 'PDF',
-      tag: 'Print-ready',
+      tag: 'PRINT-READY',
       subtitle: 'Print-ready document',
       detail: 'Crisp vector A4 layout with verification stubs & barcode',
       icon: <FileText className="w-5 h-5 sm:w-5.5 sm:h-5.5" />,
@@ -226,208 +225,182 @@ export const DesignShowcaseSection: React.FC<DesignShowcaseSectionProps> = ({ on
           </div>
 
           {/* ================= RIGHT-SIDE ILLUSTRATION ================= */}
-          <div className="lg:col-span-7">
-            <div className="flex flex-col items-center">
-              
-              {/* Outer Decorative Warm Framing (Reference Inspired) */}
+          <div className="lg:col-span-7 flex flex-col items-center">
+            {/* Unified Card Container with Clean Bezel (Vocova Reference Inspired) */}
+            <div
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+              className="w-full max-w-xl rounded-[28px] sm:rounded-[32px] p-4 sm:p-7 flex flex-col justify-between shadow-2xl relative overflow-hidden select-none"
+              style={{
+                backgroundColor: '#18191E',
+                border: '8px solid #EAE6DC',
+                outline: '1px solid #DDD8CD',
+                boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.18)',
+                color: '#FFFFFF',
+              }}
+            >
+              {/* Subtle ambient spotlight in background */}
               <div
-                className="w-full max-w-xl rounded-[28px] sm:rounded-[36px] p-2.5 sm:p-3.5 transition-all duration-300"
+                className="absolute -top-24 -right-24 w-64 h-64 rounded-full pointer-events-none opacity-25 blur-3xl"
                 style={{
-                  backgroundColor: '#EAE6DC',
-                  border: '1.5px solid #DDD8CD',
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.08)',
+                  background:
+                    activeStep === 0
+                      ? '#B86E52'
+                      : activeStep === 1
+                      ? '#2563EB'
+                      : activeStep === 2
+                      ? '#7C3AED'
+                      : activeStep === 3
+                      ? '#059669'
+                      : '#10B981',
+                  transition: 'background 0.5s ease',
                 }}
+              />
+
+              {/* Top Bar: PassForge Export & Status Pill */}
+              <div
+                className="flex items-center justify-between pb-4 sm:pb-5 relative z-10"
+                style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}
               >
-                {/* Main Dark Charcoal Stage (Vocova Reference Inspired) */}
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                    style={{
+                      backgroundColor: '#262832',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                    }}
+                  >
+                    <Layers className="w-3.5 h-3.5" style={{ color: '#B86E52' }} />
+                  </div>
+                  <span className="text-sm sm:text-base font-bold text-white tracking-tight">
+                    PassForge Export
+                  </span>
+                </div>
+
                 <div
-                  onMouseEnter={() => setIsPaused(true)}
-                  onMouseLeave={() => setIsPaused(false)}
-                  className="w-full rounded-[22px] sm:rounded-[28px] p-4 sm:p-7 flex flex-col justify-between shadow-2xl relative overflow-hidden"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
                   style={{
-                    backgroundColor: '#18191E',
-                    border: '1.5px solid #2B2D35',
-                    color: '#FFFFFF',
+                    backgroundColor: 'rgba(5, 150, 105, 0.2)',
+                    border: '1px solid rgba(5, 150, 105, 0.5)',
+                    color: '#34D399',
                   }}
                 >
-                  {/* Subtle ambient spotlight in background */}
-                  <div
-                    className="absolute -top-24 -right-24 w-64 h-64 rounded-full pointer-events-none opacity-25 blur-3xl"
-                    style={{
-                      background:
-                        activeStep === 0
-                          ? '#B86E52'
-                          : activeStep === 1
-                          ? '#2563EB'
-                          : activeStep === 2
-                          ? '#7C3AED'
-                          : activeStep === 3
-                          ? '#059669'
-                          : '#10B981',
-                      transition: 'background 0.5s ease',
-                    }}
-                  />
-
-                  {/* Top Bar: PassForge Export & Status Pill */}
-                  <div
-                    className="flex items-center justify-between pb-4 sm:pb-5 relative z-10"
-                    style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                        style={{
-                          backgroundColor: '#262832',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                        }}
-                      >
-                        <Layers className="w-3.5 h-3.5" style={{ color: '#B86E52' }} />
-                      </div>
-                      <span className="text-sm sm:text-base font-bold text-white tracking-tight">
-                        PassForge Export
-                      </span>
-                    </div>
-
-                    <div
-                      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
-                      style={{
-                        backgroundColor: 'rgba(5, 150, 105, 0.2)',
-                        border: '1px solid rgba(5, 150, 105, 0.5)',
-                        color: '#34D399',
-                      }}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: '#34D399' }} />
-                      <span>Ready</span>
-                    </div>
-                  </div>
-
-                  {/* 2x2 Floating Format Tiles Grid */}
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 my-4 sm:my-6 relative z-10">
-                    {formatTiles.map((tile) => {
-                      const isActive = activeStep === tile.id || activeStep === 4;
-                      return (
-                        <div
-                          key={tile.id}
-                          onClick={() => {
-                            setActiveStep(tile.id);
-                            setIsPaused(true);
-                          }}
-                          className={`rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between transition-all duration-300 ease-out cursor-pointer select-none ${
-                            isActive
-                              ? 'shadow-lg -translate-y-1 scale-[1.02]'
-                              : 'opacity-85 hover:opacity-100 hover:-translate-y-0.5'
-                          }`}
-                          style={{
-                            backgroundColor: tile.bgColor,
-                            border: `2px solid ${isActive ? tile.activeBorderColor : tile.borderColor}`,
-                            color: '#252525',
-                            boxShadow: isActive
-                              ? `0 12px 28px -6px ${tile.color}33, 0 4px 12px -2px rgba(0,0,0,0.15)`
-                              : '0 2px 6px rgba(0,0,0,0.06)',
-                          }}
-                        >
-                          {/* Top: Format Icon & Tag */}
-                          <div className="flex items-center justify-between mb-2 sm:mb-3">
-                            <div
-                              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200"
-                              style={{
-                                backgroundColor: tile.iconBg,
-                                color: tile.color,
-                              }}
-                            >
-                              {tile.icon}
-                            </div>
-
-                            <span
-                              className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md uppercase tracking-wider font-mono"
-                              style={{
-                                backgroundColor: tile.tagBg,
-                                color: tile.tagColor,
-                              }}
-                            >
-                              {tile.tag}
-                            </span>
-                          </div>
-
-                          {/* Middle: Format Label & Subtitle */}
-                          <div className="space-y-0.5 mb-1 sm:mb-2">
-                            <h4
-                              className="text-sm sm:text-lg font-black tracking-wider uppercase font-sans"
-                              style={{ color: tile.color }}
-                            >
-                              {tile.format}
-                            </h4>
-                            <p className="text-[11px] sm:text-xs font-bold text-neutral-800 tracking-tight leading-tight">
-                              {tile.subtitle}
-                            </p>
-                          </div>
-
-                          {/* Bottom: Technical specification */}
-                          <p className="text-[10px] sm:text-[11px] text-neutral-600 font-medium leading-snug line-clamp-2 hidden sm:block">
-                            {tile.detail}
-                          </p>
-
-                          {/* Active highlight indicator bar */}
-                          <div
-                            className="w-full h-1 rounded-full mt-2 sm:mt-3 overflow-hidden"
-                            style={{ backgroundColor: 'rgba(0,0,0,0.08)' }}
-                          >
-                            <div
-                              className="h-full rounded-full transition-all duration-300"
-                              style={{
-                                width: isActive ? '100%' : '0%',
-                                backgroundColor: tile.color,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Bottom Bar: 4 Formats Ready / Generated Status */}
-                  <div
-                    className="flex items-center justify-between pt-3 sm:pt-4 text-xs relative z-10"
-                    style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-[11px] sm:text-xs" style={{ color: '#9CA3AF' }}>
-                        {activeStep === 4 ? (
-                          <span className="font-bold flex items-center gap-1.5" style={{ color: '#34D399' }}>
-                            <span
-                              className="w-2 h-2 rounded-full animate-ping inline-block"
-                              style={{ backgroundColor: '#34D399' }}
-                            />
-                            All 4 formats ready
-                          </span>
-                        ) : (
-                          <span>4 formats generated</span>
-                        )}
-                      </span>
-                    </div>
-
-                    <div className="inline-flex items-center gap-1.5 font-semibold text-xs" style={{ color: '#34D399' }}>
-                      <span className="hidden sm:inline text-[11px] font-mono" style={{ color: '#6B7280' }}>
-                        Hyper Elements SSR
-                      </span>
-                      <CheckCircle2
-                        className={`w-4 h-4 transition-transform duration-300 ${
-                          activeStep === 4 ? 'scale-125' : 'scale-100'
-                        }`}
-                        style={{ color: '#34D399' }}
-                      />
-                    </div>
-                  </div>
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: '#34D399' }} />
+                  <span>Ready</span>
                 </div>
               </div>
 
-              {/* Conceptual Layout Footnote (from Reference) */}
-              <p
-                className="text-[11px] sm:text-xs text-center mt-3.5 max-w-md font-medium"
-                style={{ color: '#77736C' }}
+              {/* 2x2 Floating Format Tiles Grid */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 my-4 sm:my-6 relative z-10">
+                {formatTiles.map((tile) => {
+                  const isActive = activeStep === tile.id || activeStep === 4;
+                  return (
+                    <div
+                      key={tile.id}
+                      onClick={() => {
+                        setActiveStep(tile.id);
+                        setIsPaused(true);
+                      }}
+                      className={`rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between transition-all duration-300 ease-out cursor-pointer select-none min-h-[145px] sm:min-h-[165px] ${
+                        isActive
+                          ? 'shadow-lg -translate-y-1 scale-[1.02]'
+                          : 'opacity-85 hover:opacity-100 hover:-translate-y-0.5'
+                      }`}
+                      style={{
+                        backgroundColor: tile.bgColor,
+                        border: `2px solid ${isActive ? tile.activeBorderColor : tile.borderColor}`,
+                        color: '#252525',
+                        boxShadow: isActive
+                          ? `0 12px 28px -6px ${tile.color}33, 0 4px 12px -2px rgba(0,0,0,0.15)`
+                          : '0 2px 6px rgba(0,0,0,0.06)',
+                      }}
+                    >
+                      {/* Top: Format Icon & Tag */}
+                      <div className="flex items-center justify-between mb-2 sm:mb-3">
+                        <div
+                          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200"
+                          style={{
+                            backgroundColor: tile.iconBg,
+                            color: tile.color,
+                          }}
+                        >
+                          {tile.icon}
+                        </div>
+
+                        <span
+                          className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md uppercase tracking-wider font-mono"
+                          style={{
+                            backgroundColor: tile.tagBg,
+                            color: tile.tagColor,
+                          }}
+                        >
+                          {tile.tag}
+                        </span>
+                      </div>
+
+                      {/* Middle: Format Label & Subtitle */}
+                      <div className="space-y-0.5 mb-1 sm:mb-2">
+                        <h4
+                          className="text-sm sm:text-lg font-black tracking-wider uppercase font-sans"
+                          style={{ color: tile.color }}
+                        >
+                          {tile.format}
+                        </h4>
+                        <p className="text-[11px] sm:text-xs font-bold text-neutral-800 tracking-tight leading-tight">
+                          {tile.subtitle}
+                        </p>
+                      </div>
+
+                      {/* Bottom: Technical specification */}
+                      <p className="text-[10px] sm:text-[11px] text-neutral-600 font-medium leading-snug line-clamp-2">
+                        {tile.detail}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Bottom Bar: 4 Formats Ready / Generated Status */}
+              <div
+                className="flex items-center justify-between pt-3 sm:pt-4 text-xs relative z-10"
+                style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}
               >
-                Conceptual layout — illustrates multi-channel export capabilities, not actual ticket previews.
-              </p>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-[11px] sm:text-xs" style={{ color: '#9CA3AF' }}>
+                    {activeStep === 4 ? (
+                      <span className="font-bold flex items-center gap-1.5" style={{ color: '#34D399' }}>
+                        <span
+                          className="w-2 h-2 rounded-full animate-ping inline-block"
+                          style={{ backgroundColor: '#34D399' }}
+                        />
+                        All 4 formats ready
+                      </span>
+                    ) : (
+                      <span>4 formats generated</span>
+                    )}
+                  </span>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 font-semibold text-xs" style={{ color: '#34D399' }}>
+                  <span className="hidden sm:inline text-[11px] font-mono" style={{ color: '#6B7280' }}>
+                    Hyper Elements SSR
+                  </span>
+                  <CheckCircle2
+                    className={`w-4 h-4 transition-transform duration-300 ${
+                      activeStep === 4 ? 'scale-125' : 'scale-100'
+                    }`}
+                    style={{ color: '#34D399' }}
+                  />
+                </div>
+              </div>
             </div>
+
+            {/* Conceptual Layout Footnote - Generous Margin to Avoid Any Overlap */}
+            <p
+              className="text-[11px] sm:text-xs text-center mt-5 text-[#77736C] max-w-md font-medium leading-relaxed"
+            >
+              Conceptual layout — illustrates multi-channel export capabilities, not actual ticket previews.
+            </p>
           </div>
 
         </div>
