@@ -2,6 +2,8 @@ export * from './types/event.js';
 export * from './types/attendee.js';
 export * from './types/ticket.js';
 export * from './types/design.js';
+export * from './types/bulk.js';
 export * from './schemas/event.schema.js';
 export * from './schemas/attendee.schema.js';
 export * from './schemas/design.schema.js';
+export * from './schemas/bulk.schema.js';

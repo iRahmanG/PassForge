@@ -274,10 +274,14 @@ Valid User,valid@example.com,Student,B-03`;
   return { passed: allPassed, results: assertions };
 }
 
+import { runMilestone4Verification } from './verifyMilestone4.js';
+
 if (process.argv[1] && process.argv[1].endsWith('verifyAll.ts')) {
   runFullVerification()
-    .then(res => {
-      if (!res.passed) process.exit(1);
+    .then(async res3 => {
+      if (!res3.passed) process.exit(1);
+      const res4 = await runMilestone4Verification();
+      if (!res4.passed) process.exit(1);
     })
     .catch(err => {
       console.error('Verification failed:', err);

@@ -4,6 +4,7 @@ import attendeeRoutes from './attendee.routes.js';
 import ticketRoutes from './ticket.routes.js';
 import designRoutes from './design.routes.js';
 import brandingRoutes from './branding.routes.js';
+import bulkRoutes from './bulk.routes.js';
 
 const router = Router();
 
@@ -28,6 +29,9 @@ router.use('/designs', designRoutes);
 
 // Branding customization endpoints
 router.use('/branding', brandingRoutes);
+
+// Bulk ticket generation & ZIP export endpoints (Milestone 4)
+router.use('/bulk', bulkRoutes);
 
 // Ticket generation & rendering endpoints
 router.use('/tickets', ticketRoutes);

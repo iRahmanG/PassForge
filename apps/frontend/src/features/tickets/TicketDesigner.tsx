@@ -5,6 +5,7 @@ import { DesignGallery } from './DesignGallery.js';
 import { BrandingControls } from './BrandingControls.js';
 import { LiveCanvas } from './LiveCanvas.js';
 import { StudioToolbar } from './StudioToolbar.js';
+import { BulkExportModal } from './BulkExportModal.js';
 import { ActiveTab } from '../../types/index.js';
 import {
   AlertTriangle,
@@ -78,6 +79,9 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
   // Mobile drawer state for screens < 768px ('none' | 'templates' | 'brand')
   const [mobileDrawer, setMobileDrawer] = useState<'none' | 'templates' | 'brand'>('none');
 
+  // Bulk Export Modal open state
+  const [bulkModalOpen, setBulkModalOpen] = useState<boolean>(false);
+
   const toggleLeft = () => {
     setLeftCollapsed((prev) => {
       const next = !prev;
@@ -116,6 +120,7 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
         saveSuccess={saveSuccess}
         onSaveConfig={saveConfig}
         ticketId={ticketId}
+        onOpenBulkExport={() => setBulkModalOpen(true)}
       />
 
       {error && (
@@ -320,6 +325,16 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
           </div>
         </div>
       )}
+
+      {/* Bulk Ticket Export Modal */}
+      <BulkExportModal
+        isOpen={bulkModalOpen}
+        onClose={() => setBulkModalOpen(false)}
+        attendees={attendees}
+        eventName={eventName}
+        designName={designName}
+        designId={selectedDesignId}
+      />
     </div>
   );
 };

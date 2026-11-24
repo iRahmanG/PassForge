@@ -30,6 +30,7 @@ interface StudioToolbarProps {
   saveSuccess?: boolean;
   onSaveConfig?: () => void;
   ticketId?: string;
+  onOpenBulkExport?: () => void;
 }
 
 export const StudioToolbar: React.FC<StudioToolbarProps> = ({
@@ -44,6 +45,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
   saveSuccess = false,
   onSaveConfig,
   ticketId = 'KTF27-VIP-84920',
+  onOpenBulkExport,
 }) => {
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -224,9 +226,37 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
 
             {exportMenuOpen && (
               <div className="absolute right-0 mt-2 w-64 bg-white border border-[#DDD8CD] rounded-xl shadow-lg p-2 z-50 animate-fade-in">
-                <div className="px-2.5 py-1.5 border-b border-[#F0EDE6] mb-1">
+                {/* Batch Export Action Button */}
+                <button
+                  type="button"
+                  data-testid="export-dropdown-bulk-btn"
+                  onClick={() => {
+                    setExportMenuOpen(false);
+                    onOpenBulkExport?.();
+                  }}
+                  className="w-full flex items-start gap-2.5 p-2 rounded-lg bg-[#FAF8F5] hover:bg-[#FBF2EE] border border-[#E9E5DC] hover:border-[#F0D5C9] transition-all group text-left mb-2 cursor-pointer shadow-2xs"
+                >
+                  <div className="p-1.5 rounded-md bg-white border border-[#E9E5DC] group-hover:border-[#F0D5C9] group-hover:text-[#B86E52] text-[#B86E52] mt-0.5">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-[#252525] group-hover:text-[#B86E52]">
+                        Batch Export (ZIP)
+                      </span>
+                      <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-[#FBF2EE] text-[#B86E52] uppercase">
+                        Bulk
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-[#77736C] leading-snug mt-0.5">
+                      Generate & download personalized tickets for roster
+                    </p>
+                  </div>
+                </button>
+
+                <div className="px-2.5 py-1.5 border-t border-[#F0EDE6] mb-1">
                   <p className="text-[11px] font-bold text-[#252525] uppercase tracking-wider">
-                    Download Pass
+                    Download Current Pass
                   </p>
                   <p className="text-[10px] text-[#77736C]">Ticket #{ticketId}</p>
                 </div>

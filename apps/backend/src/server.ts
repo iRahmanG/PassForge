@@ -6,6 +6,7 @@ import { PORT, OUTPUT_DIR, CORS_ORIGIN, FRONTEND_DIST } from './config/constants
 import apiRoutes from './routes/index.js';
 import { ticketService } from './modules/ticket/ticket.service.js';
 import { ticketRenderer } from './services/rendering/ticketRenderer.service.js';
+import { bulkService } from './modules/bulk/bulk.service.js';
 
 const app = express();
 
@@ -36,19 +37,42 @@ if (fs.existsSync(FRONTEND_DIST)) {
 
 // Initialize sample ticket rendering in background on server boot
 async function initServer() {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 PassForge Backend Server running at http://localhost:${PORT}`);
+  });
+
+  // Clean up any orphaned bulk_* directories from previous sessions safely on boot
   try {
-    const sampleTicket = await ticketService.createTicketData();
-    await ticketRenderer.renderAll(sampleTicket, OUTPUT_DIR);
-    console.log('✅ Initialized sample ticket rendering cache');
+    const { removedDirs } = bulkService.cleanupOrphanedDirs(OUTPUT_DIR);
+    if (removedDirs.length > 0) {
+      console.log(`🧹 Cleaned up ${removedDirs.length} orphaned bulk directory/directories from previous session`);
+    }
   } catch (err: any) {
-    console.warn('⚠️ Non-fatal: Initial ticket rendering cache skipped:', err.message);
+    console.warn('⚠️ Non-fatal: Orphaned bulk directory cleanup skipped:', err.message);
   }
 
-  app.listen(PORT, () => {
-    console.log(`🚀 PassForge Backend Server running at http://localhost:${PORT}`);
+  // Start periodic background cleanup for expired bulk jobs (runs every 15 minutes)
+  bulkService.startPeriodicCleanup();
+
+  // Run initial cache warming in background without blocking server readiness
+  setImmediate(async () => {
+    try {
+      const sampleTicket = await ticketService.createTicketData();
+      await ticketRenderer.renderAll(sampleTicket, OUTPUT_DIR);
+      console.log('✅ Initialized sample ticket rendering cache');
+    } catch (err: any) {
+      console.warn('⚠️ Non-fatal: Initial ticket rendering cache skipped:', err.message);
+    }
   });
 }
 
 initServer();
+
+process.on('SIGTERM', () => {
+  bulkService.stopPeriodicCleanup();
+});
+process.on('SIGINT', () => {
+  bulkService.stopPeriodicCleanup();
+});
 
 export default app;
