@@ -11,6 +11,16 @@ import { EditorialPage } from './editorial/EditorialPage.js';
 import { EditorialDocument } from './editorial/EditorialDocument.js';
 import { EditorialCanvas } from './editorial/EditorialCanvas.js';
 
+import { VintageEmail } from './vintage/VintageEmail.js';
+import { VintagePage } from './vintage/VintagePage.js';
+import { VintageDocument } from './vintage/VintageDocument.js';
+import { VintageCanvas } from './vintage/VintageCanvas.js';
+
+import { FestivalEmail } from './festival/FestivalEmail.js';
+import { FestivalPage } from './festival/FestivalPage.js';
+import { FestivalDocument } from './festival/FestivalDocument.js';
+import { FestivalCanvas } from './festival/FestivalCanvas.js';
+
 export interface DesignTemplates {
   email: React.ComponentType<{ ticket: TicketData; branding?: BrandingConfig }>;
   page: React.ComponentType<{ ticket: TicketData; branding?: BrandingConfig }>;
@@ -56,6 +66,40 @@ export const DESIGNS_REGISTRY: Record<TicketDesignId, RegisteredDesign> = {
       page: EditorialPage,
       document: EditorialDocument,
       canvas: EditorialCanvas,
+    },
+  },
+  vintage: {
+    metadata: {
+      id: 'vintage',
+      name: 'Vintage Cinema & Event Stub',
+      description: 'Classic notched ticket with authentic perforated tear stubs, retro double-line typography, and vintage admission stamps.',
+      visualDirection: 'Warm antique cream background, vintage crimson/kraft accents, perforated dashed borders, vertical Admit One tear stubs.',
+      category: 'vintage-retro',
+      defaultAccentColor: '#C23B38',
+      tags: ['Vintage', 'Cinema', 'Carnival', 'Theater', 'Perforated Stub'],
+    },
+    templates: {
+      email: VintageEmail,
+      page: VintagePage,
+      document: VintageDocument,
+      canvas: VintageCanvas,
+    },
+  },
+  festival: {
+    metadata: {
+      id: 'festival',
+      name: 'Neon Festival & Concert Pass',
+      description: 'Modern high-energy concert pass with electric wave separator, prominent [Gate] [Row] [Seat] pill badges, and admission barcode.',
+      visualDirection: 'Deep midnight indigo background, electric neon magenta/cyan accents, curved dotted ribbon divider, fast-track stub.',
+      category: 'concert-festival',
+      defaultAccentColor: '#FF2E93',
+      tags: ['Concert', 'Festival', 'Neon', 'Live Music', 'VIP Pass'],
+    },
+    templates: {
+      email: FestivalEmail,
+      page: FestivalPage,
+      document: FestivalDocument,
+      canvas: FestivalCanvas,
     },
   },
 };

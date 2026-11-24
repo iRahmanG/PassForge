@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { attendeeSchema } from './attendee.schema.js';
 
-export const ticketDesignIdSchema = z.enum(['tech', 'editorial']);
+export const ticketDesignIdSchema = z.enum(['tech', 'editorial', 'vintage', 'festival']);
 
 export const brandingConfigSchema = z.object({
   accentColor: z

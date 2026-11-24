@@ -1,7 +1,7 @@
 import { OutputFormat, TicketData } from './ticket.js';
 import { AttendeeInfo } from './attendee.js';
 
-export type TicketDesignId = 'tech' | 'editorial';
+export type TicketDesignId = 'tech' | 'editorial' | 'vintage' | 'festival';
 
 export interface BrandingConfig {
   accentColor: string;
@@ -16,7 +16,7 @@ export interface DesignMetadata {
   name: string;
   description: string;
   visualDirection: string;
-  category: 'dark-tech' | 'light-editorial';
+  category: 'dark-tech' | 'light-editorial' | 'vintage-retro' | 'concert-festival';
   defaultAccentColor: string;
   tags: string[];
 }

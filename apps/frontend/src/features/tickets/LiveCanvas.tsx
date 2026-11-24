@@ -294,7 +294,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
       ref={canvasContainerRef}
       className={`flex flex-col bg-[#F0EDE6] rounded-2xl border border-[#E9E5DC] overflow-hidden transition-all duration-200 ${isFullscreen
           ? 'fixed inset-0 z-50 rounded-none border-0 p-4 sm:p-6 bg-[#EFECE4]'
-          : 'flex-1 min-h-[600px] shadow-sm'
+          : 'flex-1 h-full min-h-0 shadow-sm'
         }`}
     >
       {/* Canvas Top Bar: Segmented Format Selector, Attendee Picker & Viewport Controls */}
@@ -432,7 +432,9 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
 
       {/* Main Artboard Canvas Area */}
       <div
-        className="flex-1 overflow-y-auto overflow-x-auto flex justify-center items-start p-4 sm:p-8 relative"
+        className={`flex-1 min-h-0 flex justify-center items-center p-3 sm:p-6 relative ${
+          zoom > 1.0 ? 'overflow-auto' : 'overflow-hidden'
+        }`}
         style={{
           backgroundColor: '#F5F2EB',
           backgroundImage: 'radial-gradient(#DDD8CD 1.2px, transparent 1.2px)',
@@ -450,8 +452,8 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
 
         {/* Scalable Artboard Container */}
         <div
-          className="transition-transform duration-150 ease-out origin-top flex flex-col items-center justify-start w-full max-w-full pb-16"
-          style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
+          className="transition-transform duration-150 ease-out origin-center flex flex-col items-center justify-center w-full max-w-full"
+          style={{ transform: `scale(${zoom})`, transformOrigin: 'center center' }}
         >
           {/* 1. Canvas PNG Format */}
           {activeFormat === 'png' && (
@@ -463,7 +465,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                   className="max-w-full h-auto object-contain block mx-auto rounded-xl"
                   style={{
                     maxWidth: '100%',
-                    maxHeight: '560px',
+                    maxHeight: 'min(460px, 58vh)',
                     width: 'auto',
                     height: 'auto',
                     aspectRatio: '2000 / 1040',
@@ -489,7 +491,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 <div
                   style={{
                     width: 'min(100%, 360px)',
-                    height: '580px',
+                    height: 'min(520px, 60vh)',
                     maxWidth: '100%',
                     backgroundColor: '#0F172A',
                     borderRadius: '44px',
@@ -543,7 +545,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 // Desktop Browser Frame
                 <div
                   className="rounded-xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-white flex flex-col w-full max-w-full"
-                  style={{ width: '100%', height: '540px' }}
+                  style={{ width: '100%', height: 'min(480px, 58vh)' }}
                 >
                   <div className="bg-[#FAF8F5] border-b border-[#E9E5DC] px-4 py-2.5 flex items-center gap-2 shrink-0">
                     <div className="flex items-center gap-1.5">
@@ -582,7 +584,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
             <div className="flex flex-col items-center w-full max-w-full" style={{ width: 'min(100%, 640px)' }}>
               <div
                 className="rounded-xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-white flex flex-col w-full max-w-full"
-                style={{ width: '100%', height: '520px' }}
+                style={{ width: '100%', height: 'min(480px, 58vh)' }}
               >
                 <div className="bg-[#FAF8F5] border-b border-[#E9E5DC] px-4 py-2.5 text-xs text-[#504D47] flex flex-col gap-1 shrink-0">
                   <div className="flex justify-between items-center text-[10px]">
@@ -622,7 +624,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
             <div className="flex flex-col items-center w-full max-w-full" style={{ width: 'min(100%, 760px)' }}>
               <div
                 className="rounded-2xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-[#525659] w-full max-w-full"
-                style={{ width: '100%', height: '620px' }}
+                style={{ width: '100%', height: 'min(500px, 60vh)' }}
               >
                 <iframe
                   title="PDF Document Preview"

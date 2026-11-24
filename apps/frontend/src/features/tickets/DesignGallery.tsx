@@ -16,12 +16,14 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({
   onSelectDesign,
   onCollapse,
 }) => {
-  const [filter, setFilter] = useState<'all' | 'tech' | 'editorial'>('all');
+  const [filter, setFilter] = useState<'all' | 'tech' | 'editorial' | 'vintage' | 'festival'>('all');
   const [isGridModalOpen, setIsGridModalOpen] = useState(false);
 
   const filteredDesigns = designs.filter((d) => {
     if (filter === 'tech') return d.id === 'tech';
     if (filter === 'editorial') return d.id === 'editorial';
+    if (filter === 'vintage') return d.id === 'vintage';
+    if (filter === 'festival') return d.id === 'festival';
     return true;
   });
 
@@ -99,12 +101,32 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({
                 : 'bg-white text-neutral-600 border border-[#EAEAEA] hover:text-neutral-900 hover:border-neutral-300'
             }`}
           >
-            Editorial Gala
+            Editorial
+          </button>
+          <button
+            onClick={() => setFilter('vintage')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
+              filter === 'vintage'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-white text-neutral-600 border border-[#EAEAEA] hover:text-neutral-900 hover:border-neutral-300'
+            }`}
+          >
+            Vintage Stub
+          </button>
+          <button
+            onClick={() => setFilter('festival')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
+              filter === 'festival'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-white text-neutral-600 border border-[#EAEAEA] hover:text-neutral-900 hover:border-neutral-300'
+            }`}
+          >
+            Festival
           </button>
         </div>
 
         {/* Template Cards Scroll Area */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-4 space-y-4 pb-6">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-4 space-y-4 pb-6 overscroll-contain">
           {filteredDesigns.map((design) => (
             <DesignCard
               key={design.id}
@@ -184,7 +206,27 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({
                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                 }`}
               >
-                Editorial Gala
+                Editorial
+              </button>
+              <button
+                onClick={() => setFilter('vintage')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  filter === 'vintage'
+                    ? 'bg-neutral-900 text-white shadow-xs'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                }`}
+              >
+                Vintage Stub
+              </button>
+              <button
+                onClick={() => setFilter('festival')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  filter === 'festival'
+                    ? 'bg-neutral-900 text-white shadow-xs'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                }`}
+              >
+                Festival
               </button>
             </div>
 

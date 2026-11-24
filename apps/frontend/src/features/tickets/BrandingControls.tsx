@@ -33,6 +33,8 @@ interface BrandingControlsProps {
 const EVENT_PRESETS = [
   { name: 'Tech Summit', hex: '#06B6D4', icon: '⚡', desc: 'Electric Cyan' },
   { name: 'Premium Gala', hex: '#B45309', icon: '✨', desc: 'Terracotta Gold' },
+  { name: 'Vintage Stub', hex: '#C23B38', icon: '🎟️', desc: 'Vintage Crimson' },
+  { name: 'Neon Concert', hex: '#FF2E93', icon: '🎵', desc: 'Electric Magenta' },
   { name: 'University Event', hex: '#059669', icon: '🎓', desc: 'Emerald Pine' },
 ];
 
@@ -173,7 +175,13 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
                   Active Design Profile
                 </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-[#E9E5DC] text-[#252525] font-semibold">
-                  {activeDesignId === 'tech' ? 'Cyber Matrix' : 'Editorial Luxury'}
+                  {activeDesignId === 'tech'
+                    ? 'Cyber Matrix'
+                    : activeDesignId === 'vintage'
+                    ? 'Vintage Stub'
+                    : activeDesignId === 'festival'
+                    ? 'Neon Festival'
+                    : 'Editorial Luxury'}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-[11px] text-[#504D47]">
@@ -181,6 +189,10 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
                 <span className="font-medium">
                   {activeDesignId === 'tech'
                     ? 'JetBrains Mono + Space Grotesk'
+                    : activeDesignId === 'vintage'
+                    ? 'Playfair Display + Courier Monospace'
+                    : activeDesignId === 'festival'
+                    ? 'Impact Display + Inter Sans'
                     : 'Lora Serif + Georgia Headings'}
                 </span>
               </div>

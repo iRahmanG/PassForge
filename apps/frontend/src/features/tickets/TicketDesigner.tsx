@@ -18,6 +18,8 @@ import {
   Sliders,
   Terminal,
   Sparkles,
+  Ticket,
+  Music,
 } from 'lucide-react';
 
 interface TicketDesignerProps {
@@ -125,7 +127,7 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
   }, [attendees]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F7F5F0]">
+    <div className="flex flex-col h-full max-h-screen overflow-hidden bg-[#F7F5F0]">
       {/* Studio Compact Top Bar */}
       <StudioToolbar
         eventName={eventName}
@@ -153,10 +155,10 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
       )}
 
       {/* 3-REGION WORKSPACE ARCHITECTURE */}
-      <div className="flex-1 flex overflow-hidden p-2 sm:p-3 lg:p-4 gap-2.5 lg:gap-3 relative pb-20 md:pb-4">
+      <div className="flex-1 min-h-0 flex overflow-hidden p-2 sm:p-3 lg:p-4 gap-2.5 lg:gap-3 relative pb-16 md:pb-3">
         {/* LEFT REGION: TEMPLATE GALLERY (Desktop/Tablet) */}
         <aside
-          className={`hidden md:flex shrink-0 flex-col transition-[width] duration-250 ease-in-out ${
+          className={`hidden md:flex shrink-0 flex-col h-full min-h-0 transition-[width] duration-250 ease-in-out ${
             leftCollapsed ? 'w-16' : 'w-72 lg:w-80'
           }`}
         >
@@ -248,6 +250,50 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
                 </div>
               </div>
 
+              {/* Direct Quick-Switch: Vintage Cinema Stub */}
+              <div className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={() => selectDesign('vintage')}
+                  className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                    selectedDesignId === 'vintage'
+                      ? 'text-rose-700 bg-rose-50'
+                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
+                  }`}
+                  title="Vintage Cinema Stub"
+                  aria-label="Vintage Cinema Stub"
+                >
+                  {selectedDesignId === 'vintage' && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r bg-rose-700" />
+                  )}
+                  <Ticket className="w-4 h-4" />
+                </button>
+                <div className="absolute left-full ml-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Vintage Cinema Stub {selectedDesignId === 'vintage' ? '● Active' : ''}
+                </div>
+              </div>
+
+              {/* Direct Quick-Switch: Neon Festival Pass */}
+              <div className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={() => selectDesign('festival')}
+                  className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                    selectedDesignId === 'festival'
+                      ? 'text-pink-600 bg-pink-50'
+                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
+                  }`}
+                  title="Neon Festival Pass"
+                  aria-label="Neon Festival Pass"
+                >
+                  {selectedDesignId === 'festival' && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r bg-pink-600" />
+                  )}
+                  <Music className="w-4 h-4" />
+                </button>
+                <div className="absolute left-full ml-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Neon Festival Pass {selectedDesignId === 'festival' ? '● Active' : ''}
+                </div>
+              </div>
+
               <div className="flex-1" />
 
               {/* Canvas Options / Settings Shortcut */}
@@ -269,7 +315,7 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
         </aside>
 
         {/* CENTRAL REGION: LIVE CANVAS (Visual Focal Point) */}
-        <main className="flex-1 min-w-0 flex flex-col transition-all duration-200 ease-in-out">
+        <main className="flex-1 min-w-0 min-h-0 flex flex-col h-full overflow-hidden transition-all duration-200 ease-in-out">
           <LiveCanvas
             activeFormat={activeFormat}
             onSelectFormat={setActiveFormat}

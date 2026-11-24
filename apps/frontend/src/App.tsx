@@ -190,7 +190,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#252525]">
+    <div className={`flex flex-col bg-[#F7F5F0] text-[#252525] ${activeTab === 'tickets' ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
       {/* If in tickets studio, TicketDesigner renders its own compact studio toolbar */}
       {activeTab !== 'tickets' && (
         <Header
