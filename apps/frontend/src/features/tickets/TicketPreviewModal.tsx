@@ -227,9 +227,9 @@ export const TicketPreviewModal: React.FC<TicketPreviewModalProps> = ({
               <div className="h-3 w-px bg-neutral-300 mx-0.5" />
 
               <button
-                onClick={() => setZoom(85)}
+                onClick={() => setZoom(100)}
                 className="px-2 py-1 text-[10px] font-semibold text-neutral-600 hover:text-neutral-900 hover:bg-white rounded-md transition-colors cursor-pointer"
-                title="Fit to Width"
+                title="Fit to Screen"
               >
                 Fit
               </button>
@@ -309,7 +309,7 @@ export const TicketPreviewModal: React.FC<TicketPreviewModalProps> = ({
         <main
           ref={canvasRef}
           className="flex-1 min-h-0 bg-[#F5F5F5] overflow-auto flex items-center justify-center p-4 sm:p-8 relative"
-          style={{ backgroundColor: '#F5F5F5' }}
+          style={{ backgroundColor: '#F5F5F5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
           {loading ? (
             <div className="flex flex-col items-center justify-center space-y-3 py-20 text-neutral-500">
@@ -330,8 +330,8 @@ export const TicketPreviewModal: React.FC<TicketPreviewModalProps> = ({
               {activeFormat === 'page' ? (
                 /* WEB PASS: Dark Browser-Style Window Frame */
                 <div
-                  className="w-[820px] max-w-[90vw] rounded-2xl bg-[#1E1E1E] border border-neutral-700/80 shadow-2xl overflow-hidden flex flex-col"
-                  style={{ width: '820px', maxWidth: '90vw', backgroundColor: '#1E1E1E' }}
+                  className="w-[820px] max-w-[88vw] rounded-2xl bg-[#1E1E1E] border border-neutral-700/80 shadow-2xl overflow-hidden flex flex-col"
+                  style={{ width: 'min(820px, 88vw)', maxWidth: '88vw', backgroundColor: '#1E1E1E' }}
                 >
                   {/* Browser Window Header Bar */}
                   <div
@@ -356,14 +356,14 @@ export const TicketPreviewModal: React.FC<TicketPreviewModalProps> = ({
                     src={`/api/preview/page?ticketId=${ticketId}&t=${timestamp}`}
                     title="Web Pass Live Preview"
                     className="w-full bg-white border-none block"
-                    style={{ height: '620px' }}
+                    style={{ height: 'min(580px, 68vh)', maxHeight: '68vh' }}
                   />
                 </div>
               ) : activeFormat === 'email' ? (
                 /* EMAIL INVITE: Inbox-Style Client Frame */
                 <div
-                  className="w-[720px] max-w-[90vw] rounded-2xl bg-white border border-[#EAEAEA] shadow-2xl overflow-hidden flex flex-col"
-                  style={{ width: '720px', maxWidth: '90vw', backgroundColor: '#FFFFFF' }}
+                  className="w-[720px] max-w-[88vw] rounded-2xl bg-white border border-[#EAEAEA] shadow-2xl overflow-hidden flex flex-col"
+                  style={{ width: 'min(720px, 88vw)', maxWidth: '88vw', backgroundColor: '#FFFFFF' }}
                 >
                   {/* Email Client Top Bar */}
                   <div className="p-3.5 bg-[#FAF8F5] border-b border-[#EAEAEA] flex items-center justify-between text-xs text-neutral-600 shrink-0">
@@ -385,29 +385,42 @@ export const TicketPreviewModal: React.FC<TicketPreviewModalProps> = ({
                     src={`/api/preview/email?ticketId=${ticketId}&t=${timestamp}`}
                     title="Email Invite Live Preview"
                     className="w-full bg-white border-none block"
-                    style={{ height: '640px' }}
+                    style={{ height: 'min(600px, 68vh)', maxHeight: '68vh' }}
                   />
                 </div>
               ) : activeFormat === 'pdf' ? (
                 /* PRINT PDF: Realistic A4 Sheet with Realistic Paper Shadow */
                 <div
-                  className="w-[794px] max-w-[90vw] bg-white rounded-sm shadow-[0_24px_64px_rgba(0,0,0,0.18)] border border-neutral-200 overflow-hidden"
-                  style={{ width: '794px', maxWidth: '90vw', backgroundColor: '#FFFFFF' }}
+                  className="w-[760px] max-w-[88vw] bg-white rounded-sm shadow-[0_24px_64px_rgba(0,0,0,0.18)] border border-neutral-200 overflow-hidden"
+                  style={{ width: 'min(760px, 88vw)', maxWidth: '88vw', backgroundColor: '#FFFFFF' }}
                 >
                   <iframe
                     src={`/api/preview/pdf?ticketId=${ticketId}&t=${timestamp}#toolbar=0`}
                     title="Print PDF Live Preview"
                     className="w-full bg-white border-none block"
-                    style={{ height: '980px', maxHeight: '82vh' }}
+                    style={{ height: 'min(780px, 72vh)', maxHeight: '72vh' }}
                   />
                 </div>
               ) : (
                 /* CANVAS PNG: High-Resolution Badge */
-                <div className="flex items-center justify-center p-2">
+                <div
+                  className="flex items-center justify-center p-2 sm:p-4 max-w-full"
+                  style={{ width: 'min(860px, 88vw)', maxWidth: '88vw' }}
+                >
                   <img
                     src={`/api/preview/png?ticketId=${ticketId}&t=${timestamp}`}
                     alt="High-Res Pass PNG"
-                    className="max-w-[1000px] max-h-[76vh] w-auto h-auto rounded-2xl shadow-2xl border border-neutral-200 object-contain bg-white block"
+                    className="rounded-2xl shadow-2xl border border-neutral-200/80 bg-white block"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: 'min(520px, 68vh)',
+                      width: 'auto',
+                      height: 'auto',
+                      objectFit: 'contain',
+                      display: 'block',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.22)',
+                    }}
                   />
                 </div>
               )}
