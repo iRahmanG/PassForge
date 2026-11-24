@@ -30,34 +30,29 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#E9E5DC] transition-all">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-18">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E9E5DC] transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
           <button
             onClick={() => onNavigate('/')}
-            className="flex items-center gap-2 sm:gap-3 text-left cursor-pointer group shrink-0"
+            className="flex items-center gap-2.5 text-left cursor-pointer group shrink-0 focus-visible:ring-2 focus-visible:ring-[#B86E52] rounded-lg p-1"
           >
-            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#B86E52] text-white flex items-center justify-center shadow-sm group-hover:bg-[#A15D43] transition-colors shrink-0">
-              <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="h-8.5 w-8.5 rounded-xl bg-[#B86E52] text-white flex items-center justify-center shadow-xs group-hover:bg-[#A15D43] transition-colors shrink-0">
+              <Ticket className="w-4.5 h-4.5" />
             </div>
-            <div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-extrabold text-base tracking-tight text-[#252525] font-sans">
-                  PassForge
-                </span>
-                <span className="hidden sm:inline text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] uppercase tracking-wider">
-                  Open Engine
-                </span>
-              </div>
-              <p className="text-[11px] text-[#77736C] hidden sm:block">
-                Personalized bulk event ticketing
-              </p>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-base tracking-tight text-[#252525] font-sans leading-none">
+                PassForge
+              </span>
+              <span className="text-[10px] text-[#77736C] hidden sm:block font-medium mt-0.5">
+                Bulk Ticket Engine
+              </span>
             </div>
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2">
+          <nav className="hidden md:flex items-center gap-1 lg:gap-1.5" aria-label="Main Navigation">
             {navLinks.map((link) => (
               <a
                 key={link.label}
@@ -66,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
                   e.preventDefault();
                   handleNavClick(link.href);
                 }}
-                className="px-3.5 py-2 text-xs font-medium text-[#504D47] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold text-[#504D47] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#B86E52]"
               >
                 {link.label}
               </a>
@@ -74,10 +69,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             <button
               onClick={() => onNavigate('/app')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#B86E52] hover:bg-[#A15D43] shadow-sm hover:shadow-md transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#B86E52] hover:bg-[#A15D43] shadow-xs hover:shadow-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#B86E52]"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#FBF2EE]" />
               <span>Open Studio</span>
@@ -86,17 +81,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center gap-1.5 md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={() => onNavigate('/app')}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#B86E52] shrink-0"
+              className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-[#B86E52] shrink-0 shadow-xs"
             >
               Studio
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 text-[#4A4641] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
-              aria-label="Toggle menu"
+              className="p-2 text-[#4A4641] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-[#B86E52]"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -106,7 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
 
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#E9E5DC] bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg animate-fade-in">
+        <div className="md:hidden border-t border-[#E9E5DC] bg-white px-4 pt-3 pb-5 space-y-1 shadow-lg animate-fade-in">
           {navLinks.map((link) => (
             <a
               key={link.label}
@@ -115,18 +111,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
                 e.preventDefault();
                 handleNavClick(link.href);
               }}
-              className="block px-3 py-2 text-sm font-medium text-[#4A4641] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg"
+              className="block px-3 py-2.5 text-xs font-semibold text-[#4A4641] hover:text-[#252525] hover:bg-[#FAF8F5] rounded-lg"
             >
               {link.label}
             </a>
           ))}
-          <div className="pt-2 border-t border-[#F0EDE6]">
+          <div className="pt-3 border-t border-[#F0EDE6] mt-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onNavigate('/app');
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#B86E52]"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#B86E52] shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Launch Ticket Studio</span>
