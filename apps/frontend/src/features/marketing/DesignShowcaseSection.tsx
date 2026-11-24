@@ -394,13 +394,6 @@ export const DesignShowcaseSection: React.FC<DesignShowcaseSectionProps> = ({ on
                 </div>
               </div>
             </div>
-
-            {/* Conceptual Layout Footnote - Generous Margin to Avoid Any Overlap */}
-            <p
-              className="text-[11px] sm:text-xs text-center mt-5 text-[#77736C] max-w-md font-medium leading-relaxed"
-            >
-              Conceptual layout — illustrates multi-channel export capabilities, not actual ticket previews.
-            </p>
           </div>
 
         </div>
