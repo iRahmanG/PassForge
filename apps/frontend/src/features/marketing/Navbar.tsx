@@ -10,9 +10,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Features', href: '#features' },
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Ticket Designs', href: '#designs' },
+    { label: 'Export Formats', href: '#designs' },
     { label: 'Use Cases', href: '#use-cases' },
     { label: 'FAQ', href: '#faq' },
   ];

@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { Navbar } from './Navbar.js';
 import { HeroSection } from './HeroSection.js';
-import { FeaturesSection } from './FeaturesSection.js';
-import { HowItWorksSection } from './HowItWorksSection.js';
 import { DesignShowcaseSection } from './DesignShowcaseSection.js';
 import { UseCasesSection } from './UseCasesSection.js';
 import { FaqSection } from './FaqSection.js';
@@ -30,12 +28,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, initialSec
     <div className="min-h-screen bg-[#F7F5F0] text-[#252525] flex flex-col font-sans selection:bg-[#FBF2EE] selection:text-[#B86E52]">
       <Navbar onNavigate={onNavigate} />
       <main className="flex-1">
+        {/* 1) Hero — The overall promise */}
         <HeroSection onNavigate={onNavigate} />
-        <FeaturesSection onNavigate={onNavigate} />
-        <HowItWorksSection onNavigate={onNavigate} />
+
+        {/* 2) One platform. Four ways to deliver. */}
         <DesignShowcaseSection onNavigate={onNavigate} />
+
+        {/* 3) Built for any event where personalization matters */}
         <UseCasesSection />
+
+        {/* 4) Frequently Asked Questions */}
         <FaqSection />
+
+        {/* Closing CTA */}
         <CtaSection onNavigate={onNavigate} />
       </main>
       <PublicFooter onNavigate={onNavigate} />
