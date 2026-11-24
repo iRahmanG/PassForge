@@ -75,7 +75,7 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
   onReset,
   onCollapse,
   activeDesignId = 'tech',
-  attendeeName = 'Maksud Rahman',
+  attendeeName = 'Alex Morgan',
   seatNumber = 'A-104',
   ticketType = 'VIP',
 }) => {

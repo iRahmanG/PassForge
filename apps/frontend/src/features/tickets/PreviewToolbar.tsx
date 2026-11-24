@@ -66,12 +66,6 @@ export const PreviewToolbar: React.FC<PreviewToolbarProps> = ({
               {att.name} ({att.ticketType} • {att.seat || 'Open Seating'})
             </option>
           ))}
-          <option value="test-long-name">
-            🧪 Stress Test: Extreme Long Name (Prof. Dr. Alexandrina...)
-          </option>
-          <option value="test-open-seating">
-            🧪 Fallback Test: Missing Seat Number (Open Seating)
-          </option>
         </select>
       </div>
 

@@ -73,7 +73,7 @@ export const DesignCard: React.FC<DesignCardProps> = ({
                 <div className="relative z-10 flex items-end justify-between pt-1">
                   <div>
                     <p className="text-xs sm:text-sm font-bold text-white tracking-tight">
-                      Maksud Rahman
+                      Alex Morgan
                     </p>
                     <p className="text-[10px] sm:text-[11px] font-mono text-cyan-400/90 font-medium mt-0.5">
                       A-104
@@ -104,7 +104,7 @@ export const DesignCard: React.FC<DesignCardProps> = ({
                 <div className="relative z-10 flex items-end justify-between pt-1">
                   <div>
                     <p className="text-xs sm:text-sm font-serif font-bold text-stone-900 tracking-tight">
-                      Maksud Rahman
+                      Alex Morgan
                     </p>
                     <p className="text-[10px] sm:text-[11px] font-serif italic text-stone-600 mt-0.5">
                       A-104

@@ -124,7 +124,7 @@ export async function runFullVerification(): Promise<{ passed: boolean; results:
     : '';
 
   const requiredFields = [
-    'Maksud Rahman',
+    'Alex Morgan',
     'KIET TechFest 2027',
     'VIP',
     'A-104',

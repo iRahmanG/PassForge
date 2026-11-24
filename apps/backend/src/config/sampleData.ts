@@ -14,9 +14,9 @@ export const INITIAL_EVENT: EventInfo = {
 };
 
 export const INITIAL_ATTENDEE: AttendeeInfo = {
-  id: 'att-maksud-001',
-  name: 'Maksud Rahman',
-  email: 'maksud@example.com',
+  id: 'att-alex-001',
+  name: 'Alex Morgan',
+  email: 'alex.morgan@example.com',
   ticketType: 'VIP',
   seat: 'A-104',
   importedAt: new Date().toISOString(),
@@ -38,8 +38,8 @@ export const DEMO_EVENT: EventInfo = {
 export const DEMO_ATTENDEES: AttendeeInfo[] = [
   {
     id: 'att-demo-001',
-    name: 'Maksud Rahman',
-    email: 'maksud.rahman@example.com',
+    name: 'Alex Morgan',
+    email: 'alex.morgan@example.com',
     ticketType: 'VIP',
     seat: 'A-101',
     importedAt: new Date().toISOString(),

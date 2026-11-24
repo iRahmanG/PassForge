@@ -8,25 +8,26 @@ interface QrPatternProps {
 
 export const QrPattern: React.FC<QrPatternProps> = ({
   className = 'w-full h-full text-[#252525]',
+  color = '#252525',
 }) => {
   return (
     <svg
       viewBox="0 0 33 33"
       className={className}
-      fill="currentColor"
+      fill={color}
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
       {/* Top Left Corner Finder */}
-      <rect x="2" y="2" width="7" height="7" rx="1" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="2" y="2" width="7" height="7" rx="1" fill="none" stroke={color} strokeWidth="1.5" />
       <rect x="4" y="4" width="3" height="3" rx="0.5" />
 
       {/* Top Right Corner Finder */}
-      <rect x="24" y="2" width="7" height="7" rx="1" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="24" y="2" width="7" height="7" rx="1" fill="none" stroke={color} strokeWidth="1.5" />
       <rect x="26" y="4" width="3" height="3" rx="0.5" />
 
       {/* Bottom Left Corner Finder */}
-      <rect x="2" y="24" width="7" height="7" rx="1" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="2" y="24" width="7" height="7" rx="1" fill="none" stroke={color} strokeWidth="1.5" />
       <rect x="4" y="26" width="3" height="3" rx="0.5" />
 
       {/* Timing lines & Sync patterns */}

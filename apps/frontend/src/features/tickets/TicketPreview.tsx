@@ -166,7 +166,7 @@ export const TicketPreview: React.FC<TicketPreviewProps> = ({
                   <span className="font-mono text-[#9E9A90]">Today, 09:00 AM</span>
                 </div>
                 <div className="text-[10px]">
-                  <strong className="text-[#252525]">To:</strong> {ticket?.attendee.email || 'maksud@example.com'}
+                  <strong className="text-[#252525]">To:</strong> {ticket?.attendee.email || 'alex.morgan@example.com'}
                 </div>
                 <div className="text-xs font-bold text-[#252525] mt-0.5">
                   Subject: Your Official Pass: {ticket?.event.name || 'KIET TechFest 2027'}

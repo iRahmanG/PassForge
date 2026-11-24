@@ -93,13 +93,14 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ onNavigate
         </div>
 
         {/* Action CTA */}
-        <div className="mt-10 text-center">
+        <div className="mt-12 text-center" style={{ marginTop: '48px' }}>
           <button
             onClick={() => onNavigate('/app')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#B86E52] hover:bg-[#A15D43] transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#B86E52] hover:bg-[#A15D43] transition-all cursor-pointer shadow-sm hover:shadow-md"
+            style={{ backgroundColor: '#B86E52', color: '#ffffff' }}
           >
             <span>Start with Event Setup</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
       </div>

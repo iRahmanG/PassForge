@@ -62,8 +62,8 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
 }) => {
   const [zoom, setZoom] = useState<number>(1.0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [pageHeight, setPageHeight] = useState<number>(1200);
-  const [emailHeight, setEmailHeight] = useState<number>(1150);
+  const [pageHeight, setPageHeight] = useState<number>(540);
+  const [emailHeight, setEmailHeight] = useState<number>(520);
 
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const pageIframeRef = useRef<HTMLIFrameElement>(null);
@@ -165,19 +165,12 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
     if (!rawHtml) return undefined;
     const script = `
       <style>
-        /* Avoid outer and inner scrollbars on the iframe document while preserving all content */
+        /* Smooth scrolling inside preview frames */
         html, body {
           margin: 0;
           padding: 0;
-          overflow-y: hidden !important;
+          overflow-y: auto !important;
           overflow-x: hidden !important;
-          scrollbar-width: none !important;
-          -ms-overflow-style: none !important;
-        }
-        html::-webkit-scrollbar, body::-webkit-scrollbar {
-          display: none !important;
-          width: 0 !important;
-          height: 0 !important;
         }
       </style>
       <script>
@@ -343,12 +336,6 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                   {att.name} — [{att.ticketType}]
                 </option>
               ))}
-              <option value="test-long-name">
-                🧪 Long Name Test (Prof. Dr. Alexandrina...)
-              </option>
-              <option value="test-open-seating">
-                🧪 Fallback Test (Missing Seat Number)
-              </option>
             </select>
           </div>
 
@@ -501,8 +488,8 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 // Realistic Smartphone Chassis
                 <div
                   style={{
-                    width: 'min(100%, 380px)',
-                    height: `${pageHeight + 48}px`,
+                    width: 'min(100%, 360px)',
+                    height: '580px',
                     maxWidth: '100%',
                     backgroundColor: '#0F172A',
                     borderRadius: '44px',
@@ -531,15 +518,14 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                     srcDoc={prepareHtmlWithResizeScript(previewData?.pageHtml, 'page')}
                     src={!previewData?.pageHtml ? `/api/preview/page?ticketId=${ticketId}` : undefined}
                     onLoad={() => measureIframe(pageIframeRef.current, 'page')}
-                    scrolling="no"
+                    scrolling="yes"
                     style={{
                       width: '100%',
-                      height: `${pageHeight}px`,
+                      height: '100%',
                       borderRadius: '28px',
                       border: 'none',
                       backgroundColor: '#FFFFFF',
                       display: 'block',
-                      overflow: 'hidden',
                     }}
                   />
                   <div
@@ -557,7 +543,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 // Desktop Browser Frame
                 <div
                   className="rounded-xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-white flex flex-col w-full max-w-full"
-                  style={{ width: '100%', height: 'auto', minHeight: '600px' }}
+                  style={{ width: '100%', height: '540px' }}
                 >
                   <div className="bg-[#FAF8F5] border-b border-[#E9E5DC] px-4 py-2.5 flex items-center gap-2 shrink-0">
                     <div className="flex items-center gap-1.5">
@@ -575,14 +561,12 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                     srcDoc={prepareHtmlWithResizeScript(previewData?.pageHtml, 'page')}
                     src={!previewData?.pageHtml ? `/api/preview/page?ticketId=${ticketId}` : undefined}
                     onLoad={() => measureIframe(pageIframeRef.current, 'page')}
-                    scrolling="no"
+                    scrolling="yes"
                     style={{
                       width: '100%',
-                      height: `${pageHeight}px`,
-                      minHeight: '600px',
+                      height: '100%',
                       border: 'none',
                       display: 'block',
-                      overflow: 'hidden',
                     }}
                   />
                 </div>
@@ -598,7 +582,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
             <div className="flex flex-col items-center w-full max-w-full" style={{ width: 'min(100%, 640px)' }}>
               <div
                 className="rounded-xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-white flex flex-col w-full max-w-full"
-                style={{ width: '100%', height: 'auto' }}
+                style={{ width: '100%', height: '520px' }}
               >
                 <div className="bg-[#FAF8F5] border-b border-[#E9E5DC] px-4 py-2.5 text-xs text-[#504D47] flex flex-col gap-1 shrink-0">
                   <div className="flex justify-between items-center text-[10px]">
@@ -608,7 +592,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                     <span className="font-mono text-[#9E9A90]">Today, 09:00 AM</span>
                   </div>
                   <div className="text-[10px]">
-                    <strong className="text-[#252525]">To:</strong> {ticket?.attendee.email || 'maksud@example.com'}
+                    <strong className="text-[#252525]">To:</strong> {ticket?.attendee.email || 'alex.morgan@example.com'}
                   </div>
                 </div>
 
@@ -618,14 +602,12 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                   srcDoc={prepareHtmlWithResizeScript(previewData?.emailHtml, 'email')}
                   src={!previewData?.emailHtml ? `/api/preview/email?ticketId=${ticketId}` : undefined}
                   onLoad={() => measureIframe(emailIframeRef.current, 'email')}
-                  scrolling="no"
+                  scrolling="yes"
                   style={{
                     width: '100%',
-                    height: `${emailHeight}px`,
-                    minHeight: '600px',
+                    height: '100%',
                     border: 'none',
                     display: 'block',
-                    overflow: 'hidden',
                   }}
                 />
               </div>
@@ -640,7 +622,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
             <div className="flex flex-col items-center w-full max-w-full" style={{ width: 'min(100%, 760px)' }}>
               <div
                 className="rounded-2xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-[#525659] w-full max-w-full"
-                style={{ width: '100%', height: '820px' }}
+                style={{ width: '100%', height: '620px' }}
               >
                 <iframe
                   title="PDF Document Preview"
