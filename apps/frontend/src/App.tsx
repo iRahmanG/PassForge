@@ -181,108 +181,113 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#252525]">
-      <Header
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        onNavigateHome={() => navigate('/')}
-        eventName={event?.name}
-        attendeeCount={attendeeCount}
-        serverOnline={serverOnline}
-      />
+      {/* If in tickets studio, TicketDesigner renders its own compact studio toolbar */}
+      {activeTab !== 'tickets' && (
+        <Header
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          onNavigateHome={() => navigate('/')}
+          eventName={event?.name}
+          attendeeCount={attendeeCount}
+          serverOnline={serverOnline}
+        />
+      )}
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* TAB 1: EVENT CONFIGURATION */}
-        {activeTab === 'event' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              {event && <EventForm initialEvent={event} onSave={updateEvent} />}
-            </div>
-            <div>
-              {event && <EventSummaryCard event={event} />}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: CSV ATTENDEE IMPORT */}
-        {activeTab === 'import' && (
-          <div className="space-y-6">
-            {event && (
-              <div className="bg-white border border-[#E9E5DC] rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] flex items-center justify-center shrink-0">
-                    <Calendar className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#77736C]">
-                        Importing Roster For
-                      </span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#2E683E]" />
-                    </div>
-                    <p className="text-sm font-bold text-[#252525] truncate">
-                      {event.name}{' '}
-                      <span className="text-xs font-normal text-[#77736C]">
-                        • {event.date} • {event.venue}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveTab('event')}
-                  className="text-xs font-semibold text-[#B86E52] hover:text-[#A15D43] self-start sm:self-auto cursor-pointer"
-                >
-                  Edit Event Details →
-                </button>
+      {activeTab === 'tickets' ? (
+        <TicketDesigner
+          attendees={attendees}
+          eventName={event?.name || 'KIET TechFest 2027'}
+          onNavigateHome={() => navigate('/')}
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+        />
+      ) : (
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          {/* TAB 1: EVENT CONFIGURATION */}
+          {activeTab === 'event' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                {event && <EventForm initialEvent={event} onSave={updateEvent} />}
               </div>
-            )}
+              <div>
+                {event && <EventSummaryCard event={event} />}
+              </div>
+            </div>
+          )}
 
-            {importResult ? (
-              <ImportSummary
-                result={importResult}
-                onGoToDirectory={() => setActiveTab('attendees')}
-                onReset={handleResetImportFlow}
+          {/* TAB 2: CSV ATTENDEE IMPORT */}
+          {activeTab === 'import' && (
+            <div className="space-y-6">
+              {event && (
+                <div className="bg-white border border-[#E9E5DC] rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] flex items-center justify-center shrink-0">
+                      <Calendar className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#77736C]">
+                          Importing Roster For
+                        </span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#2E683E]" />
+                      </div>
+                      <p className="text-sm font-bold text-[#252525] truncate">
+                        {event.name}{' '}
+                        <span className="text-xs font-normal text-[#77736C]">
+                          • {event.date} • {event.venue}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('event')}
+                    className="text-xs font-semibold text-[#B86E52] hover:text-[#A15D43] self-start sm:self-auto cursor-pointer"
+                  >
+                    Edit Event Details →
+                  </button>
+                </div>
+              )}
+
+              {importResult ? (
+                <ImportSummary
+                  result={importResult}
+                  onGoToDirectory={() => setActiveTab('attendees')}
+                  onReset={handleResetImportFlow}
+                />
+              ) : detectedHeaders.length > 0 ? (
+                <CsvColumnMapper
+                  headers={detectedHeaders}
+                  previewRows={previewRows}
+                  initialMapping={detectedMapping}
+                  onConfirmImport={handleConfirmImport}
+                  onCancel={handleResetImportFlow}
+                  loading={importing}
+                />
+              ) : (
+                <CsvUploader
+                  onFileLoaded={handleFileLoaded}
+                  onTextLoaded={handleTextLoaded}
+                  loading={importing}
+                />
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: ATTENDEE DIRECTORY */}
+          {activeTab === 'attendees' && (
+            <div className="space-y-6">
+              <AttendeeTable
+                attendees={attendees}
+                onSelectAttendeeForTicket={handleOpenTicketModal}
+                onGoToImport={() => setActiveTab('import')}
+                onResetToDefault={resetAttendees}
               />
-            ) : detectedHeaders.length > 0 ? (
-              <CsvColumnMapper
-                headers={detectedHeaders}
-                previewRows={previewRows}
-                initialMapping={detectedMapping}
-                onConfirmImport={handleConfirmImport}
-                onCancel={handleResetImportFlow}
-                loading={importing}
-              />
-            ) : (
-              <CsvUploader
-                onFileLoaded={handleFileLoaded}
-                onTextLoaded={handleTextLoaded}
-                loading={importing}
-              />
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </main>
+      )}
 
-        {/* TAB 3: ATTENDEE DIRECTORY */}
-        {activeTab === 'attendees' && (
-          <div className="space-y-6">
-            <AttendeeTable
-              attendees={attendees}
-              onSelectAttendeeForTicket={handleOpenTicketModal}
-              onGoToImport={() => setActiveTab('import')}
-              onResetToDefault={resetAttendees}
-            />
-          </div>
-        )}
-
-        {/* TAB 4: TICKET DESIGNER & LIVE PREVIEW */}
-        {activeTab === 'tickets' && (
-          <TicketDesigner
-            attendees={attendees}
-            eventName={event?.name || 'KIET TechFest 2027'}
-          />
-        )}
-      </main>
-
-      <Footer />
+      {activeTab !== 'tickets' && <Footer />}
 
       {/* Ticket Preview Modal */}
       <TicketPreviewModal

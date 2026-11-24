@@ -22,7 +22,10 @@ app.use('/api', apiRoutes);
 // In production or when frontend build exists, serve static client bundle
 if (fs.existsSync(FRONTEND_DIST)) {
   app.use(express.static(FRONTEND_DIST));
-  app.get('*', (req, res, next) => {
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') {
+      return next();
+    }
     if (req.path.startsWith('/api') || req.path.startsWith('/output')) {
       return next();
     }
