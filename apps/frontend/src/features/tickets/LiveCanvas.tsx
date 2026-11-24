@@ -60,8 +60,8 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
 }) => {
   const [zoom, setZoom] = useState<number>(1.0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [pageHeight, setPageHeight] = useState<number>(840);
-  const [emailHeight, setEmailHeight] = useState<number>(760);
+  const [pageHeight, setPageHeight] = useState<number>(1200);
+  const [emailHeight, setEmailHeight] = useState<number>(1150);
 
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const pageIframeRef = useRef<HTMLIFrameElement>(null);
@@ -79,15 +79,19 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
   // Security-checked listener for iframe resize postMessages
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
-      // Security check: Only accept messages from our specific iframe content windows
-      const isFromOurIframe =
-        (pageIframeRef.current && e.source === pageIframeRef.current.contentWindow) ||
-        (emailIframeRef.current && e.source === emailIframeRef.current.contentWindow);
+      if (!e.data || e.data.type !== 'PASSFORGE_IFRAME_RESIZE' || typeof e.data.height !== 'number') {
+        return;
+      }
 
-      if (!isFromOurIframe) return;
+      // Add 24px safety buffer to prevent 1px rounding subpixel inner scrollbars
+      const validHeight = Math.min(Math.max(Math.round(e.data.height) + 24, 350), 4500);
 
-      if (e.data && e.data.type === 'PASSFORGE_IFRAME_RESIZE' && typeof e.data.height === 'number') {
-        const validHeight = Math.min(Math.max(Math.round(e.data.height), 300), 3500);
+      if (e.data.format === 'page') {
+        setPageHeight(validHeight);
+      } else if (e.data.format === 'email') {
+        setEmailHeight(validHeight);
+      } else {
+        // Fallback matching by active window reference
         if (pageIframeRef.current && e.source === pageIframeRef.current.contentWindow) {
           setPageHeight(validHeight);
         } else if (emailIframeRef.current && e.source === emailIframeRef.current.contentWindow) {
@@ -110,23 +114,31 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
       const compute = () => {
         const body = doc.body;
         const html = doc.documentElement;
+        if (!body && !html) return;
         const h = Math.max(
           body?.scrollHeight || 0,
           body?.offsetHeight || 0,
+          body?.clientHeight || 0,
           html?.scrollHeight || 0,
           html?.offsetHeight || 0
         );
         if (h > 200) {
-          if (format === 'page') setPageHeight(h);
-          if (format === 'email') setEmailHeight(h);
+          const finalH = h + 24;
+          if (format === 'page') setPageHeight(finalH);
+          if (format === 'email') setEmailHeight(finalH);
         }
       };
 
       compute();
 
+      if (doc.fonts && doc.fonts.ready) {
+        doc.fonts.ready.then(compute).catch(() => {});
+      }
+
       if (typeof ResizeObserver !== 'undefined' && doc.body) {
         const observer = new ResizeObserver(() => compute());
         observer.observe(doc.body);
+        if (doc.documentElement) observer.observe(doc.documentElement);
       }
     } catch {
       // In case of restricted DOM access, the postMessage listener provides fallback
@@ -134,36 +146,60 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
   };
 
   // Safely inject measurement script into srcDoc HTML without modifying the underlying template
-  const prepareHtmlWithResizeScript = (rawHtml?: string) => {
+  const prepareHtmlWithResizeScript = (rawHtml?: string, format: 'page' | 'email' = 'page') => {
     if (!rawHtml) return undefined;
     const script = `
       <style>
-        /* Avoid outer scrollbars on the iframe document while preserving all content */
-        body { margin: 0; padding: 0; overflow-y: hidden !important; }
+        /* Avoid outer and inner scrollbars on the iframe document while preserving all content */
+        html, body {
+          margin: 0;
+          padding: 0;
+          overflow-y: hidden !important;
+          overflow-x: hidden !important;
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
       </style>
       <script>
         (function() {
           function sendH() {
             var b = document.body;
             var d = document.documentElement;
-            if (!b) return;
-            var h = Math.max(b.scrollHeight, b.offsetHeight, d ? d.scrollHeight : 0, d ? d.offsetHeight : 0);
+            if (!b && !d) return;
+            var h = Math.max(
+              b ? b.scrollHeight : 0,
+              b ? b.offsetHeight : 0,
+              b ? b.clientHeight : 0,
+              d ? d.scrollHeight : 0,
+              d ? d.offsetHeight : 0
+            );
             if (h > 0) {
-              window.parent.postMessage({ type: 'PASSFORGE_IFRAME_RESIZE', height: h }, '*');
+              window.parent.postMessage({ type: 'PASSFORGE_IFRAME_RESIZE', format: '${format}', height: h }, '*');
             }
           }
           window.addEventListener('load', sendH);
           window.addEventListener('resize', sendH);
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(sendH).catch(function() {});
+          }
           if (window.ResizeObserver && document.body) {
             new ResizeObserver(sendH).observe(document.body);
+            if (document.documentElement) new ResizeObserver(sendH).observe(document.documentElement);
           }
           if (document.readyState === 'complete' || document.readyState === 'interactive') {
             sendH();
           } else {
             document.addEventListener('DOMContentLoaded', sendH);
           }
-          setTimeout(sendH, 80);
-          setTimeout(sendH, 300);
+          setTimeout(sendH, 60);
+          setTimeout(sendH, 180);
+          setTimeout(sendH, 450);
+          setTimeout(sendH, 1000);
         })();
       </script>
     `;
@@ -263,6 +299,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
             return (
               <button
                 key={f.id}
+                data-testid={`format-tab-${f.id}`}
                 onClick={() => onSelectFormat(f.id)}
                 className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   isActive
@@ -374,7 +411,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
 
       {/* Main Artboard Canvas Area */}
       <div
-        className="flex-1 overflow-auto flex items-center justify-center p-6 sm:p-10 relative"
+        className="flex-1 overflow-y-auto overflow-x-auto flex justify-center items-start p-4 sm:p-8 relative"
         style={{
           backgroundColor: '#F5F2EB',
           backgroundImage: 'radial-gradient(#DDD8CD 1.2px, transparent 1.2px)',
@@ -392,7 +429,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
 
         {/* Scalable Artboard Container */}
         <div
-          className="transition-transform duration-150 ease-out origin-top flex flex-col items-center justify-center w-full max-w-full"
+          className="transition-transform duration-150 ease-out origin-top flex flex-col items-center justify-start w-full max-w-full pb-16"
           style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
         >
           {/* 1. Canvas PNG Format */}
@@ -430,18 +467,18 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 // Realistic Smartphone Chassis
                 <div
                   style={{
-                    width: 'min(100%, 360px)',
-                    height: `${Math.max(680, Math.min(pageHeight + 48, 860))}px`,
-                    maxHeight: '85vh',
+                    width: 'min(100%, 380px)',
+                    height: `${pageHeight + 48}px`,
                     maxWidth: '100%',
                     backgroundColor: '#0F172A',
                     borderRadius: '44px',
-                    padding: '12px 10px',
+                    padding: '14px 10px 10px',
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
                     border: '4px solid #334155',
                     position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
+                    overflow: 'hidden',
                   }}
                 >
                   <div
@@ -450,22 +487,25 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                       height: '18px',
                       backgroundColor: '#020617',
                       borderRadius: '9999px',
-                      margin: '0 auto 8px',
+                      margin: '0 auto 10px',
                       flexShrink: 0,
                     }}
                   />
                   <iframe
                     ref={pageIframeRef}
                     title="Mobile Web Ticket Preview"
-                    srcDoc={prepareHtmlWithResizeScript(previewData?.pageHtml)}
+                    srcDoc={prepareHtmlWithResizeScript(previewData?.pageHtml, 'page')}
                     src={!previewData?.pageHtml ? `/api/preview/page?ticketId=${ticketId}` : undefined}
                     onLoad={() => measureIframe(pageIframeRef.current, 'page')}
+                    scrolling="no"
                     style={{
                       width: '100%',
-                      height: 'calc(100% - 34px)',
+                      height: `${pageHeight}px`,
                       borderRadius: '28px',
                       border: 'none',
                       backgroundColor: '#FFFFFF',
+                      display: 'block',
+                      overflow: 'hidden',
                     }}
                   />
                   <div
@@ -474,7 +514,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                       height: '4px',
                       backgroundColor: '#475569',
                       borderRadius: '9999px',
-                      margin: '8px auto 2px',
+                      margin: '10px auto 2px',
                       flexShrink: 0,
                     }}
                   />
@@ -483,7 +523,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 // Desktop Browser Frame
                 <div
                   className="rounded-xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-white flex flex-col w-full max-w-full"
-                  style={{ width: '100%', height: 'auto', minHeight: '520px' }}
+                  style={{ width: '100%', height: 'auto', minHeight: '600px' }}
                 >
                   <div className="bg-[#FAF8F5] border-b border-[#E9E5DC] px-4 py-2.5 flex items-center gap-2 shrink-0">
                     <div className="flex items-center gap-1.5">
@@ -498,16 +538,17 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                   <iframe
                     ref={pageIframeRef}
                     title="Desktop Web Ticket Preview"
-                    srcDoc={prepareHtmlWithResizeScript(previewData?.pageHtml)}
+                    srcDoc={prepareHtmlWithResizeScript(previewData?.pageHtml, 'page')}
                     src={!previewData?.pageHtml ? `/api/preview/page?ticketId=${ticketId}` : undefined}
                     onLoad={() => measureIframe(pageIframeRef.current, 'page')}
                     scrolling="no"
                     style={{
                       width: '100%',
                       height: `${pageHeight}px`,
-                      minHeight: '480px',
+                      minHeight: '600px',
                       border: 'none',
                       display: 'block',
+                      overflow: 'hidden',
                     }}
                   />
                 </div>
@@ -523,7 +564,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
             <div className="flex flex-col items-center w-full max-w-full" style={{ width: 'min(100%, 640px)' }}>
               <div
                 className="rounded-xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-white flex flex-col w-full max-w-full"
-                style={{ width: '100%', height: 'auto', minHeight: '480px' }}
+                style={{ width: '100%', height: 'auto' }}
               >
                 <div className="bg-[#FAF8F5] border-b border-[#E9E5DC] px-4 py-2.5 text-xs text-[#504D47] flex flex-col gap-1 shrink-0">
                   <div className="flex justify-between items-center text-[10px]">
@@ -540,16 +581,17 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                 <iframe
                   ref={emailIframeRef}
                   title="Email HTML Preview"
-                  srcDoc={prepareHtmlWithResizeScript(previewData?.emailHtml)}
+                  srcDoc={prepareHtmlWithResizeScript(previewData?.emailHtml, 'email')}
                   src={!previewData?.emailHtml ? `/api/preview/email?ticketId=${ticketId}` : undefined}
                   onLoad={() => measureIframe(emailIframeRef.current, 'email')}
                   scrolling="no"
                   style={{
                     width: '100%',
                     height: `${emailHeight}px`,
-                    minHeight: '440px',
+                    minHeight: '600px',
                     border: 'none',
                     display: 'block',
+                    overflow: 'hidden',
                   }}
                 />
               </div>
@@ -561,19 +603,19 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
 
           {/* 4. Document PDF Format */}
           {activeFormat === 'pdf' && (
-            <div className="flex flex-col items-center w-full max-w-full" style={{ width: 'min(100%, 780px)' }}>
+            <div className="flex flex-col items-center w-full max-w-full" style={{ width: 'min(100%, 760px)' }}>
               <div
-                className="rounded-xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-white w-full max-w-full"
-                style={{ width: '100%', height: '500px', maxHeight: '70vh' }}
+                className="rounded-2xl overflow-hidden border border-[#DDD8CD] shadow-xl bg-[#525659] w-full max-w-full"
+                style={{ width: '100%', height: '820px' }}
               >
                 <iframe
                   title="PDF Document Preview"
-                  src={`/api/preview/pdf?ticketId=${ticketId}&t=${Date.now()}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                  src={`/api/preview/pdf?ticketId=${ticketId}&t=${Date.now()}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
                   style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
                 />
               </div>
               <p className="text-[10px] text-[#77736C] mt-2.5 font-mono text-center">
-                Hyper Elements &lt;Document&gt; • Vector PDF Print Admission
+                Hyper Elements &lt;Document&gt; • Vector PDF Print Admission (A4 Portrait)
               </p>
             </div>
           )}
