@@ -16,6 +16,8 @@ import {
   Palette,
   X,
   Sliders,
+  Terminal,
+  Sparkles,
 } from 'lucide-react';
 
 interface TicketDesignerProps {
@@ -60,9 +62,9 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
     error,
   } = useDesignSystem(attendees[0]?.id);
 
-  // Responsive panel collapse state (defaults to collapsed on < 1200px screens)
+  // Responsive panel collapse state (defaults to collapsed on < 1024px screens)
   const [leftCollapsed, setLeftCollapsed] = useState<boolean>(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 1200) return true;
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return true;
     try {
       return sessionStorage.getItem('passforge_left_collapsed') === 'true';
     } catch {
@@ -151,41 +153,118 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
       {/* 3-REGION WORKSPACE ARCHITECTURE */}
       <div className="flex-1 flex overflow-hidden p-2 sm:p-3 lg:p-4 gap-2.5 lg:gap-3 relative pb-20 md:pb-4">
         {/* LEFT REGION: TEMPLATE GALLERY (Desktop/Tablet) */}
-        {!leftCollapsed ? (
-          <aside className="hidden md:flex w-64 lg:w-72 shrink-0 flex-col transition-all duration-200 ease-in-out">
+        <aside
+          className={`hidden md:flex shrink-0 flex-col transition-[width] duration-250 ease-in-out ${
+            leftCollapsed ? 'w-16' : 'w-72 lg:w-80'
+          }`}
+        >
+          {!leftCollapsed ? (
             <DesignGallery
               designs={designs}
               selectedDesignId={selectedDesignId}
               onSelectDesign={selectDesign}
               onCollapse={toggleLeft}
             />
-          </aside>
-        ) : (
-          /* Left Collapsed Rail */
-          <aside className="hidden md:flex w-12 shrink-0 bg-white border border-[#E9E5DC] rounded-2xl flex-col items-center py-3 gap-3 transition-all duration-200 ease-in-out shadow-xs">
-            <button
-              onClick={toggleLeft}
-              className="p-1.5 rounded-lg text-[#77736C] hover:text-[#252525] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
-              title="Expand Templates Sidebar"
-              aria-label="Expand Templates Sidebar"
-            >
-              <PanelLeftOpen className="w-4 h-4" />
-            </button>
-            <div className="h-4 w-px bg-[#E9E5DC]" />
-            <button
-              onClick={toggleLeft}
-              className="cursor-pointer flex flex-col items-center gap-1.5 p-1 rounded-xl text-[#77736C] hover:text-[#B86E52] hover:bg-[#FAF8F5] transition-colors group"
-              title="Expand Templates"
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] group-hover:bg-[#FBF2EE] border border-[#E9E5DC] group-hover:border-[#F0D5C9] flex items-center justify-center transition-colors">
-                <Layers className="w-4 h-4 text-[#77736C] group-hover:text-[#B86E52]" />
+          ) : (
+            /* Canva/Figma-Style Collapsed Icon Rail */
+            <div className="w-16 bg-white border border-[#EAEAEA] rounded-[20px] h-full flex flex-col items-center py-3.5 gap-2 shadow-xs select-none">
+              {/* Expand Action Button */}
+              <div className="relative group flex items-center justify-center">
+                <button
+                  onClick={toggleLeft}
+                  className="w-10 h-10 rounded-xl text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+                  title="Expand Templates Sidebar"
+                  aria-label="Expand Templates Sidebar"
+                >
+                  <PanelLeftOpen className="w-4 h-4" />
+                </button>
+                <div className="absolute left-full ml-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Expand Templates
+                </div>
               </div>
-              <span className="text-[8px] font-bold uppercase tracking-wider text-[#77736C] group-hover:text-[#B86E52]">
-                Layout
-              </span>
-            </button>
-          </aside>
-        )}
+
+              <div className="h-px w-8 bg-[#EAEAEA] my-1" />
+
+              {/* Layouts / Templates Tool Icon (Active Accent Bar & Soft Background) */}
+              <div className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={toggleLeft}
+                  className="relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors cursor-pointer text-neutral-900 bg-neutral-100 hover:bg-neutral-200"
+                  title="Templates & Layouts"
+                  aria-label="Templates & Layouts"
+                >
+                  {/* Left Accent Bar */}
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r bg-neutral-900" />
+                  <Layers className="w-4 h-4 text-neutral-900" />
+                </button>
+                <div className="absolute left-full ml-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Templates & Layouts
+                </div>
+              </div>
+
+              {/* Direct Quick-Switch: Cyber Tech Pass */}
+              <div className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={() => selectDesign('tech')}
+                  className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                    selectedDesignId === 'tech'
+                      ? 'text-cyan-600 bg-cyan-50'
+                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
+                  }`}
+                  title="Cyber Tech Pass"
+                  aria-label="Cyber Tech Pass"
+                >
+                  {selectedDesignId === 'tech' && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r bg-cyan-600" />
+                  )}
+                  <Terminal className="w-4 h-4" />
+                </button>
+                <div className="absolute left-full ml-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Cyber Tech Pass {selectedDesignId === 'tech' ? '● Active' : ''}
+                </div>
+              </div>
+
+              {/* Direct Quick-Switch: Editorial Gala Pass */}
+              <div className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={() => selectDesign('editorial')}
+                  className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                    selectedDesignId === 'editorial'
+                      ? 'text-amber-700 bg-amber-50'
+                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
+                  }`}
+                  title="Editorial Gala Pass"
+                  aria-label="Editorial Gala Pass"
+                >
+                  {selectedDesignId === 'editorial' && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r bg-amber-700" />
+                  )}
+                  <Sparkles className="w-4 h-4" />
+                </button>
+                <div className="absolute left-full ml-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Editorial Gala Pass {selectedDesignId === 'editorial' ? '● Active' : ''}
+                </div>
+              </div>
+
+              <div className="flex-1" />
+
+              {/* Canvas Options / Settings Shortcut */}
+              <div className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={toggleLeft}
+                  className="w-10 h-10 rounded-xl text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+                  title="Sidebar Settings"
+                  aria-label="Sidebar Settings"
+                >
+                  <Sliders className="w-4 h-4" />
+                </button>
+                <div className="absolute left-full ml-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Template Settings
+                </div>
+              </div>
+            </div>
+          )}
+        </aside>
 
         {/* CENTRAL REGION: LIVE CANVAS (Visual Focal Point) */}
         <main className="flex-1 min-w-0 flex flex-col transition-all duration-200 ease-in-out">
@@ -207,8 +286,12 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
         </main>
 
         {/* RIGHT REGION: FIGMA-STYLE BRAND KIT INSPECTOR (Desktop/Tablet) */}
-        {!rightCollapsed ? (
-          <aside className="hidden md:flex w-72 lg:w-80 shrink-0 flex-col transition-all duration-200 ease-in-out">
+        <aside
+          className={`hidden md:flex shrink-0 flex-col transition-[width] duration-250 ease-in-out ${
+            rightCollapsed ? 'w-16' : 'w-72 lg:w-80'
+          }`}
+        >
+          {!rightCollapsed ? (
             <BrandingControls
               branding={branding}
               defaultAccentColor={activeDesign?.defaultAccentColor || '#B86E52'}
@@ -222,33 +305,44 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
               seatNumber={previewData?.ticket?.attendee?.seat}
               ticketType={previewData?.ticket?.attendee?.ticketType}
             />
-          </aside>
-        ) : (
-          /* Right Collapsed Rail */
-          <aside className="hidden md:flex w-12 shrink-0 bg-white border border-[#E9E5DC] rounded-2xl flex-col items-center py-3 gap-3 transition-all duration-200 ease-in-out shadow-xs">
-            <button
-              onClick={toggleRight}
-              className="p-1.5 rounded-lg text-[#77736C] hover:text-[#252525] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
-              title="Expand Brand Kit Panel"
-              aria-label="Expand Brand Kit Panel"
-            >
-              <PanelRightOpen className="w-4 h-4" />
-            </button>
-            <div className="h-4 w-px bg-[#E9E5DC]" />
-            <button
-              onClick={toggleRight}
-              className="cursor-pointer flex flex-col items-center gap-1.5 p-1 rounded-xl text-[#77736C] hover:text-[#B86E52] hover:bg-[#FAF8F5] transition-colors group"
-              title="Expand Brand Kit (Colors & Logo)"
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] group-hover:bg-[#FBF2EE] border border-[#E9E5DC] group-hover:border-[#F0D5C9] flex items-center justify-center transition-colors">
-                <Palette className="w-4 h-4 text-[#77736C] group-hover:text-[#B86E52]" />
+          ) : (
+            /* Canva/Figma-Style Collapsed Right Rail */
+            <div className="w-16 bg-white border border-[#EAEAEA] rounded-[20px] h-full flex flex-col items-center py-3.5 gap-2 shadow-xs select-none">
+              {/* Expand Action Button */}
+              <div className="relative group flex items-center justify-center">
+                <button
+                  onClick={toggleRight}
+                  className="w-10 h-10 rounded-xl text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+                  title="Expand Brand Kit Panel"
+                  aria-label="Expand Brand Kit Panel"
+                >
+                  <PanelRightOpen className="w-4 h-4" />
+                </button>
+                <div className="absolute right-full mr-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Expand Brand Kit
+                </div>
               </div>
-              <span className="text-[8px] font-bold uppercase tracking-wider text-[#77736C] group-hover:text-[#B86E52]">
-                Brand
-              </span>
-            </button>
-          </aside>
-        )}
+
+              <div className="h-px w-8 bg-[#EAEAEA] my-1" />
+
+              {/* Brand Kit Active Icon with Right Accent Bar */}
+              <div className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={toggleRight}
+                  className="relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors cursor-pointer text-neutral-900 bg-neutral-100 hover:bg-neutral-200"
+                  title="Design & Brand Kit"
+                  aria-label="Design & Brand Kit"
+                >
+                  <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-l bg-neutral-900" />
+                  <Palette className="w-4 h-4 text-neutral-900" />
+                </button>
+                <div className="absolute right-full mr-3 px-2.5 py-1 text-[11px] font-medium text-white bg-neutral-900 rounded-md shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  Design & Brand Kit
+                </div>
+              </div>
+            </div>
+          )}
+        </aside>
       </div>
 
       {/* MOBILE BOTTOM TOOLBAR (Screens < 768px: Canva Mobile Style) */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DesignMetadata, TicketDesignId } from '@passforge/shared';
 import { DesignCard } from './DesignCard.js';
-import { Layers, PanelLeftClose, Sparkles } from 'lucide-react';
+import { Layers, PanelLeftClose, Maximize2, X, Sparkles } from 'lucide-react';
 
 interface DesignGalleryProps {
   designs: DesignMetadata[];
@@ -17,6 +17,7 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({
   onCollapse,
 }) => {
   const [filter, setFilter] = useState<'all' | 'tech' | 'editorial'>('all');
+  const [isGridModalOpen, setIsGridModalOpen] = useState(false);
 
   const filteredDesigns = designs.filter((d) => {
     if (filter === 'tech') return d.id === 'tech';
@@ -25,87 +26,199 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({
   });
 
   return (
-    <div className="bg-white border border-[#E9E5DC] rounded-2xl shadow-xs h-full flex flex-col overflow-hidden">
-      {/* Header with Title, Count & Collapse Button */}
-      <div className="p-3 border-b border-[#E9E5DC] flex items-center justify-between shrink-0 bg-[#FAF8F5]/60">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] flex items-center justify-center shrink-0">
-            <Layers className="w-3.5 h-3.5" />
+    <>
+      {/* Sidebar Gallery Container */}
+      <div className="bg-white border border-[#EAEAEA] rounded-[20px] shadow-xs h-full flex flex-col overflow-hidden">
+        {/* Header with Title, Count, Grid Expand & Collapse */}
+        <div className="p-3.5 sm:p-4 border-b border-[#EAEAEA] flex items-center justify-between shrink-0 bg-[#FAF8F5]/60">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-800 border border-neutral-200/80 flex items-center justify-center shrink-0">
+              <Layers className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs sm:text-[13px] font-bold text-neutral-900 uppercase tracking-wider">
+                Templates
+              </h3>
+              <p className="text-[11px] text-neutral-500 font-medium">
+                {designs.length} curated designs
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xs font-bold text-[#252525] uppercase tracking-wider">
-              Templates
-            </h3>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#F0EDE6] text-[#77736C] font-semibold">
-            {designs.length} layouts
-          </span>
-          {onCollapse && (
+          <div className="flex items-center gap-1">
+            {/* Expand to responsive grid modal */}
             <button
-              onClick={onCollapse}
-              className="p-1 rounded-md text-[#77736C] hover:text-[#252525] hover:bg-white transition-colors cursor-pointer"
-              title="Collapse template sidebar"
-              aria-label="Collapse template sidebar"
+              onClick={() => setIsGridModalOpen(true)}
+              className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer"
+              title="Expand template grid"
+              aria-label="Expand template grid"
             >
-              <PanelLeftClose className="w-4 h-4" />
+              <Maximize2 className="w-3.5 h-3.5" />
             </button>
-          )}
+
+            {onCollapse && (
+              <button
+                onClick={onCollapse}
+                className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer"
+                title="Collapse template sidebar"
+                aria-label="Collapse template sidebar"
+              >
+                <PanelLeftClose className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Clean Filter Chips (SaaS Neutral Styling) */}
+        <div className="px-3.5 py-2.5 flex items-center gap-1.5 border-b border-[#EAEAEA] shrink-0 bg-[#FAF8F5]/30">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
+              filter === 'all'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-white text-neutral-600 border border-[#EAEAEA] hover:text-neutral-900 hover:border-neutral-300'
+            }`}
+          >
+            All ({designs.length})
+          </button>
+          <button
+            onClick={() => setFilter('tech')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
+              filter === 'tech'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-white text-neutral-600 border border-[#EAEAEA] hover:text-neutral-900 hover:border-neutral-300'
+            }`}
+          >
+            Terminal Tech
+          </button>
+          <button
+            onClick={() => setFilter('editorial')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
+              filter === 'editorial'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-white text-neutral-600 border border-[#EAEAEA] hover:text-neutral-900 hover:border-neutral-300'
+            }`}
+          >
+            Editorial Gala
+          </button>
+        </div>
+
+        {/* Template Cards Scroll Area */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-4 space-y-4 pb-6">
+          {filteredDesigns.map((design) => (
+            <DesignCard
+              key={design.id}
+              design={design}
+              isSelected={selectedDesignId === design.id}
+              onSelect={onSelectDesign}
+            />
+          ))}
+        </div>
+
+        {/* Templates Footer Note */}
+        <div className="p-2.5 border-t border-[#EAEAEA] bg-[#FAF8F5] text-center text-[11px] text-neutral-500 font-medium shrink-0">
+          Hyper Elements SSR • 4 Native Formats
         </div>
       </div>
 
-      {/* Canva-Style Category Filter Chips */}
-      <div className="px-3 pt-2.5 pb-1 flex items-center gap-1.5 border-b border-[#F0EDE6] shrink-0 bg-[#FAF8F5]/30">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-            filter === 'all'
-              ? 'bg-[#B86E52] text-white shadow-xs'
-              : 'bg-white text-[#77736C] border border-[#E9E5DC] hover:text-[#252525]'
-          }`}
-        >
-          All ({designs.length})
-        </button>
-        <button
-          onClick={() => setFilter('tech')}
-          className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-            filter === 'tech'
-              ? 'bg-[#0E7490] text-white shadow-xs'
-              : 'bg-white text-[#77736C] border border-[#E9E5DC] hover:text-[#252525]'
-          }`}
-        >
-          Tech
-        </button>
-        <button
-          onClick={() => setFilter('editorial')}
-          className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-            filter === 'editorial'
-              ? 'bg-[#B45309] text-white shadow-xs'
-              : 'bg-white text-[#77736C] border border-[#E9E5DC] hover:text-[#252525]'
-          }`}
-        >
-          Editorial
-        </button>
-      </div>
+      {/* EXPANDED FULL RESPONSIVE GRID MODAL */}
+      {isGridModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-[24px] border border-[#EAEAEA] shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-5 sm:p-6 border-b border-[#EAEAEA] flex items-center justify-between bg-[#FAF8F5]/60">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-neutral-100 text-neutral-700 border border-neutral-200">
+                    <Sparkles className="w-3 h-3" />
+                    Template Library
+                  </span>
+                  <span className="text-xs text-neutral-500">
+                    {designs.length} production designs
+                  </span>
+                </div>
+                <h2 className="text-lg sm:text-xl font-bold text-neutral-900">
+                  Select Ticket Template
+                </h2>
+                <p className="text-xs sm:text-sm text-neutral-500">
+                  Switch aesthetics instantly. All attendee data, branding tokens, and formats sync automatically.
+                </p>
+              </div>
 
-      {/* Visual Template Cards Scroll Area */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3 pb-6">
-        {filteredDesigns.map((design) => (
-          <DesignCard
-            key={design.id}
-            design={design}
-            isSelected={selectedDesignId === design.id}
-            onSelect={onSelectDesign}
-          />
-        ))}
-      </div>
+              <button
+                onClick={() => setIsGridModalOpen(false)}
+                className="p-2 rounded-xl text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 border border-[#EAEAEA] transition-colors cursor-pointer"
+                title="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-      {/* Templates Footer Quick Note */}
-      <div className="p-2.5 border-t border-[#E9E5DC] bg-[#FAF8F5] text-center text-[10px] text-[#77736C] font-mono shrink-0">
-        Multi-format Hyper Elements SSR
-      </div>
-    </div>
+            {/* Filter Bar */}
+            <div className="px-6 py-3 border-b border-[#EAEAEA] flex items-center gap-2 bg-white">
+              <button
+                onClick={() => setFilter('all')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  filter === 'all'
+                    ? 'bg-neutral-900 text-white shadow-xs'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                }`}
+              >
+                All Templates ({designs.length})
+              </button>
+              <button
+                onClick={() => setFilter('tech')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  filter === 'tech'
+                    ? 'bg-neutral-900 text-white shadow-xs'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                }`}
+              >
+                Terminal Tech
+              </button>
+              <button
+                onClick={() => setFilter('editorial')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  filter === 'editorial'
+                    ? 'bg-neutral-900 text-white shadow-xs'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                }`}
+              >
+                Editorial Gala
+              </button>
+            </div>
+
+            {/* Responsive Grid: 1 col mobile, 2 cols tablet, 3-4 cols desktop */}
+            <div className="p-6 overflow-y-auto flex-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
+                {filteredDesigns.map((design) => (
+                  <div key={design.id} className="h-full">
+                    <DesignCard
+                      design={design}
+                      isSelected={selectedDesignId === design.id}
+                      onSelect={(id) => {
+                        onSelectDesign(id);
+                        setIsGridModalOpen(false);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-[#EAEAEA] bg-[#FAF8F5] flex items-center justify-between text-xs text-neutral-500">
+              <span>Click any card to apply template immediately</span>
+              <button
+                onClick={() => setIsGridModalOpen(false)}
+                className="px-4 py-2 rounded-lg bg-neutral-900 text-white font-semibold text-xs hover:bg-neutral-800 transition-colors cursor-pointer"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
