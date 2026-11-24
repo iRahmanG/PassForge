@@ -25,6 +25,8 @@ import {
   Layers,
   ArrowRight,
   ShieldCheck,
+  Folder,
+  FileJson,
 } from 'lucide-react';
 
 interface BulkExportModalProps {
@@ -169,6 +171,7 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
 
   // Start Generation
   const handleStartGeneration = async () => {
+    if (submitting) return;
     if (effectiveAttendeeIds.length === 0 || selectedFormats.length === 0) return;
 
     setSubmitting(true);
@@ -201,7 +204,7 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
 
   // Retry failed tasks
   const handleRetryFailed = async () => {
-    if (!jobId) return;
+    if (retrying || !jobId) return;
     setRetrying(true);
     try {
       const res = await fetch(`/api/bulk/${jobId}/retry`, { method: 'POST' });
@@ -725,30 +728,114 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
             )}
 
             {/* Metrics Breakdown */}
-            <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+              <div className="p-3 bg-[#FAF8F5] border border-[#E9E5DC] rounded-xl">
+                <span className="text-[10px] uppercase font-bold text-[#77736C] block">
+                  Attendees
+                </span>
+                <span className="text-base sm:text-lg font-bold text-[#252525] font-mono">
+                  {effectiveAttendeeIds.length}
+                </span>
+                <span className="text-[10px] text-[#77736C] block mt-0.5">Processed</span>
+              </div>
+              <div className="p-3 bg-[#FAF8F5] border border-[#E9E5DC] rounded-xl">
+                <span className="text-[10px] uppercase font-bold text-[#77736C] block">
+                  Formats
+                </span>
+                <span className="text-base sm:text-lg font-bold text-[#B86E52] font-mono">
+                  {selectedFormats.length}
+                </span>
+                <span className="text-[10px] text-[#77736C] block mt-0.5 truncate" title={selectedFormats.map(f => f.toUpperCase()).join(', ')}>
+                  {selectedFormats.map(f => f.toUpperCase()).join('/')}
+                </span>
+              </div>
               <div className="p-3 bg-[#FAF8F5] border border-[#E9E5DC] rounded-xl">
                 <span className="text-[10px] uppercase font-bold text-[#77736C] block">
                   Successful
                 </span>
-                <span className="text-lg font-bold text-[#2E683E] font-mono">
+                <span className="text-base sm:text-lg font-bold text-[#2E683E] font-mono">
                   {jobProgress?.completedTasks ?? 0}
                 </span>
+                <span className="text-[10px] text-[#2E683E] block mt-0.5">Generated</span>
               </div>
               <div className="p-3 bg-[#FAF8F5] border border-[#E9E5DC] rounded-xl">
                 <span className="text-[10px] uppercase font-bold text-[#77736C] block">
                   Failed
                 </span>
-                <span className="text-lg font-bold text-[#A83232] font-mono">
+                <span className={`text-base sm:text-lg font-bold font-mono ${
+                  (jobProgress?.failedTasks ?? 0) > 0 ? 'text-[#A83232]' : 'text-[#77736C]'
+                }`}>
                   {jobProgress?.failedTasks ?? 0}
                 </span>
+                <span className="text-[10px] text-[#77736C] block mt-0.5">Errors</span>
               </div>
-              <div className="p-3 bg-[#FAF8F5] border border-[#E9E5DC] rounded-xl">
-                <span className="text-[10px] uppercase font-bold text-[#77736C] block">
-                  Total
+            </div>
+
+            {/* Archive Package Contents Preview */}
+            <div data-testid="archive-contents-preview" className="border border-[#E9E5DC] rounded-xl overflow-hidden bg-white">
+              <div className="px-3 py-2 bg-[#FAF8F5] border-b border-[#E9E5DC] flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Archive className="w-3.5 h-3.5 text-[#B86E52]" />
+                  <span className="text-xs font-bold text-[#252525]">Archive Package Contents</span>
+                </div>
+                <span className="text-[10px] font-mono text-[#77736C] bg-white border border-[#E9E5DC] px-2 py-0.5 rounded">
+                  .ZIP Structure
                 </span>
-                <span className="text-lg font-bold text-[#252525] font-mono">
-                  {jobProgress?.totalTasks ?? 0}
-                </span>
+              </div>
+              <div className="p-3 space-y-1.5 font-mono text-xs text-[#504D47] bg-white">
+                {selectedFormats.includes('email') && (
+                  <div className="flex items-center justify-between py-0.5 px-2 rounded bg-[#FAF8F5] border border-[#F0EDE6]">
+                    <div className="flex items-center gap-2">
+                      <Folder className="w-3.5 h-3.5 text-[#B86E52]" />
+                      <span className="font-semibold text-[#252525]">email/</span>
+                    </div>
+                    <span className="text-[11px] text-[#77736C]">
+                      {effectiveAttendeeIds.length} HTML email files (.html)
+                    </span>
+                  </div>
+                )}
+                {selectedFormats.includes('page') && (
+                  <div className="flex items-center justify-between py-0.5 px-2 rounded bg-[#FAF8F5] border border-[#F0EDE6]">
+                    <div className="flex items-center gap-2">
+                      <Folder className="w-3.5 h-3.5 text-[#2E683E]" />
+                      <span className="font-semibold text-[#252525]">page/</span>
+                    </div>
+                    <span className="text-[11px] text-[#77736C]">
+                      {effectiveAttendeeIds.length} web page files (.html)
+                    </span>
+                  </div>
+                )}
+                {selectedFormats.includes('pdf') && (
+                  <div className="flex items-center justify-between py-0.5 px-2 rounded bg-[#FAF8F5] border border-[#F0EDE6]">
+                    <div className="flex items-center gap-2">
+                      <Folder className="w-3.5 h-3.5 text-[#2C3E50]" />
+                      <span className="font-semibold text-[#252525]">pdf/</span>
+                    </div>
+                    <span className="text-[11px] text-[#77736C]">
+                      {effectiveAttendeeIds.length} print PDF files (.pdf)
+                    </span>
+                  </div>
+                )}
+                {selectedFormats.includes('png') && (
+                  <div className="flex items-center justify-between py-0.5 px-2 rounded bg-[#FAF8F5] border border-[#F0EDE6]">
+                    <div className="flex items-center gap-2">
+                      <Folder className="w-3.5 h-3.5 text-[#78350F]" />
+                      <span className="font-semibold text-[#252525]">png/</span>
+                    </div>
+                    <span className="text-[11px] text-[#77736C]">
+                      {effectiveAttendeeIds.length} PNG images (.png)
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between py-0.5 px-2 rounded bg-[#FAF8F5] border border-[#F0EDE6]">
+                  <div className="flex items-center gap-2">
+                    <FileJson className="w-3.5 h-3.5 text-[#77736C]" />
+                    <span className="font-semibold text-[#252525]">manifest.json</span>
+                  </div>
+                  <span className="text-[11px] text-[#77736C]">
+                    Export metadata &amp; file registry (0 PII)
+                  </span>
+                </div>
               </div>
             </div>
 

@@ -223,6 +223,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
           {/* Export Dropdown Menu */}
           <div className="relative" ref={dropdownRef}>
             <button
+              data-testid="export-dropdown-trigger"
               onClick={() => setExportMenuOpen(!exportMenuOpen)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#B86E52] hover:bg-[#A15D43] transition-colors cursor-pointer shadow-xs"
             >

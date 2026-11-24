@@ -49,6 +49,15 @@ export class AttendeeController {
       }
 
       const result = attendeeService.importAttendeesFromCsv(csvContent, mapping);
+      const limitError = result.errors?.find(e => e.field === 'limit');
+      if (limitError) {
+        return res.status(400).json({
+          success: false,
+          error: limitError.message,
+          result,
+        });
+      }
+
       return res.json({
         success: true,
         result,

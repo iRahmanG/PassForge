@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { bulkService } from '../modules/bulk/bulk.service.js';
 import { bulkGenerateRequestSchema } from '@passforge/shared';
+import { bulkJobLimiter } from '../middleware/rateLimit.middleware.js';
 
 const router = Router();
 
@@ -8,7 +9,7 @@ const router = Router();
  * POST /api/bulk/generate
  * Enqueue bulk ticket generation for selected attendees and formats
  */
-router.post('/generate', async (req: Request, res: Response) => {
+router.post('/generate', bulkJobLimiter, async (req: Request, res: Response) => {
   try {
     const parseResult = bulkGenerateRequestSchema.safeParse(req.body);
     if (!parseResult.success) {
@@ -88,7 +89,7 @@ router.get('/:jobId', (req: Request, res: Response) => {
  * POST /api/bulk/:jobId/retry
  * Retry only failed tasks for a completed/partially failed job
  */
-router.post('/:jobId/retry', async (req: Request, res: Response) => {
+router.post('/:jobId/retry', bulkJobLimiter, async (req: Request, res: Response) => {
   const jobId = String(req.params.jobId);
   try {
     const job = await bulkService.retryJob(jobId);
