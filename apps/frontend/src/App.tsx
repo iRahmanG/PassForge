@@ -212,6 +212,7 @@ export default function App() {
           activeTab={activeTab}
           onSelectTab={setActiveTab}
           onLoadDemo={handleLoadDemo}
+          onOpenPassInspector={(attendee) => handleOpenTicketModal(attendee || attendees[0])}
         />
       ) : (
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -307,6 +308,7 @@ export default function App() {
         attendee={modalAttendee}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        eventName={event?.name || 'KIET TechFest 2027'}
       />
     </div>
   );

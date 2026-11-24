@@ -43,6 +43,7 @@ interface LiveCanvasProps {
   selectedAttendeeId?: string;
   onSelectAttendee: (id: string | undefined) => void;
   onRefresh?: () => void;
+  onOpenInspector?: () => void;
 }
 
 export const LiveCanvas: React.FC<LiveCanvasProps> = ({
@@ -57,6 +58,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
   selectedAttendeeId,
   onSelectAttendee,
   onRefresh,
+  onOpenInspector,
 }) => {
   const [zoom, setZoom] = useState<number>(1.0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -676,6 +678,19 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
+          {onOpenInspector && (
+            <>
+              <button
+                onClick={onOpenInspector}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+                title="Open Pass Inspector (Full Preview)"
+              >
+                <Maximize2 className="w-3 h-3 text-neutral-500" />
+                <span>Pass Inspector</span>
+              </button>
+              <span className="text-[#C5BFB2]">•</span>
+            </>
+          )}
           <a
             href={`/api/download/${activeFormat}?ticketId=${ticketId}`}
             download

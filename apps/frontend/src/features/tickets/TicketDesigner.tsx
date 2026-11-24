@@ -27,6 +27,7 @@ interface TicketDesignerProps {
   activeTab?: ActiveTab;
   onSelectTab?: (tab: ActiveTab) => void;
   onLoadDemo?: () => void;
+  onOpenPassInspector?: (attendee?: AttendeeInfo) => void;
 }
 
 export const TicketDesigner: React.FC<TicketDesignerProps> = ({
@@ -36,6 +37,7 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
   activeTab = 'tickets',
   onSelectTab = () => {},
   onLoadDemo,
+  onOpenPassInspector,
 }) => {
   const {
     designs,
@@ -281,6 +283,11 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
             onSelectAttendee={(id) => setActiveAttendeeId(id)}
             onRefresh={() =>
               refreshPreview(selectedDesignId, branding, activeFormat, activeAttendeeId)
+            }
+            onOpenInspector={() =>
+              onOpenPassInspector?.(
+                attendees.find((a) => a.id === activeAttendeeId) || attendees[0]
+              )
             }
           />
         </main>
