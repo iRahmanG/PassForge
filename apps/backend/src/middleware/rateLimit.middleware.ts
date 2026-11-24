@@ -87,7 +87,8 @@ export const generalApiLimiter = createRateLimiter({
   max: 300,
   message: 'API rate limit exceeded. Please try again in a few moments.',
   skip: (req: Request) => {
-    // Crucial: NEVER rate-limit the 600ms bulk progress polling route or static frontend assets
-    return req.method === 'GET' && req.path.startsWith('/bulk/');
+    // Crucial: Only exempt the 600ms bulk progress polling route (GET /bulk/:jobId).
+    // Never exempt ZIP downloads (/bulk/:jobId/download) or other endpoints.
+    return req.method === 'GET' && /^\/bulk\/[^/]+$/.test(req.path);
   },
 });

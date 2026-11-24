@@ -43,6 +43,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           {/* Call to Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <button
+              data-testid="hero-create-tickets-btn"
               onClick={() => onNavigate('/app')}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-[#B86E52] hover:bg-[#A15D43] shadow-sm hover:shadow-md transition-all cursor-pointer"
             >

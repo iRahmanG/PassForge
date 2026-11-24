@@ -12,6 +12,7 @@
     "dev:backend": "npm --workspace=@passforge/backend run dev",
     "dev:frontend": "npm --workspace=@passforge/frontend run dev",
     "build": "npm --workspace=@passforge/frontend run build",
+    "start": "npm --workspace=@passforge/backend run start",
     "test": "npm --workspace=@passforge/backend test",
     "render": "npm --workspace=@passforge/backend run render"
   },
