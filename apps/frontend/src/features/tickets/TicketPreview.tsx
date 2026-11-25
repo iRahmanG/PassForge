@@ -31,7 +31,7 @@ export const TicketPreview: React.FC<TicketPreviewProps> = ({
   designName,
 }) => {
   const ticket = previewData?.ticket;
-  const ticketId = ticket?.ticketId || 'KTF27-VIP-84920';
+  const ticketId = ticket?.ticketId || 'APX27-VIP-84920';
   const curResult = previewData?.results?.[activeFormat];
 
   return (
@@ -169,7 +169,7 @@ export const TicketPreview: React.FC<TicketPreviewProps> = ({
                   <strong className="text-[#252525]">To:</strong> {ticket?.attendee.email || 'alex.morgan@example.com'}
                 </div>
                 <div className="text-xs font-bold text-[#252525] mt-0.5">
-                  Subject: Your Official Pass: {ticket?.event.name || 'KIET TechFest 2027'}
+                  Subject: Your Official Pass: {ticket?.event.name || 'Apex Global Summit 2027'}
                 </div>
               </div>
 

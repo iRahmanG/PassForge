@@ -1,129 +1,120 @@
-# PassForge — Milestone 3: Ticket Design System & Live Preview
+# PassForge
 
-> Bulk personalized event ticket generation application for the **Hyper Elements Template Challenge**.
-
----
-
-## 🎯 Project Overview
-
-PassForge enables event organizers to configure an event, upload attendee rosters via CSV with flexible column mapping, customize branding, choose between professionally designed ticket templates, and generate personalized tickets in four distinct formats powered by **Hyper Elements**:
-
-1. **Personalized Confirmation Email** (`<Email>`)
-2. **Responsive Digital Web Ticket** (`<Page>`)
-3. **Printable Admission Pass PDF** (`<Document>`)
-4. **Visual Ticket Badge PNG** (`<Canvas>`)
+> High-performance personalized event ticket engine & design studio powered by React and Hyper Elements.
 
 ---
 
-## 🎨 Milestone 3: Ticket Design System & Live Preview
+## 🎯 Overview
 
-### Two Genuinely Distinct Layouts
+**PassForge** is an open event ticketing engine and design studio. It enables event organizers to configure events, import attendee rosters via CSV with intelligent column mapping, customize typography and branding with watermark overlays, live-preview tickets across four distinct rendering formats, and batch-export production-ready ticket packages in a single organized ZIP archive.
 
-PassForge provides two genuinely different ticket architectures that consume the exact same typed `TicketData` model:
+Every ticket is rendered through unified **Hyper Elements** Server-Side Rendering (SSR), producing high-fidelity outputs across:
 
-| Design Feature | Design A: Tech / Hackathon (`tech`) | Design B: Premium Editorial & Gala (`editorial`) |
-|---|---|---|
-| **Aesthetic** | Futuristic dark navy, high-contrast | Warm parchment cream, classical elegance |
-| **Background** | `#0a0e17` dark navy with `#0f172a` cards | `#faf8f5` cream with `#ffffff` parchment cards |
-| **Default Accent** | Electric Cyan (`#06b6d4`) | Amber Terracotta (`#b45309`) |
-| **Typography** | Modern bold sans-serif, uppercase accents | Refined editorial serif (`Georgia, Times, serif`) |
-| **Layout Composition** | Side-by-side terminal card with tech stub | Centered masthead with elegant border dividers |
-| **QR Integration** | Dark-themed matrix container | Parchment check-in credential stub |
+1. **Email HTML** (`<Email>`): Table-based HTML compatible across email clients (Gmail, Outlook, Apple Mail).
+2. **Responsive Web Page** (`<Page>`): Standalone digital admission pass with responsive mobile viewport support.
+3. **Printable Document** (`<Document>`): Vector A4/Letter PDF with crisp typographic hierarchy and scannable QR matrix.
+4. **Graphic Badge** (`<Canvas>`): High-resolution 2x Retina PNG card badge rendered via Cairo/Pango bindings.
 
-### Branding Customization
+---
 
-- **Accent Color Selection:** Palette swatches (Electric Cyan, Indigo, Amber, Emerald, Crimson, Royal Violet, Sunset Flame, Midnight Slate) + custom hex input & native color picker.
-- **Event / Sponsor Logo:** Optional logo upload (PNG, SVG, JPG) with base64 buffer handling passed into Hyper Elements SSR (`Document` and `Canvas`).
-- **Reset to Defaults:** Instant reset button restoring template defaults.
-- **State Persistence:** Saved in-memory via `POST /api/designs/current` and retrievable via `GET /api/designs/current`.
+## ✨ Features
 
-### Live Ticket Preview
-
-- **4-Format Switcher:** Instant switching between Canvas PNG, Responsive Page, Email HTML, and Printable PDF.
-- **Desktop / Mobile Viewport Toggle:** Tests responsive mobile breakpoints (`breakpoints={{ mobile: 560 }}`) for `<Page>`.
-- **Attendee Switcher:** Preview any imported attendee, plus dedicated stress test options for extreme long names and missing seat fallbacks ("Open Seating").
-- **Real-Time Previews:** Server returns rendered HTML, base64 data URLs for retina PNGs, and vector PDF links.
+- **Guided 4-Step Event Creation Workflow:** Seamless step-by-step progress from Event Details → Import Attendees → Design Tickets → Generate & Export.
+- **Multiple Design Systems:**
+  - **Cyber Tech:** High-contrast dark-mode terminal layout designed for developer conferences, hackathons, and tech summits.
+  - **Premium Editorial:** Warm parchment typography and classical border composition designed for galas, keynotes, and ceremonies.
+- **Brand Kit Customization:**
+  - Curated color swatches + custom HEX picker with live accent propagation.
+  - Multi-family typography presets (Modern Sans, Technical Mono, Editorial Serif, Humanist Sans, Classic Serif).
+  - Organizer logo upload with automatic aspect-ratio-preserved centered watermark overlay.
+- **Robust CSV Ingestion:**
+  - Drag-and-drop file upload with raw CSV paste fallback.
+  - Automatic column detection for Name, Email, Ticket Tier, and Seat.
+  - In-browser validation, duplicate email detection, and row-level error reporting.
+- **High-Throughput Batch Generation:**
+  - Asynchronous background worker queue with real-time progress tracking.
+  - Multi-format batch generation with selective tier/attendee filtering.
+  - Unified zero-PII ZIP archive bundling with structured manifest metadata.
+  - Automatic directory retention and orphaned job cleanup.
 
 ---
 
 ## 🏛️ Monorepo Architecture
 
-The project is structured as an **npm-workspaces monorepo**:
+PassForge is structured as an **npm-workspaces monorepo**:
 
 ```
 PassForge/
 ├── apps/
 │   ├── frontend/         # React 19 + TypeScript + Vite Single Page Application
 │   │   ├── src/
-│   │   │   ├── components/layout/   # Header & Footer
+│   │   │   ├── components/layout/   # StepProgressBar, Header, Footer
 │   │   │   ├── components/ui/       # Design system primitives (Button, Card, Badge, Modal, Alert, Input)
 │   │   │   ├── features/event/      # Event configuration form & summary card
-│   │   │   ├── features/attendees/  # CSV drag-and-drop uploader, column mapper, import summary, table
-│   │   │   ├── features/tickets/    # DesignGallery, BrandingControls, PreviewToolbar, TicketPreview, TicketDesigner
+│   │   │   ├── features/attendees/  # CSV drag-and-drop uploader, column mapper, table
+│   │   │   ├── features/tickets/    # DesignGallery, BrandingControls, LiveCanvas, StudioToolbar
 │   │   │   ├── hooks/               # useEvent, useAttendees, useDesignSystem, useTicketRender
-│   │   │   ├── services/api.ts      # REST API client
-│   │   │   ├── App.tsx              # Main application shell
+│   │   │   ├── services/api.ts      # Typed REST API client
+│   │   │   ├── App.tsx              # Guided workflow orchestrator & state manager
 │   │   │   └── main.tsx             # React entrypoint
-│   │   ├── vite.config.ts           # Vite proxy configuration (/api -> http://localhost:3000)
-│   │   └── package.json
+│   │   └── vite.config.ts           # Vite proxy configuration (/api -> http://localhost:3000)
 │   │
 │   └── backend/          # Node.js 24 + Express 5 + Hyper Elements SSR Service
 │       ├── src/
 │       │   ├── config/              # Constants and sample event/attendee data
-│       │   ├── modules/event/       # In-memory event service and controller
+│       │   ├── modules/event/       # In-memory event configuration service
 │       │   ├── modules/attendee/    # Papa Parse ingestion, Zod validator, duplicate email filter
 │       │   ├── modules/ticket/      # TicketData synthesizer with QR code generation
-│       │   ├── modules/design/      # Design service and controller for template/branding state
+│       │   ├── modules/design/      # Design service holding template and branding state
+│       │   ├── modules/bulk/        # High-throughput background generation queue & ZIP archiver
 │       │   ├── templates/designs/   # Design Registry & Templates:
 │       │   │   ├── tech/            # TechEmail, TechPage, TechDocument, TechCanvas
 │       │   │   ├── editorial/       # EditorialEmail, EditorialPage, EditorialDocument, EditorialCanvas
-│       │   │   └── registry.ts      # Central Design Registry mapping IDs to metadata & templates
-│       │   ├── services/rendering/  # Unified SSR service for all 4 output formats & designs
-│       │   ├── routes/              # Express API routers (event, attendee, ticket, design, branding)
+│       │   │   └── registry.ts      # Central Design Registry
+│       │   ├── services/rendering/  # Unified SSR rendering service for all 4 output formats
+│       │   ├── routes/              # Express API routers (event, attendee, ticket, design, bulk)
 │       │   ├── middleware/          # Multer file upload & validation middleware
-│       │   ├── cli/                 # CLI renderer and 28-assertion automated test suite
 │       │   └── server.ts            # Express server (Port 3000)
-│       ├── assets/fonts/            # Local TrueType fonts for offline rendering
-│       ├── output/                  # Generated ticket artifacts
-│       └── package.json
+│       └── assets/fonts/            # Local TrueType fonts for offline rendering
 │
 ├── packages/
 │   └── shared/           # Shared TypeScript domain contracts & Zod validation schemas
 │       ├── src/
-│       │   ├── types/               # EventInfo, AttendeeInfo, TicketData, DesignConfig, BrandingConfig
-│       │   ├── schemas/             # eventSchema, attendeeSchema, designConfigSchema, ticketPreviewRequestSchema
+│       │   ├── types/               # EventInfo, AttendeeInfo, TicketData, DesignConfig, BulkJob
+│       │   ├── schemas/             # eventSchema, attendeeSchema, designConfigSchema, bulkSchema
 │       │   └── index.ts
 │       └── package.json
 │
-├── docs/                 # architecture.md and development.md
+├── docs/                 # System architecture specification
 ├── package.json          # Root workspace configuration
 └── tsconfig.base.json    # Shared TypeScript compiler options
 ```
 
 ---
 
-## 🚀 Running the Project
+## 🚀 Getting Started
 
 ### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### 2. Start Development Servers (Concurrent Frontend + Backend)
+### 2. Start Development Servers
+Runs backend and frontend concurrently:
 ```bash
 npm run dev
 ```
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
+- **Frontend Studio & Landing Page:** [http://localhost:5173](http://localhost:5173)
+- **Backend REST API:** [http://localhost:3000](http://localhost:3000)
 
-Or run each independently:
+Or run each service individually:
 ```bash
-npm run dev:backend   # Backend on port 3000
-npm run dev:frontend  # Frontend on port 5173
+npm run dev:backend   # Express backend on port 3000
+npm run dev:frontend  # Vite frontend on port 5173
 ```
 
-### 3. Run Automated Verification Suite
-Runs the 28-assertion test suite verifying Hyper Elements SSR across Tech and Editorial designs, magic bytes, event persistence, CSV validation, and branding customization:
+### 3. Run Automated Verification Tests
+Executes the comprehensive automated test suite verifying ticket rendering across all 4 formats, Zod schemas, CSV ingestion, background bulk processing, and ZIP archiving:
 ```bash
 npm test
 ```
@@ -135,28 +126,26 @@ npm run build
 
 ---
 
-## 🧪 Automated Verification Results
+## 📦 Output Formats & Verification
 
-All 28 assertions passing:
-- ✅ Design Registry contains both `tech` and `editorial` layouts
-- ✅ Both designs have all 4 Hyper Elements templates registered
-- ✅ Tech Design: Render EMAIL successfully
-- ✅ Tech Design: Render PAGE successfully
-- ✅ Tech Design: Render PDF successfully
-- ✅ Tech Design: Render PNG successfully
-- ✅ Editorial Design: Render EMAIL successfully
-- ✅ Editorial Design: Render PAGE successfully
-- ✅ Editorial Design: Render PDF successfully
-- ✅ Editorial Design: Render PNG successfully
-- ✅ Editorial PDF Magic Bytes validation (`%PDF-`)
-- ✅ Editorial PNG Magic Bytes validation (`\x89PNG`)
-- ✅ Editorial: Consistency of Attendee & Event data across formats
-- ✅ Custom accent color propagates to Email & Web outputs
-- ✅ Editorial handles missing seat number with "Open Seating"
-- ✅ Editorial Long Name: Render EMAIL without breaking
-- ✅ Editorial Long Name: Render PAGE without breaking
-- ✅ Editorial Long Name: Render PDF without breaking
-- ✅ Editorial Long Name: Render PNG without breaking
-- ✅ Import valid CSV with column auto-detection
-- ✅ Validate missing name and invalid email format in CSV
-- ✅ Design configuration update and retrieval in memory
+| Format | Technology | Dimensions / Spec | Use Case |
+|---|---|---|---|
+| **Email HTML** | `@hyper-elements/react` `<Email>` | Inline CSS, responsive tables | Dispatch via SMTP/SendGrid/SES |
+| **Web Ticket** | `@hyper-elements/react` `<Page>` | Responsive viewport (desktop + mobile) | Direct attendee check-in link |
+| **Printable PDF** | `@hyper-elements/react` `<Document>` | Vector A4/Letter (%PDF- header) | Physical badge printing / download |
+| **Retina PNG** | `@hyper-elements/react` `<Canvas>` | Exact-fit 720px card (PNG signature) | Digital wallet / social sharing |
+
+---
+
+## 🔒 Security & Privacy
+
+- **Strict Input Validation:** Every CSV row and API payload is verified against strict Zod domain schemas.
+- **Upload Boundaries:** File uploads are limited to 5MB and 5,000 records to prevent memory exhaustion.
+- **Zero-PII Manifests:** ZIP export archives maintain strict privacy standards by omitting attendee emails and names from machine-readable manifest indices.
+- **No Unnecessary Infrastructure:** Zero mandatory external database or authentication services required for full core functionality.
+
+---
+
+## 📄 License
+
+ISC License.

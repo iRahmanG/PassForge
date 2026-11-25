@@ -34,7 +34,7 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ onNavigate
       isUpcoming: true,
       icon: <Archive className="w-5 h-5 text-[#945B0E]" />,
       description:
-        'Milestone 4: High-throughput background generation queue with organized single-click ZIP archive packaging.',
+        'High-throughput background generation queue with organized single-click ZIP archive packaging.',
     },
   ];
 

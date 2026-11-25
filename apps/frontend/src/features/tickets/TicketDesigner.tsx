@@ -6,7 +6,6 @@ import { BrandingControls } from './BrandingControls.js';
 import { LiveCanvas } from './LiveCanvas.js';
 import { StudioToolbar } from './StudioToolbar.js';
 import { BulkExportModal } from './BulkExportModal.js';
-import { JudgeQuickGuide } from './JudgeQuickGuide.js';
 import { ActiveTab } from '../../types/index.js';
 import {
   AlertTriangle,
@@ -119,7 +118,7 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
 
   const activeDesign = designs.find((d) => d.id === selectedDesignId);
   const designName = activeDesign ? activeDesign.name : 'Cyber Tech';
-  const ticketId = previewData?.ticket?.ticketId || 'KTF27-VIP-84920';
+  const ticketId = previewData?.ticket?.ticketId || 'APX27-VIP-84920';
 
   // Automatically sync preview attendee when roster changes
   useEffect(() => {
@@ -164,8 +163,6 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
         </div>
       )}
 
-      {/* Judge Quick Guide */}
-      <JudgeQuickGuide onLoadDemo={onLoadDemo} attendeeCount={attendees.length} />
 
       {error && (
         <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-[#FDF0F0] border border-[#F5CCCC] text-[#A83232] text-xs flex items-center gap-2.5 shadow-xs">

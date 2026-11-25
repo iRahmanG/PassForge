@@ -10,12 +10,12 @@ interface CsvUploaderProps {
 }
 
 const SAMPLE_CSV = `Full Name,Email Address,Ticket Type,Seat Number
-Aarav Sharma,aarav@kiet.edu,VIP,B-101
-Diya Patel,diya@kiet.edu,General,C-205
-Rohan Verma,rohan@kiet.edu,Speaker,A-012
-Dr. Priya Nair,priya.nair@kiet.edu,VIP,A-105
-Ananya Das,ananya.das@kiet.edu,Student,D-304
-Kunal Singh,kunal@kiet.edu,General,C-206`;
+Aarav Sharma,aarav@example.com,VIP,B-101
+Diya Patel,diya@example.com,General,C-205
+Rohan Verma,rohan@example.com,Speaker,A-012
+Dr. Priya Nair,priya.nair@example.com,VIP,A-105
+Ananya Das,ananya.das@example.com,Student,D-304
+Kunal Singh,kunal@example.com,General,C-206`;
 
 export const CsvUploader: React.FC<CsvUploaderProps> = ({
   onFileLoaded,

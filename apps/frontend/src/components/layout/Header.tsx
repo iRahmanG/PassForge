@@ -16,7 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   onSelectTab,
   onNavigateHome,
-  eventName = 'KIET TechFest 2027',
+  eventName = 'Apex Global Summit 2027',
   attendeeCount = 1,
   serverOnline = true,
   onLoadDemo,
@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Stage 4: Upcoming Generation Step */}
             <div
               className="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-xs text-[#9E9A90] border border-dashed border-[#DDD8CD] shrink-0 opacity-80 cursor-default select-none"
-              title="Bulk ZIP & Background Export — Milestone 4"
+              title="Bulk ZIP & Background Export"
             >
               <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold bg-[#EAE6DC] text-[#9E9A90]">
                 4

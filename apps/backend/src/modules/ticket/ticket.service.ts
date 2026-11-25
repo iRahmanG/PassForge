@@ -10,7 +10,7 @@ export class TicketService {
    */
   async createTicketData(
     attendeeOverrides?: Partial<AttendeeInfo>,
-    ticketId = 'KTF27-VIP-84920'
+    ticketId = 'APX27-VIP-84920'
   ): Promise<TicketData> {
     const currentEvent = eventService.getCurrentEvent();
     const baseAttendee = attendeeService.getAllAttendees()[0] || INITIAL_ATTENDEE;
@@ -63,7 +63,7 @@ export class TicketService {
 
     const prefix = attendee.ticketType.substring(0, 3).toUpperCase();
     const randomSuffix = Math.floor(10000 + Math.random() * 90000);
-    const ticketId = `KTF27-${prefix}-${randomSuffix}`;
+    const ticketId = `APX27-${prefix}-${randomSuffix}`;
 
     return this.createTicketData(attendee, ticketId);
   }

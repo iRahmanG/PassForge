@@ -30,12 +30,12 @@ router.use('/designs', designRoutes);
 // Branding customization endpoints
 router.use('/branding', brandingRoutes);
 
-// Bulk ticket generation & ZIP export endpoints (Milestone 4)
+// Bulk ticket generation & ZIP export endpoints
 router.use('/bulk', bulkRoutes);
 
 // Ticket generation & rendering endpoints
 router.use('/tickets', ticketRoutes);
-// Mount ticket routes directly on /api for backward compatibility with Milestone 1
+// Mount ticket routes directly on /api
 router.use('/', ticketRoutes);
 
 export default router;

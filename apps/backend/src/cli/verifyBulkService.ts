@@ -57,11 +57,11 @@ class MockResponse extends EventEmitter {
   }
 }
 
-export async function runMilestone4Verification(): Promise<{ passed: boolean; results: TestAssertion[] }> {
+export async function runBulkServiceVerification(): Promise<{ passed: boolean; results: TestAssertion[] }> {
   const assertions: TestAssertion[] = [];
 
   console.log('===============================================================');
-  console.log('   PassForge Milestone 4: Bulk Generation & ZIP Export Suite');
+  console.log('   PassForge: Bulk Generation & ZIP Export Suite');
   console.log('===============================================================\n');
 
   // --- Test 1: Schema & Input Validation ---
@@ -555,8 +555,8 @@ export async function runMilestone4Verification(): Promise<{ passed: boolean; re
     details: `Safe error recovery: true, Removed: ${safeErrorResult.removedDirs.length}`,
   });
 
-  // --- Test 12: Day 1 Demo Roster & Multi-Tier Personalization Suite ---
-  console.log('Test 12: Day 1 Demo Roster & Personalization Suite...');
+  // --- Test 12: Demo Event & Multi-Tier Personalization Suite ---
+  console.log('Test 12: Demo Event & Personalization Suite...');
   const demoEvent = eventService.loadDemoEvent();
   const demoRoster = attendeeService.loadDemoRoster();
 
@@ -570,26 +570,26 @@ export async function runMilestone4Verification(): Promise<{ passed: boolean; re
   const allAssignedSeats = demoRoster.every((a) => a.seat && a.seat.length > 0);
 
   assertions.push({
-    name: 'Day 1 Demo Roster: Successfully populates exactly 12 realistic attendees',
+    name: 'Demo Roster: Successfully populates exactly 12 realistic attendees',
     passed: hasTwelveAttendees,
     details: `Attendees count: ${demoRoster.length}`,
   });
 
   assertions.push({
-    name: 'Day 1 Demo Tiers: All four ticket tiers (VIP, Speaker, Student, General) represented',
+    name: 'Demo Tiers: All four ticket tiers (VIP, Speaker, Student, General) represented',
     passed: hasAllFourTiers,
     details: `Tiers: ${Array.from(tiersFound).join(', ')}`,
   });
 
   assertions.push({
-    name: 'Day 1 Personalization: All 12 attendees have unique fictional example.com emails and seats',
+    name: 'Personalization: All 12 attendees have unique fictional example.com emails and seats',
     passed: allUniqueEmails && allAssignedSeats,
     details: `Unique emails: ${uniqueEmails.size}/12, All have seats: ${allAssignedSeats}`,
   });
 
   assertions.push({
-    name: 'Day 1 Demo Event: Realistic flagship event metadata loaded with venue and schedule',
-    passed: demoEvent.name === 'KIET TechFest 2027' && Boolean(demoEvent.venue) && Boolean(demoEvent.date),
+    name: 'Demo Event: Realistic flagship event metadata loaded with venue and schedule',
+    passed: demoEvent.name === 'Apex Global Summit 2027' && Boolean(demoEvent.venue) && Boolean(demoEvent.date),
     details: `Event: "${demoEvent.name}" at "${demoEvent.venue}" on "${demoEvent.date}"`,
   });
 
@@ -618,7 +618,7 @@ export async function runMilestone4Verification(): Promise<{ passed: boolean; re
 
   console.log('\n===============================================================');
   if (allPassed) {
-    console.log(`🎉 ALL ${assertions.length} ASSERTIONS PASSED! Milestone 4 Bulk Service verified.`);
+    console.log(`🎉 ALL ${assertions.length} ASSERTIONS PASSED! Bulk Service verified.`);
   } else {
     console.log(`⚠️ SOME ASSERTIONS FAILED.`);
   }
@@ -628,11 +628,11 @@ export async function runMilestone4Verification(): Promise<{ passed: boolean; re
 }
 
 // Self-executing CLI
-if (process.argv[1]?.endsWith('verifyMilestone4.ts') || process.argv[1]?.endsWith('verifyMilestone4.js')) {
-  runMilestone4Verification()
+if (process.argv[1]?.endsWith('verifyBulkService.ts') || process.argv[1]?.endsWith('verifyBulkService.js')) {
+  runBulkServiceVerification()
     .then(({ passed }) => process.exit(passed ? 0 : 1))
     .catch((err) => {
-      console.error('Fatal error during Milestone 4 verification:', err);
+      console.error('Fatal error during Bulk Service verification:', err);
       process.exit(1);
     });
 }

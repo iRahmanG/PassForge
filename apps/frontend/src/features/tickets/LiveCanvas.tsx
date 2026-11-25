@@ -70,7 +70,7 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
   const emailIframeRef = useRef<HTMLIFrameElement>(null);
 
   const ticket = previewData?.ticket;
-  const ticketId = ticket?.ticketId || 'KTF27-VIP-84920';
+  const ticketId = ticket?.ticketId || 'APX27-VIP-84920';
   const curResult = previewData?.results?.[activeFormat];
 
   const currentAttendee =

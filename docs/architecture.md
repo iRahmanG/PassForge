@@ -1,4 +1,4 @@
-# PassForge Architecture Specification (Milestone 3)
+# PassForge Architecture Specification
 
 PassForge is structured as an **npm-workspaces monorepo** separating presentation, server-side business logic, and shared TypeScript domain contracts.
 

@@ -1,15 +1,15 @@
 import { EventInfo, AttendeeInfo } from '@passforge/shared';
 
 export const INITIAL_EVENT: EventInfo = {
-  id: 'evt-kiet-2027',
-  name: 'KIET TechFest 2027',
+  id: 'evt-apex-2027',
+  name: 'Apex Global Summit 2027',
   date: '15 February 2027',
-  time: '09:00 AM - 06:00 PM IST',
-  venue: 'KIET Group of Institutions',
-  location: 'Delhi-NCR, Ghaziabad, Uttar Pradesh 201206',
-  organizer: 'KIET Technical Team',
+  time: '09:00 AM - 06:00 PM PST',
+  venue: 'Grand Horizon Center',
+  location: 'San Francisco, CA 94103',
+  organizer: 'Apex Technology Directorate',
   tagline: 'Annual Flagship Technology & Innovation Summit',
-  website: 'https://kiet.edu/techfest2027',
+  website: 'https://apexsummit2027.example.com',
   createdAt: new Date().toISOString(),
 };
 
@@ -23,15 +23,15 @@ export const INITIAL_ATTENDEE: AttendeeInfo = {
 };
 
 export const DEMO_EVENT: EventInfo = {
-  id: 'evt-kiet-2027',
-  name: 'KIET TechFest 2027',
+  id: 'evt-apex-2027',
+  name: 'Apex Global Summit 2027',
   date: '15 February 2027',
-  time: '09:00 AM - 06:00 PM IST',
-  venue: 'KIET Group of Institutions',
-  location: 'Delhi-NCR, Ghaziabad, Uttar Pradesh 201206',
-  organizer: 'KIET Technical Directorate',
+  time: '09:00 AM - 06:00 PM PST',
+  venue: 'Grand Horizon Center',
+  location: 'San Francisco, CA 94103',
+  organizer: 'Apex Technology Directorate',
   tagline: 'Annual Flagship Technology & Innovation Summit',
-  website: 'https://kiet.edu/techfest2027',
+  website: 'https://apexsummit2027.example.com',
   createdAt: new Date().toISOString(),
 };
 

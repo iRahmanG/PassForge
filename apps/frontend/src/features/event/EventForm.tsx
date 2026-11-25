@@ -79,7 +79,7 @@ export const EventForm: React.FC<EventFormProps> = ({ initialEvent, onSave }) =>
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 required
-                placeholder="e.g. KIET TechFest 2027"
+                placeholder="e.g. Apex Global Summit 2027"
                 helperText="Primary heading displayed on all tickets and email subjects"
               />
             </div>
@@ -142,7 +142,7 @@ export const EventForm: React.FC<EventFormProps> = ({ initialEvent, onSave }) =>
               value={formData.venue}
               onChange={(e) => handleChange('venue', e.target.value)}
               required
-              placeholder="e.g. KIET Group of Institutions"
+              placeholder="e.g. Grand Horizon Center"
               icon={<Building className="w-4 h-4" />}
             />
 
@@ -151,7 +151,7 @@ export const EventForm: React.FC<EventFormProps> = ({ initialEvent, onSave }) =>
               value={formData.location}
               onChange={(e) => handleChange('location', e.target.value)}
               required
-              placeholder="e.g. Delhi-NCR, Ghaziabad, UP 201206"
+              placeholder="e.g. San Francisco, CA 94103"
               icon={<MapPin className="w-4 h-4" />}
             />
           </div>
@@ -172,7 +172,7 @@ export const EventForm: React.FC<EventFormProps> = ({ initialEvent, onSave }) =>
               value={formData.organizer}
               onChange={(e) => handleChange('organizer', e.target.value)}
               required
-              placeholder="e.g. KIET Technical Team"
+              placeholder="e.g. Apex Technology Directorate"
               icon={<Building className="w-4 h-4" />}
             />
 
@@ -180,7 +180,7 @@ export const EventForm: React.FC<EventFormProps> = ({ initialEvent, onSave }) =>
               label="Official Website URL"
               value={formData.website}
               onChange={(e) => handleChange('website', e.target.value)}
-              placeholder="e.g. https://techfest.kiet.edu"
+              placeholder="e.g. https://apexsummit2027.example.com"
               icon={<Globe className="w-4 h-4" />}
             />
           </div>

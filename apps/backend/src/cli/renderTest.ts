@@ -4,9 +4,9 @@ import { OUTPUT_DIR } from '../config/constants.js';
 import fs from 'node:fs';
 
 async function main() {
-  console.log('=== PassForge: Milestone 2 Backend Rendering Test ===\n');
+  console.log('=== PassForge Ticket Rendering Test ===\n');
 
-  console.log('1. Generating sample ticket data for KIET TechFest 2027...');
+  console.log('1. Generating sample ticket data for Apex Global Summit 2027...');
   const ticket = await ticketService.createTicketData();
   console.log(`   Attendee: ${ticket.attendee.name} (${ticket.attendee.email})`);
   console.log(`   Event:    ${ticket.event.name}`);

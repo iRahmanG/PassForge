@@ -512,7 +512,7 @@ export default function App() {
         <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <TicketDesigner
             attendees={attendees}
-            eventName={event?.name || 'KIET TechFest 2027'}
+            eventName={event?.name || 'Apex Global Summit 2027'}
             onNavigateHome={() => navigate('/')}
             onSelectTab={(tab) => {
               if (tab === 'event') setCurrentStep(1);
@@ -567,7 +567,7 @@ export default function App() {
             onClose={() => setCurrentStep(3)}
             onBackToDesign={() => setCurrentStep(3)}
             attendees={attendees}
-            eventName={event?.name || 'KIET TechFest 2027'}
+            eventName={event?.name || 'Apex Global Summit 2027'}
             designName="Selected Template"
             onLoadDemo={handleLoadDemoAndGoToDesign}
           />
@@ -582,7 +582,7 @@ export default function App() {
         attendee={modalAttendee}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        eventName={event?.name || 'KIET TechFest 2027'}
+        eventName={event?.name || 'Apex Global Summit 2027'}
       />
     </div>
   );

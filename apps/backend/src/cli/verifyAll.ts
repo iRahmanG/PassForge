@@ -19,7 +19,7 @@ export async function runFullVerification(): Promise<{ passed: boolean; results:
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
   console.log('===============================================================');
-  console.log('   PassForge Milestone 3: Automated Verification Suite');
+  console.log('   PassForge: Core Automated Verification Suite');
   console.log('===============================================================\n');
 
   // --- Test 1: Design Registry Verification ---
@@ -125,12 +125,12 @@ export async function runFullVerification(): Promise<{ passed: boolean; results:
 
   const requiredFields = [
     'Alex Morgan',
-    'KIET TechFest 2027',
+    'Apex Global Summit 2027',
     'VIP',
     'A-104',
     '15 February 2027',
-    'KIET Group of Institutions',
-    'KTF27-VIP-84920',
+    'Grand Horizon Center',
+    'APX27-VIP-84920',
   ];
 
   for (const field of requiredFields) {
@@ -171,7 +171,7 @@ export async function runFullVerification(): Promise<{ passed: boolean; results:
     ticketType: 'General',
     seat: undefined,
   };
-  const unseatedTicket = await ticketService.createTicketData(unseatedAttendee, 'KTF27-GEN-10293');
+  const unseatedTicket = await ticketService.createTicketData(unseatedAttendee, 'APX27-GEN-10293');
   const unseatedEditPage = await ticketRenderer.renderPage(unseatedTicket, { designId: 'editorial' });
   assertions.push({
     name: 'Editorial handles missing seat number with "Open Seating"',
@@ -188,7 +188,7 @@ export async function runFullVerification(): Promise<{ passed: boolean; results:
       ticketType: 'HONORARY FELLOW',
       seat: 'ZONE-ALPHA-ROW-01-SEAT-001',
     },
-    'KTF27-HON-LONGNAME'
+    'APX27-HON-LONGNAME'
   );
 
   const longEditorialResults = await ticketRenderer.renderAll(longNameTicket, editorialOutputDir, {
@@ -204,12 +204,12 @@ export async function runFullVerification(): Promise<{ passed: boolean; results:
     });
   }
 
-  // --- Test 9: Event & CSV Import Tests from Milestone 2 ---
+  // --- Test 9: Event & CSV Import Pipeline Tests ---
   console.log('\nTest 9: CSV Attendee Import Pipeline Validation...');
   const validCsv = `Full Name,Email Address,Ticket Type,Seat Number
-Aarav Sharma,aarav@kiet.edu,VIP,B-101
-Diya Patel,diya@kiet.edu,General,C-205
-Rohan Verma,rohan@kiet.edu,Speaker,A-012`;
+Aarav Sharma,aarav@example.com,VIP,B-101
+Diya Patel,diya@example.com,General,C-205
+Rohan Verma,rohan@example.com,Speaker,A-012`;
 
   const validImport = attendeeService.importAttendeesFromCsv(validCsv);
   assertions.push({
@@ -265,7 +265,7 @@ Valid User,valid@example.com,Student,B-03`;
 
   console.log('\n===============================================================');
   if (allPassed) {
-    console.log(`🎉 ALL ${assertions.length} ASSERTIONS PASSED! Milestone 3 Design System verified.`);
+    console.log(`🎉 ALL ${assertions.length} ASSERTIONS PASSED! Core Verification Suite verified.`);
   } else {
     console.log('⚠️ SOME ASSERTIONS FAILED. Inspect logs above.');
   }
@@ -274,13 +274,13 @@ Valid User,valid@example.com,Student,B-03`;
   return { passed: allPassed, results: assertions };
 }
 
-import { runMilestone4Verification } from './verifyMilestone4.js';
+import { runBulkServiceVerification } from './verifyBulkService.js';
 
 if (process.argv[1] && process.argv[1].endsWith('verifyAll.ts')) {
   runFullVerification()
     .then(async res3 => {
       if (!res3.passed) process.exit(1);
-      const res4 = await runMilestone4Verification();
+      const res4 = await runBulkServiceVerification();
       if (!res4.passed) process.exit(1);
     })
     .catch(err => {

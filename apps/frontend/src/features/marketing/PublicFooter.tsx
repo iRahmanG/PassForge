@@ -105,7 +105,7 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({ onNavigate }) => {
 
           <div className="flex items-center gap-4">
             <a
-              href="https://github.com/iRahmanG/PassForge"
+              href="https://github.com/passforge/passforge"
               target="_blank"
               rel="noreferrer"
               className="text-neutral-500 hover:text-neutral-900 transition-colors inline-flex items-center gap-1.5"

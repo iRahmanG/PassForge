@@ -31,7 +31,7 @@ export const TicketPreviewModal: React.FC<TicketPreviewModalProps> = ({
   attendee,
   isOpen,
   onClose,
-  eventName = 'KIET TechFest 2027',
+  eventName = 'Apex Global Summit 2027',
 }) => {
   const [activeFormat, setActiveFormat] = useState<OutputFormat>('png');
   const [loading, setLoading] = useState(false);
@@ -112,7 +112,7 @@ export const TicketPreviewModal: React.FC<TicketPreviewModalProps> = ({
 
   if (!isOpen || !attendee) return null;
 
-  const ticketId = ticketData?.ticketId || 'KTF27-VIP-84920';
+  const ticketId = ticketData?.ticketId || 'APX27-VIP-84920';
   const curResult = results[activeFormat];
 
   const formatTabs: { id: OutputFormat; label: string; icon: React.ReactNode }[] = [

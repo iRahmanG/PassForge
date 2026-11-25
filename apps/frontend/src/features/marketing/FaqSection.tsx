@@ -27,7 +27,7 @@ export const FaqSection: React.FC = () => {
     },
     {
       q: 'When will bulk ZIP batch generation be available?',
-      a: 'Batch generation and unified ZIP exports are scheduled for Milestone 4. The core rendering engine, Zod validation pipelines, and column mapping systems are fully complete and verified.',
+      a: 'PassForge supports high-throughput batch generation and unified ZIP exports with real-time queue progress monitoring, format selection, and one-click archive downloading.',
     },
   ];
 

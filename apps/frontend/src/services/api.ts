@@ -150,7 +150,7 @@ export async function testLongName(): Promise<{ success: boolean; results: any; 
 }
 
 // ==========================================
-// Milestone 3: Design & Branding API Methods
+// Design & Branding API Methods
 // ==========================================
 
 export async function fetchDesigns(): Promise<DesignMetadata[]> {

@@ -31,7 +31,7 @@ interface StudioToolbarProps {
 }
 
 export const StudioToolbar: React.FC<StudioToolbarProps> = ({
-  eventName = 'KIET TechFest 2027',
+  eventName = 'Apex Global Summit 2027',
   attendeeCount = 1,
   serverOnline = true,
   activeTab,
@@ -41,7 +41,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
   saving = false,
   saveSuccess = false,
   onSaveConfig,
-  ticketId = 'KTF27-VIP-84920',
+  ticketId = 'APX27-VIP-84920',
   onOpenBulkExport,
   onLoadDemo,
   onProceedToExport,

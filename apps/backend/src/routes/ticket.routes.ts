@@ -300,7 +300,7 @@ router.post('/generate/:format', async (req: Request, res: Response) => {
 // GET /api/preview/:format
 router.get('/preview/:format', async (req: Request, res: Response) => {
   const format = req.params.format;
-  const ticketId = (req.query.ticketId as string) || 'KTF27-VIP-84920';
+  const ticketId = (req.query.ticketId as string) || 'APX27-VIP-84920';
 
   const fileMap: Record<string, { file: string; type: string }> = {
     email: { file: `ticket-${ticketId}-email.html`, type: 'text/html; charset=utf-8' },
@@ -316,7 +316,7 @@ router.get('/preview/:format', async (req: Request, res: Response) => {
 
   // Fallback to default sample output if specific ticketId not rendered yet
   if (!fs.existsSync(filePath)) {
-    const defaultFile = info.file.replace(ticketId, 'KTF27-VIP-84920');
+    const defaultFile = info.file.replace(ticketId, 'APX27-VIP-84920');
     filePath = path.join(OUTPUT_DIR, defaultFile);
   }
 
@@ -331,7 +331,7 @@ router.get('/preview/:format', async (req: Request, res: Response) => {
 // GET /api/download/:format
 router.get('/download/:format', async (req: Request, res: Response) => {
   const format = req.params.format;
-  const ticketId = (req.query.ticketId as string) || 'KTF27-VIP-84920';
+  const ticketId = (req.query.ticketId as string) || 'APX27-VIP-84920';
 
   const fileMap: Record<string, string> = {
     email: `ticket-${ticketId}-email.html`,
@@ -345,7 +345,7 @@ router.get('/download/:format', async (req: Request, res: Response) => {
 
   let filePath = path.join(OUTPUT_DIR, fileName);
   if (!fs.existsSync(filePath)) {
-    const defaultFile = fileName.replace(ticketId, 'KTF27-VIP-84920');
+    const defaultFile = fileName.replace(ticketId, 'APX27-VIP-84920');
     filePath = path.join(OUTPUT_DIR, defaultFile);
   }
 
@@ -366,7 +366,7 @@ router.post('/test-long-name', async (_req: Request, res: Response) => {
         ticketType: 'VIP DELEGATE',
         seat: 'SECTION-A-ROW-02-SEAT-104',
       },
-      'KTF27-VIP-LONGNAME'
+      'APX27-VIP-LONGNAME'
     );
     const results = await ticketRenderer.renderAll(longTicket, OUTPUT_DIR);
     return res.json({ success: true, results, ticket: longTicket });
