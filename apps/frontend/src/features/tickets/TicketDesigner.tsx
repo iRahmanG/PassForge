@@ -30,6 +30,8 @@ interface TicketDesignerProps {
   onSelectTab?: (tab: ActiveTab) => void;
   onLoadDemo?: () => void;
   onOpenPassInspector?: (attendee?: AttendeeInfo) => void;
+  onProceedToExport?: () => void;
+  isDemoLoaded?: boolean;
 }
 
 export const TicketDesigner: React.FC<TicketDesignerProps> = ({
@@ -40,6 +42,8 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
   onSelectTab = () => {},
   onLoadDemo,
   onOpenPassInspector,
+  onProceedToExport,
+  isDemoLoaded = false,
 }) => {
   const {
     designs,
@@ -142,7 +146,21 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
         ticketId={ticketId}
         onOpenBulkExport={() => setBulkModalOpen(true)}
         onLoadDemo={onLoadDemo}
+        onProceedToExport={onProceedToExport}
       />
+
+      {/* Demo Data Loaded Success Banner */}
+      {isDemoLoaded && (
+        <div className="mx-3 sm:mx-6 mt-2.5 px-4 py-2 rounded-xl bg-[#F4F9F5] border border-[#C6E2CD] text-[#2E683E] text-xs flex items-center gap-2 shadow-2xs">
+          <Sparkles className="w-4 h-4 text-[#2E683E] shrink-0" />
+          <span className="font-bold">
+            Demo Event &amp; 12 Attendees Active
+          </span>
+          <span className="hidden sm:inline text-[#3F634A]">
+            — Setup steps 1 &amp; 2 completed. Customize templates and branding below, then use "Proceed to Export" above when ready.
+          </span>
+        </div>
+      )}
 
       {/* Judge Quick Guide */}
       <JudgeQuickGuide onLoadDemo={onLoadDemo} attendeeCount={attendees.length} />

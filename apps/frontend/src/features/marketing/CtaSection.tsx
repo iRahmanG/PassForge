@@ -19,7 +19,7 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onNavigate }) => {
 
         <div className="pt-2">
           <button
-            onClick={() => onNavigate('/app')}
+            onClick={() => onNavigate('/app?action=create')}
             className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white bg-neutral-900 hover:bg-neutral-800 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-amber-400" />

@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   Folder,
   FileJson,
+  ArrowLeft,
 } from 'lucide-react';
 
 interface BulkExportModalProps {
@@ -37,6 +38,8 @@ interface BulkExportModalProps {
   designName: string;
   designId?: TicketDesignId;
   onLoadDemo?: () => void;
+  embedded?: boolean;
+  onBackToDesign?: () => void;
 }
 
 type Step = 'config' | 'progress' | 'results';
@@ -49,6 +52,8 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
   designName,
   designId,
   onLoadDemo,
+  embedded = false,
+  onBackToDesign,
 }) => {
   // Step state
   const [step, setStep] = useState<Step>('config');
@@ -118,7 +123,7 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
     }
   }, [step, jobId]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !embedded) return null;
 
   // Format toggling
   const toggleFormat = (format: OutputFormat) => {
@@ -279,45 +284,57 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
     },
   ];
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
-      {/* Backdrop */}
-      <div
-        onClick={step === 'progress' ? undefined : onClose}
-        className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
-      />
-
-      {/* Modal Dialog Container */}
-      <div
-        data-testid="bulk-export-modal"
-        className="relative w-full max-w-2xl bg-white rounded-2xl border border-[#DDD8CD] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden z-10 animate-fade-in"
-      >
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-[#E9E5DC] bg-[#FAF8F5] flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#FBF2EE] border border-[#F0D5C9] flex items-center justify-center text-[#B86E52] shrink-0">
-              <Archive className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm sm:text-base font-bold text-[#252525]">
-                Bulk Ticket Generation &amp; ZIP Export
-              </h3>
-              <p className="text-xs text-[#77736C]">
-                {eventName} • Design: <span className="font-semibold text-[#252525]">{designName}</span>
-              </p>
-            </div>
+  const content = (
+    <div
+      data-testid="bulk-export-modal"
+      className={
+        embedded
+          ? 'w-full max-w-4xl mx-auto bg-white rounded-2xl border border-[#DDD8CD] shadow-sm flex flex-col overflow-hidden animate-fade-in'
+          : 'relative w-full max-w-2xl bg-white rounded-2xl border border-[#DDD8CD] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden z-10 animate-fade-in'
+      }
+    >
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-[#E9E5DC] bg-[#FAF8F5] flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-[#FBF2EE] border border-[#F0D5C9] flex items-center justify-center text-[#B86E52] shrink-0">
+            <Archive className="w-5 h-5" />
           </div>
-
-          <button
-            onClick={onClose}
-            data-testid="bulk-modal-close-btn"
-            disabled={step === 'progress'}
-            className="p-1.5 rounded-lg text-[#77736C] hover:text-[#252525] hover:bg-white border border-[#E9E5DC] transition-colors cursor-pointer disabled:opacity-40"
-            title="Close modal"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div>
+            <h3 className="text-sm sm:text-base font-bold text-[#252525]">
+              Bulk Ticket Generation &amp; ZIP Export
+            </h3>
+            <p className="text-xs text-[#77736C]">
+              {eventName} • Design: <span className="font-semibold text-[#252525]">{designName}</span>
+            </p>
+          </div>
         </div>
+
+        <div className="flex items-center gap-2">
+          {embedded && onBackToDesign && (
+            <button
+              onClick={onBackToDesign}
+              data-testid="bulk-export-back-to-design-btn"
+              disabled={step === 'progress'}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#5F5B54] bg-white hover:bg-[#FAF8F5] border border-[#DDD8CD] transition-colors cursor-pointer disabled:opacity-40"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Design</span>
+            </button>
+          )}
+
+          {!embedded && (
+            <button
+              onClick={onClose}
+              data-testid="bulk-modal-close-btn"
+              disabled={step === 'progress'}
+              className="p-1.5 rounded-lg text-[#77736C] hover:text-[#252525] hover:bg-white border border-[#E9E5DC] transition-colors cursor-pointer disabled:opacity-40"
+              title="Close modal"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
 
         {/* Error Alert Banner */}
         {errorMessage && (
@@ -562,15 +579,27 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
                 </p>
               </div>
 
-              <button
-                onClick={handleStartGeneration}
-                data-testid="start-bulk-generate-btn"
-                disabled={submitting || totalExpectedOutputs === 0}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#B86E52] hover:bg-[#A15D43] transition-all cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>{submitting ? 'Initiating...' : `Generate ${totalExpectedOutputs} Tickets`}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {embedded && onBackToDesign && (
+                  <button
+                    type="button"
+                    onClick={onBackToDesign}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-[#5F5B54] bg-[#FAF8F5] hover:bg-white border border-[#DDD8CD] transition-all cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Back to Design</span>
+                  </button>
+                )}
+                <button
+                  onClick={handleStartGeneration}
+                  data-testid="start-bulk-generate-btn"
+                  disabled={submitting || totalExpectedOutputs === 0}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#B86E52] hover:bg-[#A15D43] transition-all cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>{submitting ? 'Initiating...' : `Generate ${totalExpectedOutputs} Tickets`}</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -899,18 +928,42 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
                 >
                   ← Configure New Export
                 </button>
-                <button
-                  onClick={onClose}
-                  data-testid="close-modal-done-btn"
-                  className="px-4 py-2 text-xs font-semibold text-[#504D47] hover:text-[#252525] bg-[#FAF8F5] hover:bg-white rounded-lg border border-[#E9E5DC] cursor-pointer"
-                >
-                  Close
-                </button>
+                {embedded && onBackToDesign ? (
+                  <button
+                    onClick={onBackToDesign}
+                    data-testid="close-modal-done-btn"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#504D47] hover:text-[#252525] bg-[#FAF8F5] hover:bg-white rounded-lg border border-[#E9E5DC] cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Return to Design Studio</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={onClose}
+                    data-testid="close-modal-done-btn"
+                    className="px-4 py-2 text-xs font-semibold text-[#504D47] hover:text-[#252525] bg-[#FAF8F5] hover:bg-white rounded-lg border border-[#E9E5DC] cursor-pointer"
+                  >
+                    Close
+                  </button>
+                )}
               </div>
             </div>
           </div>
         )}
       </div>
+  );
+
+  if (embedded) {
+    return <div className="w-full pb-8">{content}</div>;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
+      <div
+        onClick={step === 'progress' ? undefined : onClose}
+        className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
+      />
+      {content}
     </div>
   );
 };

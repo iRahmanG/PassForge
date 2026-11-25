@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Ticket,
   ArrowLeft,
+  ArrowRight,
   Calendar,
   Users,
   Download,
@@ -32,6 +33,7 @@ interface StudioToolbarProps {
   ticketId?: string;
   onOpenBulkExport?: () => void;
   onLoadDemo?: () => void;
+  onProceedToExport?: () => void;
 }
 
 export const StudioToolbar: React.FC<StudioToolbarProps> = ({
@@ -48,6 +50,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
   ticketId = 'KTF27-VIP-84920',
   onOpenBulkExport,
   onLoadDemo,
+  onProceedToExport,
 }) => {
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -208,20 +211,23 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
           )}
         </div>
 
-        {/* Right Section: Attendee Count & Export Action */}
+        {/* Right Section: Export Action */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <button
-            onClick={() => onSelectTab('attendees')}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#E9E5DC] bg-[#FAF8F5] hover:bg-white text-xs text-[#5F5B54] transition-colors cursor-pointer"
-            title="View attendee roster"
-          >
-            <Users className="w-3.5 h-3.5 text-[#77866F]" />
-            <span className="font-semibold text-[#252525]">{attendeeCount}</span>
-            <span className="hidden sm:inline text-[#77736C]">Attendees</span>
-          </button>
-
-          {/* Export Dropdown Menu */}
-          <div className="relative" ref={dropdownRef}>
+          {onProceedToExport ? (
+            <button
+              type="button"
+              data-testid="toolbar-proceed-to-export-btn"
+              onClick={onProceedToExport}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#B86E52] hover:bg-[#A15D43] transition-all cursor-pointer shadow-xs hover:shadow-sm"
+              title="Proceed to Step 4: Generate & Export"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Proceed to Export</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            /* Standalone Export Dropdown Menu (when not in guided workflow) */
+            <div className="relative" ref={dropdownRef}>
             <button
               data-testid="export-dropdown-trigger"
               onClick={() => setExportMenuOpen(!exportMenuOpen)}
@@ -295,6 +301,7 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
               </div>
             )}
           </div>
+          )}
         </div>
       </div>
     </header>

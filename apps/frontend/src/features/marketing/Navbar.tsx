@@ -70,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePath = '/' }) 
           <div className="hidden md:flex items-center gap-3">
             <button
               data-testid="navbar-open-studio-btn"
-              onClick={() => onNavigate('/app')}
+              onClick={() => onNavigate('/app?action=resume')}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#B86E52] hover:bg-[#A15D43] shadow-xs hover:shadow-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#B86E52]"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#FBF2EE]" />
