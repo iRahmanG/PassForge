@@ -17,18 +17,18 @@ Every ticket is rendered through unified **Hyper Elements** (`@hyper-elements/re
 Instead of writing and maintaining four completely separate template stacks (an MJML/HTML email template, a web page, a PDF generation script, and a canvas image script), PassForge leverages **Hyper Elements** to write declarative React templates once. Each ticket layout (such as *Cyber Tech* or *Premium Editorial*) defines four dedicated root components consuming the same typed ticket data:
 
 ```mermaid
-flowchart LR
-    Data["Typed TicketData<br/>(Attendee + Event + Brand Kit)"]
+flowchart TD
+    Data["TicketData Model\n(Attendee + Event + Brand Kit)"]
 
-    Data --> EmailTpl["&lt;Email&gt;<br/>TechEmail / EditorialEmail"]
-    Data --> PageTpl["&lt;Page&gt;<br/>TechPage / EditorialPage"]
-    Data --> DocTpl["&lt;Document&gt;<br/>TechDocument / EditorialDocument"]
-    Data --> CanvasTpl["&lt;Canvas&gt;<br/>TechCanvas / EditorialCanvas"]
+    Data --> EmailTpl["Email Root\nTechEmail / EditorialEmail"]
+    Data --> PageTpl["Page Root\nTechPage / EditorialPage"]
+    Data --> DocTpl["Document Root\nTechDocument / EditorialDocument"]
+    Data --> CanvasTpl["Canvas Root\nTechCanvas / EditorialCanvas"]
 
-    EmailTpl -->|render()| OutEmail["📧 Email HTML<br/>(Table-based & inline CSS)"]
-    PageTpl -->|render()| OutPage["🌐 Web Ticket<br/>(Responsive mobile-ready HTML)"]
-    DocTpl -->|renderPdf()| OutPdf["📄 Printable PDF<br/>(Vector A4 document with QR)"]
-    CanvasTpl -->|renderImage()| OutPng["🖼️ Badge PNG<br/>(2x Retina card graphic)"]
+    EmailTpl --> OutEmail["Email HTML\n(Client-safe tables & inline CSS)"]
+    PageTpl --> OutPage["Web Ticket\n(Responsive mobile-ready HTML)"]
+    DocTpl --> OutPdf["Printable PDF\n(Vector A4 document with QR)"]
+    CanvasTpl --> OutPng["Badge PNG\n(2x Retina card graphic)"]
 ```
 
 ### The 4 Specialized Roots in PassForge
