@@ -51,8 +51,10 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
     selectDesign,
     branding,
     setAccentColor,
+    setFontFamily,
     handleLogoUpload,
     clearLogo,
+    setWatermark,
     resetBrandingDefaults,
     isDirty,
     saving,
@@ -367,8 +369,10 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
               branding={branding}
               defaultAccentColor={activeDesign?.defaultAccentColor || '#B86E52'}
               onColorChange={setAccentColor}
+              onFontFamilyChange={setFontFamily}
               onLogoUpload={handleLogoUpload}
               onClearLogo={clearLogo}
+              onWatermarkChange={setWatermark}
               onReset={resetBrandingDefaults}
               onCollapse={toggleRight}
               activeDesignId={selectedDesignId}
@@ -495,8 +499,10 @@ export const TicketDesigner: React.FC<TicketDesignerProps> = ({
                   branding={branding}
                   defaultAccentColor={activeDesign?.defaultAccentColor || '#B86E52'}
                   onColorChange={setAccentColor}
+                  onFontFamilyChange={setFontFamily}
                   onLogoUpload={handleLogoUpload}
                   onClearLogo={clearLogo}
+                  onWatermarkChange={setWatermark}
                   onReset={resetBrandingDefaults}
                   activeDesignId={selectedDesignId}
                   attendeeName={previewData?.ticket?.attendee?.name}

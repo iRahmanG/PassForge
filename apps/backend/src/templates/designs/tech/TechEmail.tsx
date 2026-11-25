@@ -11,6 +11,7 @@ import {
 } from '@hyper-elements/react';
 import { TicketData, BrandingConfig } from '@passforge/shared';
 import { passforgeTheme } from '../../theme.js';
+import { renderWithWatermark } from '../../utils/watermark.js';
 
 interface TechEmailProps {
   ticket: TicketData;
@@ -21,6 +22,7 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
   const { event, attendee, ticketId, qrCodeDataUrl, ticketUrl } = ticket;
   const accent = branding?.accentColor || '#06b6d4';
   const logoUrl = branding?.logoUrl;
+  const watermarkUrl = branding?.watermarkUrl;
 
   const getTierBadge = (tier?: string) => {
     const t = (tier || 'general').toLowerCase();
@@ -39,7 +41,7 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
       width={600}
       style={{
         backgroundColor: '#0a0e17',
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: branding?.fontFamily || 'Arial, Helvetica, sans-serif',
       }}
     >
       {/* Top Header */}
@@ -54,7 +56,7 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
           <Image
             src={{ src: logoUrl, width: 240, height: 60 }}
             alt="Event Logo"
-            style={{ width: 140, height: 'auto', borderRadius: 4 }}
+            style={{ width: 140, height: 36, borderRadius: 4 }}
           />
         ) : (
           <Text
@@ -80,12 +82,16 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
           backgroundColor: '#111827',
           border: '1px solid #1f2937',
           borderRadius: 16,
-          padding: 32,
-          gap: 20,
+          overflow: 'hidden',
         }}
       >
-        {/* Event Header with Accent Bar */}
-        <Column style={{ gap: 8 }}>
+        {renderWithWatermark(
+          watermarkUrl,
+          600,
+          440,
+          <Column style={{ width: '100%', padding: 32, gap: 20 }}>
+            {/* Event Header with Accent Bar */}
+            <Column style={{ gap: 8 }}>
           <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Text
               style={{
@@ -244,6 +250,9 @@ export function TechEmail({ ticket, branding }: TechEmailProps) {
             Access Digital Pass Portal
           </Button>
         </Column>
+          </Column>,
+          true
+        )}
       </Column>
 
       {/* Footer Notice */}

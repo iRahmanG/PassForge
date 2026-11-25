@@ -1,20 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Ticket,
-  ArrowLeft,
-  ArrowRight,
   Calendar,
-  Users,
   Download,
   Check,
-  Sparkles,
   ChevronDown,
   FileText,
   Image as ImageIcon,
   Globe,
   Mail,
-  Sliders,
-  UploadCloud,
+  ArrowRight,
 } from 'lucide-react';
 import { ActiveTab } from '../../types/index.js';
 import { OutputFormat } from '@passforge/shared';
@@ -94,117 +88,41 @@ export const StudioToolbar: React.FC<StudioToolbarProps> = ({
   ];
 
   return (
-    <header className="bg-white border-b border-[#E9E5DC] sticky top-0 z-30 shadow-xs">
-      <div className="w-full px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-        {/* Left Section: Logo, Home Return & Workspace Navigation */}
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            onClick={onNavigateHome}
-            className="flex items-center gap-2 text-left cursor-pointer group"
-            title="Return to Public Website"
-          >
-            <div className="h-8 w-8 rounded-lg bg-[#B86E52] text-white flex items-center justify-center shadow-xs group-hover:bg-[#A15D43] transition-colors shrink-0">
-              <Ticket className="w-4 h-4" />
-            </div>
-            <div className="hidden sm:block">
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-sm tracking-tight text-[#252525]">
-                  PassForge
-                </span>
-                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-[#FBF2EE] text-[#B86E52] border border-[#F0D5C9] uppercase">
-                  Studio
-                </span>
-              </div>
-            </div>
-          </button>
-
-          <div className="h-4 w-px bg-[#E9E5DC] hidden sm:block" />
-
-          {/* Quick Workspace Switcher */}
-          <div className="flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-lg border border-[#E9E5DC]">
-            <button
-              data-testid="toolbar-tab-tickets"
-              onClick={() => onSelectTab('tickets')}
-              className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'tickets'
-                  ? 'bg-white text-[#B86E52] shadow-xs'
-                  : 'text-[#77736C] hover:text-[#252525]'
-              }`}
-            >
-              <Sliders className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Design Studio</span>
-            </button>
-            <button
-              data-testid="toolbar-tab-event"
-              onClick={() => onSelectTab('event')}
-              className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'event'
-                  ? 'bg-white text-[#B86E52] shadow-xs'
-                  : 'text-[#77736C] hover:text-[#252525]'
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Event</span>
-            </button>
-            <button
-              data-testid="toolbar-tab-import"
-              onClick={() => onSelectTab('import')}
-              className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'import'
-                  ? 'bg-white text-[#B86E52] shadow-xs'
-                  : 'text-[#77736C] hover:text-[#252525]'
-              }`}
-            >
-              <UploadCloud className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Import</span>
-            </button>
-            <button
-              onClick={() => onSelectTab('attendees')}
-              className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'attendees'
-                  ? 'bg-white text-[#B86E52] shadow-xs'
-                  : 'text-[#77736C] hover:text-[#252525]'
-              }`}
-            >
-              <Users className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Roster</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Center Section: Event Title & Session Save Status */}
-        <div className="hidden lg:flex items-center gap-2.5 text-xs">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#E9E5DC]">
+    <header className="bg-white border-b border-[#E9E5DC] sticky top-0 z-30 shadow-2xs">
+      <div className="w-full px-4 sm:px-6 h-12 flex items-center justify-between gap-4">
+        {/* Left Section: Event Context & Session Save Status */}
+        <div className="flex items-center gap-2.5 sm:gap-3 text-xs min-w-0">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E9E5DC] shrink-0">
             <Calendar className="w-3.5 h-3.5 text-[#B86E52]" />
-            <span className="font-semibold text-[#252525] truncate max-w-[200px]">
+            <span className="font-bold text-[#252525] truncate max-w-[200px] sm:max-w-[320px]">
               {eventName}
             </span>
           </div>
 
-
+          <div className="h-4 w-px bg-[#E9E5DC] hidden sm:block" />
 
           {/* Session Persistence Status */}
           {saving ? (
-            <span className="text-[11px] font-medium text-[#77736C] flex items-center gap-1.5">
+            <span className="text-[11px] font-medium text-[#77736C] flex items-center gap-1.5 shrink-0">
               <span className="w-2 h-2 rounded-full bg-[#B86E52] animate-pulse" />
               Saving...
             </span>
           ) : isDirty ? (
             <button
               onClick={onSaveConfig}
-              className="text-[11px] font-semibold text-[#945B0E] bg-[#FDF6E8] hover:bg-[#FBEFCF] border border-[#F3E0BA] px-2 py-0.5 rounded-full flex items-center gap-1 cursor-pointer transition-colors"
+              className="text-[11px] font-semibold text-[#945B0E] bg-[#FDF6E8] hover:bg-[#FBEFCF] border border-[#F3E0BA] px-2.5 py-0.5 rounded-full flex items-center gap-1 cursor-pointer transition-colors shrink-0"
               title="Click to save design configuration"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#945B0E]" />
               Save Changes
             </button>
           ) : saveSuccess ? (
-            <span className="text-[11px] font-semibold text-[#2E683E] bg-[#EEF6F0] border border-[#C6E2CD] px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="text-[11px] font-semibold text-[#2E683E] bg-[#EEF6F0] border border-[#C6E2CD] px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0">
               <Check className="w-3 h-3 text-[#2E683E]" />
-              Saved to session
+              Saved in session
             </span>
           ) : (
-            <span className="text-[11px] text-[#77736C] flex items-center gap-1">
+            <span className="text-[11px] text-[#77736C] flex items-center gap-1 shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-[#2E683E]" />
               Saved in session
             </span>

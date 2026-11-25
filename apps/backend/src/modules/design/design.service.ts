@@ -45,6 +45,20 @@ export class DesignService {
         ...this.currentConfig.branding,
         ...updates.branding,
       };
+
+      if (updates.branding.logoUrl === undefined || updates.branding.logoUrl === null || updates.branding.logoUrl === '') {
+        this.currentConfig.branding.logoUrl = undefined;
+        this.logoBuffer = null;
+      } else if (updates.branding.logoUrl && updates.branding.logoUrl.startsWith('data:image/')) {
+        const base64Data = updates.branding.logoUrl.split(',')[1];
+        if (base64Data) {
+          try {
+            this.logoBuffer = Buffer.from(base64Data, 'base64');
+          } catch (e) {
+            console.warn('Failed to parse logo buffer in updateConfig:', e);
+          }
+        }
+      }
     }
 
     this.currentConfig.updatedAt = new Date().toISOString();
@@ -53,6 +67,17 @@ export class DesignService {
 
   setLogo(dataUrl: string, buffer?: Buffer): DesignConfig {
     this.currentConfig.branding.logoUrl = dataUrl;
+    if (!this.currentConfig.branding.watermark) {
+      this.currentConfig.branding.watermark = {
+        enabled: true,
+        opacity: 0.08,
+        size: 40,
+        position: 'center',
+      };
+    } else if (this.currentConfig.branding.watermark.enabled === undefined) {
+      this.currentConfig.branding.watermark.enabled = true;
+    }
+
     if (buffer) {
       this.logoBuffer = buffer;
     } else if (dataUrl.startsWith('data:image/')) {
@@ -71,6 +96,7 @@ export class DesignService {
       accentColor: meta.defaultAccentColor,
       showOrganizer: true,
       logoUrl: undefined,
+      watermark: undefined,
     };
     this.logoBuffer = null;
     this.currentConfig.updatedAt = new Date().toISOString();

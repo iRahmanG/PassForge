@@ -10,6 +10,7 @@ import {
   Divider,
 } from '@hyper-elements/react';
 import { TicketData, BrandingConfig } from '@passforge/shared';
+import { renderWithWatermark } from '../../utils/watermark.js';
 
 interface EditorialEmailProps {
   ticket: TicketData;
@@ -20,6 +21,7 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
   const { event, attendee, ticketId, qrCodeDataUrl, ticketUrl } = ticket;
   const accent = branding?.accentColor || '#b45309';
   const logoUrl = branding?.logoUrl;
+  const watermarkUrl = branding?.watermarkUrl;
 
   const getTierBadge = (tier?: string) => {
     const t = (tier || 'general').toLowerCase();
@@ -37,7 +39,7 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
       width={600}
       style={{
         backgroundColor: '#f5f3ef',
-        fontFamily: 'Georgia, Times, serif',
+        fontFamily: branding?.fontFamily || 'Georgia, Times, serif',
       }}
     >
       {/* Top Editorial Masthead */}
@@ -70,17 +72,21 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
           backgroundColor: '#ffffff',
           border: '1px solid #e7e5e4',
           borderRadius: 8,
-          padding: [36, 32],
-          gap: 24,
+          overflow: 'hidden',
         }}
       >
-        {/* Event Header */}
-        <Column style={{ alignItems: 'center', gap: 8, textAlign: 'center' }}>
+        {renderWithWatermark(
+          watermarkUrl,
+          600,
+          440,
+          <Column style={{ width: '100%', padding: [36, 32], gap: 24 }}>
+            {/* Event Header */}
+            <Column style={{ alignItems: 'center', gap: 8, textAlign: 'center' }}>
           {logoUrl ? (
             <Image
               src={{ src: logoUrl, width: 200, height: 50 }}
               alt="Event Logo"
-              style={{ width: 130, height: 'auto' }}
+              style={{ width: 130, height: 32 }}
             />
           ) : null}
 
@@ -230,6 +236,9 @@ export function EditorialEmail({ ticket, branding }: EditorialEmailProps) {
             Open Digital Invitation
           </Button>
         </Column>
+          </Column>,
+          true
+        )}
       </Column>
 
       {/* Footer */}

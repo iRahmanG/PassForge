@@ -8,9 +8,11 @@ import {
   Image,
   Button,
   Divider,
+  Layer,
 } from '@hyper-elements/react';
 import { TicketData, BrandingConfig } from '@passforge/shared';
 import { passforgeTheme } from '../../theme.js';
+import { renderWithWatermark } from '../../utils/watermark.js';
 
 interface TechPageProps {
   ticket: TicketData;
@@ -21,6 +23,7 @@ export function TechPage({ ticket, branding }: TechPageProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#06b6d4';
   const logoUrl = branding?.logoUrl;
+  const watermarkUrl = branding?.watermarkUrl;
 
   const getTierBadge = (tier?: string) => {
     const t = (tier || 'general').toLowerCase();
@@ -40,7 +43,7 @@ export function TechPage({ ticket, branding }: TechPageProps) {
       breakpoints={{ mobile: 560 }}
       style={{
         backgroundColor: '#0a0e17',
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: branding?.fontFamily || 'Arial, Helvetica, sans-serif',
       }}
     >
       {/* Top Header */}
@@ -56,7 +59,7 @@ export function TechPage({ ticket, branding }: TechPageProps) {
             <Image
               src={{ src: logoUrl, width: 200, height: 50 }}
               alt="Logo"
-              style={{ width: 120, height: 'auto' }}
+              style={{ width: 120, height: 30 }}
             />
           ) : (
             <Text
@@ -105,12 +108,16 @@ export function TechPage({ ticket, branding }: TechPageProps) {
           backgroundColor: '#111827',
           border: `1px solid ${accent}33`,
           borderRadius: 20,
-          padding: 36,
-          gap: 24,
+          overflow: 'hidden',
         }}
       >
-        {/* Pass Top Banner */}
-        <Row
+        {renderWithWatermark(
+          watermarkUrl,
+          620,
+          480,
+          <Column style={{ width: '100%', padding: 36, gap: 24 }}>
+            {/* Pass Top Banner */}
+            <Row
           style={{
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -333,6 +340,8 @@ export function TechPage({ ticket, branding }: TechPageProps) {
             Save PNG Image
           </Button>
         </Row>
+          </Column>
+        )}
       </Column>
 
       {/* Footer */}

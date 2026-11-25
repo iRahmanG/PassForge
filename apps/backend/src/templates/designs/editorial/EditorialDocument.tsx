@@ -11,6 +11,7 @@ import {
   PageFooter,
 } from '@hyper-elements/react';
 import { TicketData, BrandingConfig } from '@passforge/shared';
+import { renderWithWatermark } from '../../utils/watermark.js';
 
 interface EditorialDocumentProps {
   ticket: TicketData;
@@ -21,6 +22,7 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#b45309';
   const logoUrl = branding?.logoUrl;
+  const watermarkUrl = branding?.watermarkUrl;
 
   const getTierBadge = (tier?: string) => {
     const t = (tier || 'general').toLowerCase();
@@ -39,7 +41,7 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
       margin={40}
       style={{
         backgroundColor: '#faf8f5',
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: branding?.fontFamily || 'Georgia, Times, serif',
         color: '#1c1917',
       }}
     >
@@ -86,18 +88,22 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
             backgroundColor: '#ffffff',
             border: '1px solid #e7e5e4',
             borderRadius: 6,
-            padding: 36,
-            gap: 28,
+            overflow: 'hidden',
           }}
         >
-          {/* Top Section: Event Title & Branding */}
-          <Row style={{ justifyContent: 'space-between', alignItems: 'start' }}>
+          {renderWithWatermark(
+            watermarkUrl,
+            520,
+            320,
+            <Column style={{ width: '100%', padding: 36, gap: 28 }}>
+              {/* Top Section: Event Title & Branding */}
+              <Row style={{ justifyContent: 'space-between', alignItems: 'start' }}>
             <Column style={{ flex: 1, gap: 8 }}>
               {logoUrl ? (
                 <Image
                   src={{ src: logoUrl, width: 160, height: 40 }}
                   alt="Event Logo"
-                  style={{ width: 120, height: 'auto' }}
+                  style={{ width: 140, height: 36 }}
                 />
               ) : (
                 <Text
@@ -277,6 +283,8 @@ export function EditorialDocument({ ticket, branding }: EditorialDocumentProps) 
               </Text>
             </Column>
           </Row>
+            </Column>
+          )}
         </Column>
       </Document.Page>
 

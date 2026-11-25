@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { BrandingConfig } from '@passforge/shared';
+import { BrandingConfig, FONT_OPTIONS } from '@passforge/shared';
 import {
   Palette,
   Upload,
@@ -10,7 +10,6 @@ import {
   PanelRightClose,
   Sliders,
   Type,
-  Database,
   ShieldCheck,
   Copy,
   Layers,
@@ -20,8 +19,10 @@ interface BrandingControlsProps {
   branding: BrandingConfig;
   defaultAccentColor: string;
   onColorChange: (color: string) => void;
+  onFontFamilyChange?: (fontFamily: string) => void;
   onLogoUpload: (dataUrl: string) => void;
   onClearLogo: () => void;
+  onWatermarkChange?: (watermark: BrandingConfig['watermark']) => void;
   onReset: () => void;
   onCollapse?: () => void;
   activeDesignId?: string;
@@ -72,8 +73,10 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
   branding,
   defaultAccentColor,
   onColorChange,
+  onFontFamilyChange,
   onLogoUpload,
   onClearLogo,
+  onWatermarkChange,
   onReset,
   onCollapse,
   activeDesignId = 'tech',
@@ -82,11 +85,41 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
   ticketType = 'VIP',
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<'style' | 'variables'>('style');
   const [isDragging, setIsDragging] = useState(false);
   const [copiedHex, setCopiedHex] = useState(false);
 
   const contrast = getContrastRatio(branding.accentColor);
+
+  const isWatermarkEnabled = Boolean(branding.logoUrl && branding.watermark?.enabled !== false);
+  const watermarkOpacity = typeof branding.watermark?.opacity === 'number' ? branding.watermark.opacity : 0.08;
+  const watermarkSize = typeof branding.watermark?.size === 'number' ? branding.watermark.size : 40;
+
+  const handleToggleWatermark = () => {
+    onWatermarkChange?.({
+      enabled: !isWatermarkEnabled,
+      opacity: watermarkOpacity,
+      size: watermarkSize,
+      position: 'center',
+    });
+  };
+
+  const handleOpacityChange = (val: number) => {
+    onWatermarkChange?.({
+      enabled: isWatermarkEnabled,
+      opacity: val / 100,
+      size: watermarkSize,
+      position: 'center',
+    });
+  };
+
+  const handleSizeChange = (val: number) => {
+    onWatermarkChange?.({
+      enabled: isWatermarkEnabled,
+      opacity: watermarkOpacity,
+      size: val,
+      position: 'center',
+    });
+  };
 
   const processFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -115,37 +148,22 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
 
   return (
     <div className="bg-white border border-[#E9E5DC] rounded-2xl shadow-xs h-full flex flex-col overflow-hidden">
-      {/* Top Inspector Header with Figma-Style Tool Tabs */}
+      {/* Top Inspector Header */}
       <div className="p-3 border-b border-[#E9E5DC] flex items-center justify-between shrink-0 bg-[#FAF8F5]/60">
-        <div className="flex items-center gap-1 bg-[#F0EDE6] p-0.5 rounded-lg border border-[#E9E5DC]">
-          <button
-            onClick={() => setActiveTab('style')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-              activeTab === 'style'
-                ? 'bg-white text-[#252525] shadow-xs'
-                : 'text-[#77736C] hover:text-[#252525]'
-            }`}
-          >
-            <Sliders className="w-3 h-3 text-[#B86E52]" />
-            <span>Design</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('variables')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-              activeTab === 'variables'
-                ? 'bg-white text-[#252525] shadow-xs'
-                : 'text-[#77736C] hover:text-[#252525]'
-            }`}
-          >
-            <Database className="w-3 h-3 text-[#77736C]" />
-            <span>Variables</span>
-          </button>
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg bg-[#FBF2EE] border border-[#F0D5C9] flex items-center justify-center text-[#B86E52]">
+            <Sliders className="w-3.5 h-3.5" />
+          </div>
+          <div>
+            <h3 className="text-xs font-bold text-[#252525]">Brand & Styling Kit</h3>
+            <p className="text-[10px] text-[#77736C]">Customize palette, fonts & watermark</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-1">
           <button
             onClick={onReset}
-            className="p-1 rounded-md text-[#77736C] hover:text-[#252525] hover:bg-white transition-colors cursor-pointer"
+            className="p-1.5 rounded-md text-[#77736C] hover:text-[#252525] hover:bg-white transition-colors cursor-pointer"
             title="Reset to design defaults"
             aria-label="Reset to design defaults"
           >
@@ -154,7 +172,7 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
           {onCollapse && (
             <button
               onClick={onCollapse}
-              className="p-1 rounded-md text-[#77736C] hover:text-[#252525] hover:bg-white transition-colors cursor-pointer"
+              className="p-1.5 rounded-md text-[#77736C] hover:text-[#252525] hover:bg-white transition-colors cursor-pointer"
               title="Collapse brand kit panel"
               aria-label="Collapse brand kit panel"
             >
@@ -166,8 +184,6 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
 
       {/* Inspector Scrollable Body */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
-        {activeTab === 'style' ? (
-          <>
             {/* 1. Active Aesthetic Profile Badge */}
             <div className="rounded-xl border border-[#E9E5DC] bg-[#FAF8F5] p-3 space-y-2">
               <div className="flex items-center justify-between">
@@ -323,7 +339,69 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
               </div>
             </div>
 
-            {/* 3. Event Identity Asset Section */}
+            {/* 3. Typography & Font Options */}
+            <div className="space-y-2.5 pt-2 border-t border-[#E9E5DC]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Type className="w-3.5 h-3.5 text-[#B86E52]" />
+                  <span className="text-[11px] font-bold text-[#252525] uppercase tracking-wider">
+                    Typography & Fonts
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#77736C] font-mono">
+                  {FONT_OPTIONS.length} options
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                {FONT_OPTIONS.map((font) => {
+                  const isSelected =
+                    branding.fontFamily === font.family ||
+                    (!branding.fontFamily && font.id === (activeDesignId === 'editorial' ? 'serif-editorial' : 'sans-modern'));
+
+                  return (
+                    <button
+                      key={font.id}
+                      type="button"
+                      onClick={() => onFontFamilyChange?.(font.family)}
+                      className={`w-full text-left p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
+                        isSelected
+                          ? 'border-[#B86E52] bg-[#FBF2EE] shadow-xs ring-1 ring-[#B86E52]/20'
+                          : 'border-[#E9E5DC] bg-white hover:bg-[#FAF8F5] hover:border-[#DDD8CD]'
+                      }`}
+                    >
+                      <div className="space-y-0.5 min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="text-xs font-bold text-[#252525] truncate"
+                            style={{ fontFamily: font.family }}
+                          >
+                            {font.name}
+                          </span>
+                          <span className="text-[9px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded bg-[#FAF8F5] border border-[#E9E5DC] text-[#77736C]">
+                            {font.category}
+                          </span>
+                        </div>
+                        <p
+                          className="text-[11px] text-[#504D47] truncate"
+                          style={{ fontFamily: font.family }}
+                        >
+                          Aa Bb Gg 123 • {font.description}
+                        </p>
+                      </div>
+
+                      {isSelected && (
+                        <div className="w-5 h-5 rounded-full bg-[#B86E52] text-white flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 stroke-[2.5]" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 4. Event Identity Asset Section */}
             <div className="space-y-2 pt-2 border-t border-[#E9E5DC]">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-[#252525] uppercase tracking-wider">
@@ -414,67 +492,108 @@ export const BrandingControls: React.FC<BrandingControlsProps> = ({
                 </div>
               )}
             </div>
-          </>
-        ) : (
-          /* Variables & Data Tab (Figma Token Inspector) */
-          <div className="space-y-3">
-            <div className="rounded-xl border border-[#E9E5DC] bg-[#FAF8F5] p-3 space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#77736C] block">
-                Live Dynamic Bindings
-              </span>
-              <p className="text-[11px] text-[#504D47]">
-                These live data tokens are bound directly into the active Hyper Elements SSR templates:
-              </p>
+
+            {/* Background Watermark Section */}
+            <div className="pt-4 border-t border-[#E9E5DC] space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-[#B86E52]" />
+                  <span className="text-xs font-bold text-[#252525]">Background Watermark</span>
+                </div>
+
+                {branding.logoUrl ? (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={isWatermarkEnabled}
+                    onClick={handleToggleWatermark}
+                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                      isWatermarkEnabled ? 'bg-[#B86E52]' : 'bg-[#DDD8CD]'
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                        isWatermarkEnabled ? 'translate-x-4' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                ) : (
+                  <span className="text-[10px] text-[#A39E93] bg-[#F0EDE6] px-2 py-0.5 rounded-full font-medium">
+                    Requires Logo
+                  </span>
+                )}
+              </div>
+
+              {!branding.logoUrl ? (
+                <div className="p-2.5 rounded-lg bg-[#FAF8F5] border border-[#E9E5DC] text-[11px] text-[#77736C] flex items-center gap-2">
+                  <span className="text-xs">💡</span>
+                  <span>Upload an event logo above to activate background watermark branding.</span>
+                </div>
+              ) : isWatermarkEnabled ? (
+                <div className="space-y-3 p-3 rounded-xl bg-[#FAF8F5] border border-[#E9E5DC]">
+                  {/* Opacity Control */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-[#504D47]">Opacity</span>
+                      <span className="font-mono text-[11px] font-bold text-[#B86E52] bg-white px-1.5 py-0.5 rounded border border-[#E9E5DC]">
+                        {Math.round(watermarkOpacity * 100)}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="3"
+                      max="15"
+                      step="1"
+                      value={Math.round(watermarkOpacity * 100)}
+                      onChange={(e) => handleOpacityChange(Number(e.target.value))}
+                      className="w-full accent-[#B86E52] h-1.5 bg-[#E9E5DC] rounded-lg cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[9px] text-[#A39E93]">
+                      <span>3% (Subtle)</span>
+                      <span>8% (Default)</span>
+                      <span>15% (Vibrant)</span>
+                    </div>
+                  </div>
+
+                  {/* Size Control */}
+                  <div className="space-y-1.5 pt-2 border-t border-[#E9E5DC]/70">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-[#504D47]">Watermark Width</span>
+                      <span className="font-mono text-[11px] font-bold text-[#B86E52] bg-white px-1.5 py-0.5 rounded border border-[#E9E5DC]">
+                        {watermarkSize}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="25"
+                      max="55"
+                      step="1"
+                      value={watermarkSize}
+                      onChange={(e) => handleSizeChange(Number(e.target.value))}
+                      className="w-full accent-[#B86E52] h-1.5 bg-[#E9E5DC] rounded-lg cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[9px] text-[#A39E93]">
+                      <span>25% (Compact)</span>
+                      <span>40% (Default)</span>
+                      <span>55% (Wide)</span>
+                    </div>
+                  </div>
+
+                  {/* Position Indicator */}
+                  <div className="flex items-center justify-between pt-2 border-t border-[#E9E5DC]/70 text-xs">
+                    <span className="font-semibold text-[#504D47]">Alignment</span>
+                    <span className="text-[10px] font-medium text-[#504D47] bg-white px-2 py-0.5 rounded border border-[#E9E5DC]">
+                      Center • Aspect Ratio Contained
+                    </span>
+                  </div>
+                </div>
+              ) : null}
             </div>
-
-            <div className="space-y-2">
-              <div className="p-2.5 rounded-lg border border-[#E9E5DC] bg-white flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-mono text-[#B86E52] font-semibold">{'{attendee.name}'}</span>
-                  <p className="text-xs font-bold text-[#252525] mt-0.5">{attendeeName}</p>
-                </div>
-                <span className="text-[9px] font-mono bg-[#FAF8F5] border border-[#E9E5DC] px-2 py-0.5 rounded text-[#77736C]">
-                  String
-                </span>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-[#E9E5DC] bg-white flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-mono text-[#B86E52] font-semibold">{'{attendee.ticketType}'}</span>
-                  <p className="text-xs font-bold text-[#252525] mt-0.5">{ticketType} ACCESS</p>
-                </div>
-                <span className="text-[9px] font-mono bg-[#FAF8F5] border border-[#E9E5DC] px-2 py-0.5 rounded text-[#77736C]">
-                  Enum
-                </span>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-[#E9E5DC] bg-white flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-mono text-[#B86E52] font-semibold">{'{attendee.seat}'}</span>
-                  <p className="text-xs font-bold text-[#252525] mt-0.5">{seatNumber || 'Open Seating'}</p>
-                </div>
-                <span className="text-[9px] font-mono bg-[#FAF8F5] border border-[#E9E5DC] px-2 py-0.5 rounded text-[#77736C]">
-                  Nullable
-                </span>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-[#E9E5DC] bg-white flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-mono text-[#B86E52] font-semibold">{'{ticket.qrCode}'}</span>
-                  <p className="text-[11px] text-[#504D47] mt-0.5">High-ECC Dynamic Matrix</p>
-                </div>
-                <span className="text-[9px] font-mono bg-[#EEF6F0] border border-[#C6E2CD] text-[#2E683E] px-2 py-0.5 rounded font-bold">
-                  Active
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Inspector Footer Status */}
       <div className="p-3 border-t border-[#E9E5DC] bg-[#FAF8F5] flex items-center justify-between text-[11px] text-[#77736C] shrink-0">
-        <span className="font-mono text-[10px]">PassForge Token Engine</span>
+        <span className="font-mono text-[10px]">PassForge Design Engine</span>
         <span className="inline-flex items-center gap-1 text-[10px] text-[#2E683E] font-medium font-mono">
           <span className="w-1.5 h-1.5 rounded-full bg-[#2E683E]" />
           SSR Synchronized

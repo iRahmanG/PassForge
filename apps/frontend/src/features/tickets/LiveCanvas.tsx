@@ -468,14 +468,13 @@ export const LiveCanvas: React.FC<LiveCanvasProps> = ({
                     maxHeight: 'min(460px, 58vh)',
                     width: 'auto',
                     height: 'auto',
-                    aspectRatio: '2000 / 1040',
                     objectFit: 'contain',
                     display: 'block',
                   }}
                 />
               </div>
               <p className="text-[10px] text-[#77736C] mt-2.5 font-mono text-center">
-                Hyper Elements &lt;Canvas&gt; • 2000×1040 High-Res Pass
+                Hyper Elements &lt;Canvas&gt; • High-Resolution Ticket Pass
               </p>
             </div>
           )}

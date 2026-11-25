@@ -80,7 +80,9 @@ export function useDesignSystem(initialAttendeeId?: string) {
     savedConfig &&
       (savedConfig.designId !== selectedDesignId ||
         savedConfig.branding.accentColor !== branding.accentColor ||
-        savedConfig.branding.logoUrl !== branding.logoUrl)
+        savedConfig.branding.fontFamily !== branding.fontFamily ||
+        savedConfig.branding.logoUrl !== branding.logoUrl ||
+        JSON.stringify(savedConfig.branding.watermark) !== JSON.stringify(branding.watermark))
   );
 
   // Trigger preview fetch
@@ -124,7 +126,17 @@ export function useDesignSystem(initialAttendeeId?: string) {
     if (!loading && designs.length > 0) {
       refreshPreview(selectedDesignId, branding, activeFormat, activeAttendeeId);
     }
-  }, [selectedDesignId, branding.accentColor, branding.logoUrl, activeAttendeeId, loading]);
+  }, [
+    selectedDesignId,
+    branding.accentColor,
+    branding.fontFamily,
+    branding.logoUrl,
+    branding.watermark?.enabled,
+    branding.watermark?.opacity,
+    branding.watermark?.size,
+    activeAttendeeId,
+    loading,
+  ]);
 
   // Design selection handler
   const selectDesign = (id: TicketDesignId) => {
@@ -144,17 +156,34 @@ export function useDesignSystem(initialAttendeeId?: string) {
     setBranding((prev) => ({ ...prev, accentColor: color }));
   };
 
+  const setFontFamily = (fontFamily: string) => {
+    setBranding((prev) => ({ ...prev, fontFamily }));
+  };
+
   const handleLogoUpload = async (dataUrl: string) => {
     try {
       const res = await uploadLogo(dataUrl);
-      setBranding((prev) => ({ ...prev, logoUrl: res.logoUrl }));
+      setBranding((prev) => ({
+        ...prev,
+        logoUrl: res.logoUrl,
+        watermark: {
+          enabled: true,
+          opacity: typeof prev.watermark?.opacity === 'number' ? prev.watermark.opacity : 0.08,
+          size: typeof prev.watermark?.size === 'number' ? prev.watermark.size : 40,
+          position: 'center',
+        },
+      }));
     } catch (err: any) {
       setError(err.message || 'Failed to upload logo');
     }
   };
 
   const clearLogo = () => {
-    setBranding((prev) => ({ ...prev, logoUrl: undefined }));
+    setBranding((prev) => ({ ...prev, logoUrl: undefined, watermark: undefined }));
+  };
+
+  const setWatermark = (watermark: BrandingConfig['watermark']) => {
+    setBranding((prev) => ({ ...prev, watermark }));
   };
 
   const resetBrandingDefaults = async () => {
@@ -198,8 +227,10 @@ export function useDesignSystem(initialAttendeeId?: string) {
     selectDesign,
     branding,
     setAccentColor,
+    setFontFamily,
     handleLogoUpload,
     clearLogo,
+    setWatermark,
     resetBrandingDefaults,
     savedConfig,
     isDirty,

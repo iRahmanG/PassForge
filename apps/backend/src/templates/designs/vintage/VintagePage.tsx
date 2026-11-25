@@ -19,6 +19,7 @@ interface VintagePageProps {
 export function VintagePage({ ticket, branding }: VintagePageProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#C23B38';
+  const logoUrl = branding?.logoUrl;
 
   return (
     <Page
@@ -53,9 +54,17 @@ export function VintagePage({ ticket, branding }: VintagePageProps) {
               border: { bottom: `2px dashed ${accent}` },
             }}
           >
-            <Text style={{ color: accent, fontSize: 11, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase' }}>
-              {event.organizer} • OFFICIAL ADMISSION
-            </Text>
+            {logoUrl ? (
+              <Image
+                src={{ src: logoUrl, width: 140, height: 36 }}
+                alt="Logo"
+                style={{ width: 110, height: 32 }}
+              />
+            ) : (
+              <Text style={{ color: accent, fontSize: 11, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase' }}>
+                {event.organizer} • OFFICIAL ADMISSION
+              </Text>
+            )}
             <Heading level={1} style={{ fontSize: 32, fontWeight: 700, color: '#1C1917', letterSpacing: 6, textTransform: 'uppercase' }}>
               TICKET
             </Heading>

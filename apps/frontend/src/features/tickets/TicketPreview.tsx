@@ -105,7 +105,7 @@ export const TicketPreview: React.FC<TicketPreviewProps> = ({
             <p className="text-[11px] text-[#77736C] mt-2.5 font-mono flex items-center gap-2">
               <span>Hyper Elements &lt;Canvas&gt;</span>
               <span>•</span>
-              <span>2000x1040 (2x Retina)</span>
+              <span>High-Res Pass (2x Retina)</span>
             </p>
           </div>
         )}

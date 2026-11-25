@@ -11,6 +11,7 @@ import {
   PageFooter,
 } from '@hyper-elements/react';
 import { TicketData, BrandingConfig } from '@passforge/shared';
+import { renderWithWatermark } from '../../utils/watermark.js';
 
 interface TechDocumentProps {
   ticket: TicketData;
@@ -21,6 +22,7 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#06b6d4';
   const logoUrl = branding?.logoUrl;
+  const watermarkUrl = branding?.watermarkUrl;
 
   const getTierBadge = (tier?: string) => {
     const t = (tier || 'general').toLowerCase();
@@ -39,7 +41,7 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
       margin={32}
       style={{
         backgroundColor: '#ffffff',
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: branding?.fontFamily || 'Arial, Helvetica, sans-serif',
         color: '#0f172a',
       }}
     >
@@ -70,18 +72,22 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
             border: '2px solid #0f172a',
             borderRadius: 12,
             backgroundColor: '#f8fafc',
-            padding: 24,
-            gap: 18,
+            overflow: 'hidden',
           }}
         >
-          {/* Top Bar of the Ticket */}
-          <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          {renderWithWatermark(
+            watermarkUrl,
+            520,
+            320,
+            <Column style={{ width: '100%', padding: 24, gap: 18 }}>
+              {/* Top Bar of the Ticket */}
+              <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Column style={{ gap: 2 }}>
               {logoUrl ? (
                 <Image
                   src={{ src: logoUrl, width: 180, height: 40 }}
                   alt="Logo"
-                  style={{ width: 130, height: 'auto' }}
+                  style={{ width: 140, height: 36 }}
                 />
               ) : (
                 <Text style={{ color: accent, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
@@ -223,6 +229,8 @@ export function TechDocument({ ticket, branding }: TechDocumentProps) {
               </Text>
             </Column>
           </Row>
+            </Column>
+          )}
         </Column>
 
         {/* Important Attendee Instructions Section */}

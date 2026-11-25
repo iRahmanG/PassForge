@@ -18,6 +18,7 @@ interface VintageDocumentProps {
 export function VintageDocument({ ticket, branding }: VintageDocumentProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#C23B38';
+  const logoUrl = branding?.logoUrl;
 
   return (
     <Document
@@ -95,9 +96,17 @@ export function VintageDocument({ ticket, branding }: VintageDocumentProps) {
             {/* Center Main Pass Body */}
             <Column style={{ flex: 1, padding: [24, 24, 24, 24], gap: 14, justifyContent: 'space-between' }}>
               <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ color: accent, fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>
-                  {event.organizer}
-                </Text>
+                {logoUrl ? (
+                  <Image
+                    src={{ src: logoUrl, width: 140, height: 36 }}
+                    alt="Logo"
+                    style={{ width: 110, height: 28 }}
+                  />
+                ) : (
+                  <Text style={{ color: accent, fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>
+                    {event.organizer}
+                  </Text>
+                )}
                 <Text style={{ color: '#991B1B', backgroundColor: '#FEE2E2', border: '1px solid #F87171', borderRadius: 4, padding: [2, 10], fontSize: 9, fontWeight: 700 }}>
                   {attendee.ticketType || 'VIP'} PASS
                 </Text>

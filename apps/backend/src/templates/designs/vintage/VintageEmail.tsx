@@ -19,6 +19,7 @@ interface VintageEmailProps {
 export function VintageEmail({ ticket, branding }: VintageEmailProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#C23B38';
+  const logoUrl = branding?.logoUrl;
 
   return (
     <Email
@@ -43,9 +44,17 @@ export function VintageEmail({ ticket, branding }: VintageEmailProps) {
         >
           {/* Header */}
           <Column style={{ alignItems: 'center', gap: 6, textAlign: 'center' }}>
-            <Text style={{ color: accent, fontSize: 11, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase' }}>
-              {event.organizer} • OFFICIAL ADMISSION
-            </Text>
+            {logoUrl ? (
+              <Image
+                src={{ src: logoUrl, width: 140, height: 36 }}
+                alt="Logo"
+                style={{ width: 110, height: 32 }}
+              />
+            ) : (
+              <Text style={{ color: accent, fontSize: 11, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase' }}>
+                {event.organizer} • OFFICIAL ADMISSION
+              </Text>
+            )}
             <Row style={{ alignItems: 'center', gap: 10, justifyContent: 'center' }}>
               <Text style={{ color: accent, fontSize: 14 }}>★</Text>
               <Heading level={1} style={{ fontSize: 28, fontWeight: 700, color: '#1C1917', letterSpacing: 4, textTransform: 'uppercase' }}>

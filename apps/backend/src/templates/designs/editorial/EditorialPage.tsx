@@ -10,6 +10,7 @@ import {
   Divider,
 } from '@hyper-elements/react';
 import { TicketData, BrandingConfig } from '@passforge/shared';
+import { renderWithWatermark } from '../../utils/watermark.js';
 
 interface EditorialPageProps {
   ticket: TicketData;
@@ -20,6 +21,7 @@ export function EditorialPage({ ticket, branding }: EditorialPageProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#b45309';
   const logoUrl = branding?.logoUrl;
+  const watermarkUrl = branding?.watermarkUrl;
 
   const getTierBadge = (tier?: string) => {
     const t = (tier || 'general').toLowerCase();
@@ -38,7 +40,7 @@ export function EditorialPage({ ticket, branding }: EditorialPageProps) {
       breakpoints={{ mobile: 560 }}
       style={{
         backgroundColor: '#f5f3ef',
-        fontFamily: 'Georgia, Times, serif',
+        fontFamily: branding?.fontFamily || 'Georgia, Times, serif',
         color: '#1c1917',
       }}
     >
@@ -81,12 +83,16 @@ export function EditorialPage({ ticket, branding }: EditorialPageProps) {
           backgroundColor: '#ffffff',
           border: '1px solid #e7e5e4',
           borderRadius: 12,
-          padding: 40,
-          gap: 28,
+          overflow: 'hidden',
         }}
       >
-        {/* Pass Top Banner */}
-        <Row
+        {renderWithWatermark(
+          watermarkUrl,
+          620,
+          480,
+          <Column style={{ width: '100%', padding: 40, gap: 28 }}>
+            {/* Pass Top Banner */}
+            <Row
           style={{
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -98,7 +104,7 @@ export function EditorialPage({ ticket, branding }: EditorialPageProps) {
             <Image
               src={{ src: logoUrl, width: 200, height: 50 }}
               alt="Logo"
-              style={{ width: 120, height: 'auto' }}
+              style={{ width: 120, height: 30 }}
             />
           ) : (
             <Text style={{ color: '#78716c', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase' }}>
@@ -302,6 +308,8 @@ export function EditorialPage({ ticket, branding }: EditorialPageProps) {
             Save PNG Image
           </Button>
         </Row>
+          </Column>
+        )}
       </Column>
 
       {/* Footer */}

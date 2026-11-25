@@ -43,7 +43,7 @@ export function FestivalCanvas({ ticket, branding }: FestivalCanvasProps) {
       height={520}
       style={{
         backgroundColor: '#0A0B1A',
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: branding?.fontFamily || 'Arial, Helvetica, sans-serif',
         color: '#FFFFFF',
         padding: 30,
         gap: 16,
@@ -71,17 +71,25 @@ export function FestivalCanvas({ ticket, branding }: FestivalCanvasProps) {
           {/* Top Bar: Title & Subtitle matching Image 3 */}
           <Column style={{ gap: 4 }}>
             <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: accent,
-                  letterSpacing: 4,
-                  textTransform: 'uppercase',
-                }}
-              >
-                TICKET
-              </Text>
+              {logoUrl ? (
+                <Image
+                  src={{ src: logoUrl, width: 140, height: 36 }}
+                  alt="Logo"
+                  style={{ width: 120, height: 32 }}
+                />
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: accent,
+                    letterSpacing: 4,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  TICKET
+                </Text>
+              )}
               <Text
                 style={{
                   backgroundColor: tierBadge.bg,

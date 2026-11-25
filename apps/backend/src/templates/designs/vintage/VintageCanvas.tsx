@@ -36,7 +36,7 @@ export function VintageCanvas({ ticket, branding }: VintageCanvasProps) {
       height={520}
       style={{
         backgroundColor: '#EFE7DA',
-        fontFamily: 'Georgia, Times, serif',
+        fontFamily: branding?.fontFamily || 'Georgia, Times, serif',
         color: '#26221F',
         padding: 30,
         gap: 16,
@@ -130,7 +130,7 @@ export function VintageCanvas({ ticket, branding }: VintageCanvasProps) {
               <Image
                 src={{ src: logoUrl, width: 140, height: 36 }}
                 alt="Logo"
-                style={{ width: 110, height: 'auto' }}
+                style={{ width: 110, height: 32 }}
               />
             ) : (
               <Text

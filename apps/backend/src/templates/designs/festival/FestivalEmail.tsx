@@ -19,6 +19,7 @@ interface FestivalEmailProps {
 export function FestivalEmail({ ticket, branding }: FestivalEmailProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#FF2E93';
+  const logoUrl = branding?.logoUrl;
 
   const seatStr = attendee.seat || 'A-104';
   const rowMatch = seatStr.match(/[A-Za-z]+/);
@@ -48,9 +49,17 @@ export function FestivalEmail({ ticket, branding }: FestivalEmailProps) {
         >
           {/* Header */}
           <Column style={{ alignItems: 'center', gap: 6, textAlign: 'center' }}>
-            <Text style={{ color: accent, fontSize: 12, fontWeight: 800, letterSpacing: 4, textTransform: 'uppercase' }}>
-              TICKET • FOR ONE PERSON ONLY
-            </Text>
+            {logoUrl ? (
+              <Image
+                src={{ src: logoUrl, width: 140, height: 36 }}
+                alt="Logo"
+                style={{ width: 120, height: 32 }}
+              />
+            ) : (
+              <Text style={{ color: accent, fontSize: 12, fontWeight: 800, letterSpacing: 4, textTransform: 'uppercase' }}>
+                TICKET • FOR ONE PERSON ONLY
+              </Text>
+            )}
             <Heading level={1} style={{ fontSize: 26, fontWeight: 800, color: '#FFFFFF', letterSpacing: 1 }}>
               {event.name}
             </Heading>

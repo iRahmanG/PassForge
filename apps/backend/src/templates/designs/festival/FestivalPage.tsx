@@ -19,6 +19,7 @@ interface FestivalPageProps {
 export function FestivalPage({ ticket, branding }: FestivalPageProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#FF2E93';
+  const logoUrl = branding?.logoUrl;
 
   const seatStr = attendee.seat || 'A-104';
   const rowMatch = seatStr.match(/[A-Za-z]+/);
@@ -58,9 +59,17 @@ export function FestivalPage({ ticket, branding }: FestivalPageProps) {
               border: { bottom: '1px solid #2B3066' },
             }}
           >
-            <Text style={{ color: accent, fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase' }}>
-              TICKET • FOR ONE PERSON ONLY
-            </Text>
+            {logoUrl ? (
+              <Image
+                src={{ src: logoUrl, width: 140, height: 36 }}
+                alt="Logo"
+                style={{ width: 120, height: 32 }}
+              />
+            ) : (
+              <Text style={{ color: accent, fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase' }}>
+                TICKET • FOR ONE PERSON ONLY
+              </Text>
+            )}
             <Heading level={1} style={{ fontSize: 28, fontWeight: 800, color: '#FFFFFF', textAlign: 'center' }}>
               {event.name}
             </Heading>

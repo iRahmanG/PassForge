@@ -18,6 +18,7 @@ interface FestivalDocumentProps {
 export function FestivalDocument({ ticket, branding }: FestivalDocumentProps) {
   const { event, attendee, ticketId, qrCodeDataUrl } = ticket;
   const accent = branding?.accentColor || '#FF2E93';
+  const logoUrl = branding?.logoUrl;
 
   const seatStr = attendee.seat || 'A-104';
   const rowMatch = seatStr.match(/[A-Za-z]+/);
@@ -73,9 +74,17 @@ export function FestivalDocument({ ticket, branding }: FestivalDocumentProps) {
             {/* Main Pass Section */}
             <Column style={{ flex: 1, padding: [24, 28], gap: 16, justifyContent: 'space-between' }}>
               <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 11, fontWeight: 700, color: accent, letterSpacing: 2 }}>
-                  TICKET • FOR ONE PERSON ONLY
-                </Text>
+                {logoUrl ? (
+                  <Image
+                    src={{ src: logoUrl, width: 140, height: 36 }}
+                    alt="Logo"
+                    style={{ width: 120, height: 32 }}
+                  />
+                ) : (
+                  <Text style={{ fontSize: 11, fontWeight: 700, color: accent, letterSpacing: 2 }}>
+                    TICKET • FOR ONE PERSON ONLY
+                  </Text>
+                )}
                 <Text style={{ backgroundColor: accent, color: '#FFFFFF', borderRadius: 12, padding: [3, 10], fontSize: 9, fontWeight: 700 }}>
                   {attendee.ticketType || 'VIP'} PASS
                 </Text>

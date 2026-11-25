@@ -3,14 +3,24 @@ import { attendeeSchema } from './attendee.schema.js';
 
 export const ticketDesignIdSchema = z.enum(['tech', 'editorial', 'vintage', 'festival']);
 
+export const watermarkConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  opacity: z.number().min(0.01).max(0.5).default(0.08).optional(),
+  size: z.number().min(10).max(100).default(40).optional(),
+  position: z.enum(['center']).default('center').optional(),
+});
+
 export const brandingConfigSchema = z.object({
   accentColor: z
     .string()
     .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Accent color must be a valid hex code (e.g. #06b6d4)')
     .default('#06b6d4'),
+  fontFamily: z.string().optional(),
   logoUrl: z.string().optional(),
   showOrganizer: z.boolean().default(true).optional(),
   customNotes: z.string().max(300).optional(),
+  watermark: watermarkConfigSchema.optional(),
+  watermarkUrl: z.string().optional(),
 });
 
 export const designConfigSchema = z.object({
