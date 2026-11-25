@@ -8,12 +8,53 @@
 
 **PassForge** is an open event ticketing engine and design studio. It enables event organizers to configure events, import attendee rosters via CSV with intelligent column mapping, customize typography and branding with watermark overlays, live-preview tickets across four distinct rendering formats, and batch-export production-ready ticket packages in a single organized ZIP archive.
 
-Every ticket is rendered through unified **Hyper Elements** Server-Side Rendering (SSR), producing high-fidelity outputs across:
+Every ticket is rendered through unified **Hyper Elements** (`@hyper-elements/react`) Server-Side Rendering (SSR), producing high-fidelity outputs across Email, Web, PDF, and PNG formats from a single strongly-typed data model.
 
-1. **Email HTML** (`<Email>`): Table-based HTML compatible across email clients (Gmail, Outlook, Apple Mail).
-2. **Responsive Web Page** (`<Page>`): Standalone digital admission pass with responsive mobile viewport support.
-3. **Printable Document** (`<Document>`): Vector A4/Letter PDF with crisp typographic hierarchy and scannable QR matrix.
-4. **Graphic Badge** (`<Canvas>`): High-resolution 2x Retina PNG card badge rendered via Cairo/Pango bindings.
+---
+
+## ⚡ How Hyper Elements Powers PassForge
+
+Instead of writing and maintaining four completely separate template stacks (an MJML/HTML email template, a web page, a PDF generation script, and a canvas image script), PassForge leverages **Hyper Elements** to write declarative React templates once. Each ticket layout (such as *Cyber Tech* or *Premium Editorial*) defines four dedicated root components consuming the same typed ticket data:
+
+```mermaid
+flowchart LR
+    Data["Typed TicketData<br/>(Attendee + Event + Brand Kit)"]
+
+    Data --> EmailTpl["&lt;Email&gt;<br/>TechEmail / EditorialEmail"]
+    Data --> PageTpl["&lt;Page&gt;<br/>TechPage / EditorialPage"]
+    Data --> DocTpl["&lt;Document&gt;<br/>TechDocument / EditorialDocument"]
+    Data --> CanvasTpl["&lt;Canvas&gt;<br/>TechCanvas / EditorialCanvas"]
+
+    EmailTpl -->|render()| OutEmail["📧 Email HTML<br/>(Table-based & inline CSS)"]
+    PageTpl -->|render()| OutPage["🌐 Web Ticket<br/>(Responsive mobile-ready HTML)"]
+    DocTpl -->|renderPdf()| OutPdf["📄 Printable PDF<br/>(Vector A4 document with QR)"]
+    CanvasTpl -->|renderImage()| OutPng["🖼️ Badge PNG<br/>(2x Retina card graphic)"]
+```
+
+### The 4 Specialized Roots in PassForge
+
+| Root Component | Render Function | Output Format | How PassForge Uses It |
+|---|---|---|---|
+| `<Email>` | `render(jsx)` | HTML (String) | Compiles table-based email layouts with inline styles, bulletproof across Outlook, Gmail, and Apple Mail for automated confirmation emails. |
+| `<Page>` | `render(jsx)` | HTML (String) | Emits a responsive web page with metadata, dynamic viewport scaling, and mobile breakpoints (`breakpoints={{ mobile: 560 }}`) for digital admission passes. |
+| `<Document>` | `renderPdf(jsx)` | Binary Buffer (`%PDF-`) | Generates a vector PDF ticket with scannable QR matrices and print margins, ideal for print-at-home or on-site badge printing. |
+| `<Canvas>` | `renderImage(jsx)` | Binary Buffer (`\x89PNG`) | Renders pixel-perfect 2x Retina PNG card badges with centered opacity watermarks, exact ticket aspect ratios, and local font rendering via Cairo/Pango bindings. |
+
+### Code Example: Unified Rendering Pipeline
+
+```tsx
+import { render, renderPdf, renderImage } from '@hyper-elements/react';
+import { getDesignTemplates } from './templates/designs/registry.js';
+
+// 1. Fetch template component tree based on organizer's selected design
+const { Email, Page, Document, Canvas } = getDesignTemplates(designId);
+
+// 2. Render all 4 formats from the exact same ticket & branding data:
+const emailHtml = await render(<Email ticket={ticket} branding={branding} />);
+const pageHtml  = await render(<Page ticket={ticket} branding={branding} />);
+const pdfBuffer = await renderPdf(<Document ticket={ticket} branding={branding} />);
+const pngBuffer = await renderImage(<Canvas ticket={ticket} branding={branding} />);
+```
 
 ---
 
