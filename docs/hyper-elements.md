@@ -40,7 +40,7 @@ interface TicketTemplateProps {
 }
 ```
 
-Each registered design (such as `tech` or `editorial`) exports four root components:
+Each registered design (such as `tech`, `editorial`, `vintage`, or `festival`) exports four root components:
 - `Email`: Rooted in `<Email>` from `@hyper-elements/react`.
 - `Page`: Rooted in `<Page>` from `@hyper-elements/react`.
 - `Document`: Rooted in `<Document>` from `@hyper-elements/react`.

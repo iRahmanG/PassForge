@@ -102,7 +102,7 @@ The backend operates as an Express 5 application divided into modular services (
 
 - **Event Module (`event.service.ts`):** Manages current active event configuration, timestamps, venue details, and sample event presets.
 - **Attendee Module (`attendee.service.ts`):** Handles CSV file uploads, header mapping, row validation, duplicate email filtering, and in-memory roster storage.
-- **Design Module (`design.service.ts`):** Maintains the active design theme (`tech` vs `editorial`), typography presets, accent colors, and base64 logo buffers.
+- **Design Module (`design.service.ts`):** Maintains the active design theme (`tech`, `editorial`, `vintage`, or `festival`), typography presets, accent colors, and base64 logo buffers.
 - **Ticket Module (`ticket.service.ts`):** Synthesizes attendee data and event metadata into a complete `TicketData` model, generating dynamic scannable QR code buffers.
 - **Bulk Module (`bulk.service.ts`):** Orchestrates background batch generation, concurrency bounding, progress calculation, and ZIP streaming.
 
@@ -171,6 +171,8 @@ PassForge maintains a central **Design Registry** (`templates/designs/registry.t
 
 - **Cyber Tech (`tech`):** Dark navy palette (`#0a0e17`), monospaced technical typography, cyan/neon accents, and terminal metadata styling.
 - **Premium Editorial (`editorial`):** Warm parchment palette (`#faf8f5`), serif typography (`Georgia, Times`), terracotta accents, and classic bordered ticket styling.
+- **Vintage Cinema (`vintage`):** Antique cream palette (`#fdfbf7`), perforated tear-off stubs, vintage crimson accents (`#C23B38`), and authentic admission stamp typography.
+- **Neon Festival (`festival`):** Midnight indigo palette (`#0f0c29`), electric magenta accents (`#FF2E93`), ticket gate/row/seat pill badges, and high-energy concert pass geometry.
 
 Each theme exposes the four required Hyper Elements component roots:
 ```

@@ -184,15 +184,31 @@ Returns all registered design templates and their supported capabilities.
   "designs": [
     {
       "id": "tech",
-      "name": "Cyber Tech",
-      "description": "High-contrast dark-mode terminal layout.",
-      "defaultAccent": "#06b6d4"
+      "name": "Cyber Tech & Hackathon",
+      "description": "Futuristic high-contrast dark theme with cyan neon accents, tech badge stubs, and geometric layout.",
+      "category": "dark-tech",
+      "defaultAccentColor": "#06b6d4"
     },
     {
       "id": "editorial",
-      "name": "Premium Editorial",
-      "description": "Warm parchment typography with classical borders.",
-      "defaultAccent": "#b45309"
+      "name": "Premium Editorial & Gala",
+      "description": "Sophisticated warm-white parchment with warm terracotta accents, refined serif typography, and elegant admission stubs.",
+      "category": "light-editorial",
+      "defaultAccentColor": "#b45309"
+    },
+    {
+      "id": "vintage",
+      "name": "Vintage Cinema & Event Stub",
+      "description": "Classic notched ticket with authentic perforated tear stubs, retro double-line typography, and vintage admission stamps.",
+      "category": "vintage-retro",
+      "defaultAccentColor": "#C23B38"
+    },
+    {
+      "id": "festival",
+      "name": "Neon Festival & Concert Pass",
+      "description": "Modern high-energy concert pass with electric wave separator, prominent [Gate] [Row] [Seat] pill badges, and admission barcode.",
+      "category": "concert-festival",
+      "defaultAccentColor": "#FF2E93"
     }
   ]
 }

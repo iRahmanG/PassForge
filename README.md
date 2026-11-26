@@ -22,7 +22,7 @@ PassForge simplifies event ticket creation into a guided four-step workflow:
 
 1. **Event Details:** Define event title, date, time, venue, and organizer identity.
 2. **Import Attendees:** Upload rosters via CSV with automatic column detection, row-level validation, and duplicate email filtering.
-3. **Design Tickets:** Choose between distinct architectural themes (*Cyber Tech* and *Premium Editorial*), customize color palettes and typography, upload an organizer logo, and configure an opacity watermark.
+3. **Design Tickets:** Choose between distinct architectural themes (*Cyber Tech*, *Premium Editorial*, *Vintage Cinema*, and *Neon Festival*), customize color palettes and typography, upload an organizer logo, and configure an opacity watermark.
 4. **Generate & Export:** Live-preview tickets across all four formats, or trigger a background bulk generation job to package all tickets into an organized, zero-PII ZIP archive.
 
 ---
@@ -45,7 +45,7 @@ Every ticket is rendered through unified Server-Side Rendering (SSR) into four s
 - **Robust CSV Ingestion:** Drag-and-drop file upload with raw CSV paste fallback.
 - **Intelligent Column Mapping:** Automatically detects and maps columns for Name, Email, Ticket Tier, and Seat Number.
 - **Attendee Validation:** Enforces RFC 5322 email syntax, detects duplicates, and isolates row-level errors without rejecting the entire file.
-- **Dual Design Themes:** Switch seamlessly between *Cyber Tech* (dark terminal aesthetic) and *Premium Editorial* (warm parchment gala aesthetic).
+- **Multiple Ticket Design Templates:** Switch seamlessly between curated architectural themes including *Cyber Tech* (dark terminal aesthetic), *Premium Editorial* (warm parchment gala aesthetic), *Vintage Cinema* (authentic perforated tear-off stub), and *Neon Festival* (high-energy concert pass with badge accents).
 - **Brand Kit Customization:** Real-time accent color picker, five typography presets, and optional logo watermark with preserve-aspect-ratio scaling and opacity control.
 - **Live Ticket Preview:** Instant browser preview across all four formats, desktop/mobile viewport toggle, and attendee selector.
 - **High-Throughput Bulk Generation:** Asynchronous background worker queue with bounded concurrency (3 concurrent workers).
