@@ -33,7 +33,7 @@ Every ticket is rendered through unified Server-Side Rendering (SSR) into four s
 
 | Format | Technical Root | Description | Practical Use Case |
 |---|---|---|---|
-| **Email Invite** | `<Email>` | Email-ready HTML with table layout and inline CSS | Automated confirmation and dispatch via SMTP / email service providers |
+| **Email Invite** | `<Email>` | Email-ready HTML with table layout and inline CSS | Exportable for dispatch via external email services or SMTP |
 | **Web Pass** | `<Page>` | Standalone responsive HTML document with mobile viewport scaling | Direct digital admission pass accessible via mobile browser |
 | **Print PDF** | `<Document>` | Vector A4/Letter PDF with scannable QR matrices | Physical attendee badges and print-at-home admission passes |
 | **Canvas Badge** | `<Canvas>` | High-resolution 2x Retina PNG card graphic | Digital wallet storage, social sharing, and graphic badges |
@@ -58,7 +58,7 @@ Every ticket is rendered through unified Server-Side Rendering (SSR) into four s
 ## How Hyper Elements Powers PassForge
 
 ### For Non-Technical Readers
-PassForge uses a shared React-based ticket design system powered by **Hyper Elements**. Instead of creating and maintaining four completely separate templates (an HTML email template, a web page, a PDF generation script, and a graphic canvas), organizers select one design and PassForge automatically renders it across email, web, PDF, and image badge formats. This guarantees visual consistency while saving hours of design coordination.
+PassForge uses a shared React-based ticket design system powered by **Hyper Elements**. Instead of creating and maintaining four completely separate templates (an HTML email template, a web page, a PDF generation script, and a graphic canvas), organizers select one design and PassForge automatically renders it across email, web, PDF, and image badge formats. This maintains visual consistency while saving hours of design coordination.
 
 ### For Technical Readers
 Hyper Elements (`@hyper-elements/react`) acts as the unified multi-format compiler in PassForge:
@@ -68,7 +68,7 @@ Hyper Elements (`@hyper-elements/react`) acts as the unified multi-format compil
 
 PassForge provides the business logic—CSV ingestion, state management, ticket data synthesis, QR matrix encoding, and the concurrent worker queue—while Hyper Elements provides the rendering primitives that translate typed React JSX trees into client-safe outputs.
 
-For detailed architecture diagrams, component trees, and rendering benchmarks, see [HYPER_ELEMENTS.md](HYPER_ELEMENTS.md).
+For detailed architecture diagrams, component trees, and rendering benchmarks, see [docs/hyper-elements.md](docs/hyper-elements.md).
 
 ---
 
@@ -92,7 +92,7 @@ For detailed architecture diagrams, component trees, and rendering benchmarks, s
 
 ## Documentation
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) — Comprehensive system architecture, data flow diagrams, worker pool mechanics, and design trade-offs.
-- [HYPER_ELEMENTS.md](HYPER_ELEMENTS.md) — Technical deep dive into Hyper Elements integration, root components, and rendering pipeline.
-- [API_REFERENCE.md](API_REFERENCE.md) — Complete REST API specification with request schemas, response models, and error codes.
-- [CONTRIBUTING.md](CONTRIBUTING.md) — Contribution guidelines, bug reporting, and code quality standards.
+- [Architecture Specification](docs/architecture.md) — Comprehensive system architecture, data flow diagrams, worker pool mechanics, and design trade-offs.
+- [Hyper Elements Integration Guide](docs/hyper-elements.md) — Technical deep dive into Hyper Elements integration, root components, and rendering pipeline.
+- [REST API Reference](docs/api-reference.md) — Complete REST API specification with request schemas, response models, and error codes.
+- [Contributing Guidelines](docs/contributing.md) — Contribution guidelines, bug reporting, and code quality standards.

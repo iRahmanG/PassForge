@@ -279,7 +279,7 @@ Restores default colors and font settings for the current design.
 ## 5. Ticket Preview & Rendering
 
 ### `POST /api/tickets/preview`
-Generates an immediate, real-time ticket preview for the specified format.
+Generates an immediate, real-time ticket preview for the specified format. *(Also accessible via alias `POST /api/preview`).*
 
 **Request Body (`application/json`):**
 ```json
@@ -311,15 +311,56 @@ Generates an immediate, real-time ticket preview for the specified format.
 ```
 *(For `email` and `page`, returns rendered `html` string; for `pdf`, returns `dataUrl` with `%PDF-` base64).*
 
+### `GET /api/ticket-data`
+Returns synthesized sample ticket data and metadata from the most recent rendering run. *(Also accessible via `GET /api/tickets/ticket-data`).*
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "ticket": {
+    "ticketId": "APX27-VIP-84920",
+    "attendee": { ... },
+    "event": { ... },
+    "qrCodeDataUrl": "data:image/png;base64,..."
+  },
+  "results": { ... }
+}
+```
+
+### `POST /api/generate/:format`
+Generates a ticket on disk for a single attendee across a specified format or `'all'`. *(Also accessible via `POST /api/tickets/generate/:format`).*
+
+**Path Parameters:**
+- `format`: `email`, `page`, `pdf`, `png`, or `all`
+
+**Query Parameters:**
+- `attendeeId` (optional string): Target attendee identifier.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "format": "pdf",
+  "ticketId": "APX27-VIP-84920",
+  "result": {
+    "format": "pdf",
+    "success": true,
+    "outputPath": "/path/to/output/ticket-APX27-VIP-84920.pdf",
+    "sizeBytes": 10862
+  }
+}
+```
+
 ### `GET /api/preview/:format`
-Streams raw rendered ticket content directly for browser previewing (`?ticketId=...`).
+Streams raw rendered ticket content directly for browser previewing (`?ticketId=...`). *(Also accessible via `GET /api/tickets/preview/:format`).*
 - `format: email` → `Content-Type: text/html`
 - `format: page` → `Content-Type: text/html`
 - `format: pdf` → `Content-Type: application/pdf`
 - `format: png` → `Content-Type: image/png`
 
 ### `GET /api/download/:format`
-Triggers file attachment download with `Content-Disposition: attachment`.
+Triggers file attachment download with `Content-Disposition: attachment`. *(Also accessible via `GET /api/tickets/download/:format`).*
 
 ---
 

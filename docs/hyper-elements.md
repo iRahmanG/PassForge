@@ -14,7 +14,7 @@ Generating tickets across modern distribution channels typically requires managi
 
 Maintaining four disjoint template codebases for every ticket design leads to visual drift, styling bugs, and quadrupled engineering overhead.
 
-**Hyper Elements** solves this fundamental problem. It allows developers to author declarative ticket designs once using React components (`<Email>`, `<Page>`, `<Document>`, `<Canvas>`), compiling each into its respective medium while preserving pixel-level design fidelity and typographic hierarchy.
+**Hyper Elements** solves this fundamental problem. It allows developers to author declarative ticket designs once using React components (`<Email>`, `<Page>`, `<Document>`, `<Canvas>`), compiling each into its respective medium while maintaining high visual consistency and typographic hierarchy across formats.
 
 ---
 
@@ -130,14 +130,14 @@ const { image } = await renderImage(
 | **Compiler Function** | `render()` | `render()` | `renderPdf()` | `renderImage()` |
 | **Output Type** | UTF-8 String (HTML) | UTF-8 String (HTML) | `Uint8Array` (Binary `%PDF-`) | `Uint8Array` (Binary `\x89PNG`) |
 | **Responsive Behavior** | Stacks columns on mobile | `breakpoints={{ mobile: 560 }}` | Fixed print media margins | Fixed pixel dimensions |
-| **Image Resolution** | Screen DPI | Screen DPI | Vector / 300 DPI | 2x Retina (1440×640 px) |
-| **Typical Target** | SMTP / SendGrid / SES | Mobile Web Check-in | A4 / Badge Printers | Digital Wallet / Apple Photos |
+| **Image Resolution** | Screen / Responsive | Screen / Responsive | Vector (scalable) | 2x Retina (scale: 2) |
+| **Typical Target** | External SMTP / SES Dispatch | Direct Link / Mobile Browser | Badge Printers / Print-at-Home | Digital Wallet / Photo Library |
 
 ---
 
 ## 7. How Visual Consistency Is Maintained
 
-To guarantee that a ticket looks identical across all four formats, PassForge follows strict layout conventions:
+To maintain visual consistency across all four formats, PassForge follows strict layout conventions:
 
 1. **Shared Color Tokens:** The active accent color (`branding.accentColor`) is applied to borders, badges, tier labels, and callouts across all four roots.
 2. **Deterministic Font Bundling:** The backend bundles physical TrueType font files (`arial.ttf`, `cour.ttf`, `georgia.ttf`, `trebuc.ttf`, `times.ttf`). When `renderImage` and `renderPdf` execute, fonts are read from local memory buffers, eliminating missing glyphs or cross-platform rasterization variations.

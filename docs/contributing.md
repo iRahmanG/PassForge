@@ -41,7 +41,7 @@ When proposing architectural changes or new ticket designs:
 Before opening a pull request, run the automated verification suites:
 
 ```bash
-# 1. Run core verification & bulk queue tests (all 33 assertions must pass)
+# 1. Run core verification & bulk queue tests (all 61 assertions must pass)
 npm test
 
 # 2. Verify frontend compilation and bundle integrity
@@ -54,7 +54,7 @@ Any PR modifying ticket templates or rendering logic must ensure that magic byte
 
 ## 5. Pull Request Guidelines
 
-1. Create a focused branch from `master` or `main` (e.g., `fix/csv-quote-parsing` or `feat/badge-template`).
+1. Create a focused branch from `main` (e.g., `fix/csv-quote-parsing` or `feat/badge-template`).
 2. Keep pull requests focused on a single change. Avoid bundling unrelated refactors.
 3. Ensure commit messages describe the operational change clearly (e.g., `fix: handle empty seat values in editorial document`).
-4. Update relevant documentation in `API_REFERENCE.md` or `HYPER_ELEMENTS.md` if endpoints or template interfaces change.
+4. Update relevant documentation in `docs/api-reference.md` or `docs/hyper-elements.md` if endpoints or template interfaces change.
