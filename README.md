@@ -167,6 +167,34 @@ npm run build
 
 ---
 
+## 🌐 Deploy to Render
+
+PassForge is configured for zero-friction deployment on [Render](https://render.com) using either Render Blueprints or manual setup.
+
+### Option A: 1-Click Blueprint (Recommended)
+1. Fork or push this repository to GitHub/GitLab.
+2. In the [Render Dashboard](https://dashboard.render.com), click **New +** → **Blueprint**.
+3. Connect your repository. Render automatically reads [`render.yaml`](render.yaml) and configures the build command, start script, health check, and environment variables.
+4. Click **Apply**. PassForge will build and deploy automatically!
+
+### Option B: Manual Web Service
+If setting up manually without a Blueprint:
+1. Click **New +** → **Web Service**.
+2. Connect your repository.
+3. Configure settings:
+   - **Environment:** `Node`
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `npm run start`
+   - **Health Check Path:** `/api/health`
+4. Under **Advanced** → **Environment Variables**, add:
+   - `NODE_ENV` = `production`
+   - `NODE_VERSION` = `20.18.0`
+5. Click **Create Web Service**.
+
+When built, the Express server serves both the high-performance API endpoints and the compiled React frontend client bundle on a unified port.
+
+---
+
 ## 📦 Output Formats & Verification
 
 | Format | Technology | Dimensions / Spec | Use Case |
