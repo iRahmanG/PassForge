@@ -1,220 +1,98 @@
 # PassForge
 
-> High-performance personalized event ticket engine & design studio powered by React and Hyper Elements.
+> "One event. Hundreds of tickets. Every one personal."
+
+PassForge is a modern event ticketing engine and design studio. It helps event organizers transform attendee spreadsheets into beautiful, personalized tickets across four distinct production formats—eliminating the tedious, error-prone manual work of traditional ticket generation.
 
 ---
 
-## 🎯 Overview
+## The Problem
 
-**PassForge** is an open event ticketing engine and design studio. It enables event organizers to configure events, import attendee rosters via CSV with intelligent column mapping, customize typography and branding with watermark overlays, live-preview tickets across four distinct rendering formats, and batch-export production-ready ticket packages in a single organized ZIP archive.
+Event organizers commonly manage attendee rosters using simple spreadsheets or CSV exports from registration forms. However, when it comes to generating and distributing admission passes:
 
-Every ticket is rendered through unified **Hyper Elements** (`@hyper-elements/react`) Server-Side Rendering (SSR), producing high-fidelity outputs across Email, Web, PDF, and PNG formats from a single strongly-typed data model.
+- **Manual customization is tedious:** Merging attendee names, categories, and seat numbers into design software requires repetitive export workflows.
+- **Multi-format fragmentation:** Organizers need email invitations for confirmation, responsive web passes for mobile check-in, printable PDFs for badge printing, and high-resolution images for digital wallets. Maintaining four separate designs leads to brand inconsistency and formatting errors.
+- **Export bottlenecks:** Batch processing hundreds of tickets often freezes local computers or fails mid-way with no way to isolate failed records or retry selectively.
 
 ---
 
-## ⚡ How Hyper Elements Powers PassForge
+## The Solution
 
-Instead of writing and maintaining four completely separate template stacks (an MJML/HTML email template, a web page, a PDF generation script, and a canvas image script), PassForge leverages **Hyper Elements** to write declarative React templates once. Each ticket layout (such as *Cyber Tech* or *Premium Editorial*) defines four dedicated root components consuming the same typed ticket data:
+PassForge simplifies event ticket creation into a guided four-step workflow:
 
-```mermaid
-flowchart TD
-    Data["TicketData Model\n(Attendee + Event + Brand Kit)"]
+1. **Event Details:** Define event title, date, time, venue, and organizer identity.
+2. **Import Attendees:** Upload rosters via CSV with automatic column detection, row-level validation, and duplicate email filtering.
+3. **Design Tickets:** Choose between distinct architectural themes (*Cyber Tech* and *Premium Editorial*), customize color palettes and typography, upload an organizer logo, and configure an opacity watermark.
+4. **Generate & Export:** Live-preview tickets across all four formats, or trigger a background bulk generation job to package all tickets into an organized, zero-PII ZIP archive.
 
-    Data --> EmailTpl["Email Root\nTechEmail / EditorialEmail"]
-    Data --> PageTpl["Page Root\nTechPage / EditorialPage"]
-    Data --> DocTpl["Document Root\nTechDocument / EditorialDocument"]
-    Data --> CanvasTpl["Canvas Root\nTechCanvas / EditorialCanvas"]
+---
 
-    EmailTpl --> OutEmail["Email HTML\n(Client-safe tables & inline CSS)"]
-    PageTpl --> OutPage["Web Ticket\n(Responsive mobile-ready HTML)"]
-    DocTpl --> OutPdf["Printable PDF\n(Vector A4 document with QR)"]
-    CanvasTpl --> OutPng["Badge PNG\n(2x Retina card graphic)"]
-```
+## Four Output Formats
 
-### The 4 Specialized Roots in PassForge
+Every ticket is rendered through unified Server-Side Rendering (SSR) into four specialized formats tailored for real-world event distribution:
 
-| Root Component | Render Function | Output Format | How PassForge Uses It |
+| Format | Technical Root | Description | Practical Use Case |
 |---|---|---|---|
-| `<Email>` | `render(jsx)` | HTML (String) | Compiles table-based email layouts with inline styles, bulletproof across Outlook, Gmail, and Apple Mail for automated confirmation emails. |
-| `<Page>` | `render(jsx)` | HTML (String) | Emits a responsive web page with metadata, dynamic viewport scaling, and mobile breakpoints (`breakpoints={{ mobile: 560 }}`) for digital admission passes. |
-| `<Document>` | `renderPdf(jsx)` | Binary Buffer (`%PDF-`) | Generates a vector PDF ticket with scannable QR matrices and print margins, ideal for print-at-home or on-site badge printing. |
-| `<Canvas>` | `renderImage(jsx)` | Binary Buffer (`\x89PNG`) | Renders pixel-perfect 2x Retina PNG card badges with centered opacity watermarks, exact ticket aspect ratios, and local font rendering via Cairo/Pango bindings. |
-
-### Code Example: Unified Rendering Pipeline
-
-```tsx
-import { render, renderPdf, renderImage } from '@hyper-elements/react';
-import { getDesignTemplates } from './templates/designs/registry.js';
-
-// 1. Fetch template component tree based on organizer's selected design
-const { Email, Page, Document, Canvas } = getDesignTemplates(designId);
-
-// 2. Render all 4 formats from the exact same ticket & branding data:
-const emailHtml = await render(<Email ticket={ticket} branding={branding} />);
-const pageHtml  = await render(<Page ticket={ticket} branding={branding} />);
-const pdfBuffer = await renderPdf(<Document ticket={ticket} branding={branding} />);
-const pngBuffer = await renderImage(<Canvas ticket={ticket} branding={branding} />);
-```
+| **Email Invite** | `<Email>` | Email-ready HTML with table layout and inline CSS | Automated confirmation and dispatch via SMTP / email service providers |
+| **Web Pass** | `<Page>` | Standalone responsive HTML document with mobile viewport scaling | Direct digital admission pass accessible via mobile browser |
+| **Print PDF** | `<Document>` | Vector A4/Letter PDF with scannable QR matrices | Physical attendee badges and print-at-home admission passes |
+| **Canvas Badge** | `<Canvas>` | High-resolution 2x Retina PNG card graphic | Digital wallet storage, social sharing, and graphic badges |
 
 ---
 
-## ✨ Features
+## Key Features
 
-- **Guided 4-Step Event Creation Workflow:** Seamless step-by-step progress from Event Details → Import Attendees → Design Tickets → Generate & Export.
-- **Multiple Design Systems:**
-  - **Cyber Tech:** High-contrast dark-mode terminal layout designed for developer conferences, hackathons, and tech summits.
-  - **Premium Editorial:** Warm parchment typography and classical border composition designed for galas, keynotes, and ceremonies.
-- **Brand Kit Customization:**
-  - Curated color swatches + custom HEX picker with live accent propagation.
-  - Multi-family typography presets (Modern Sans, Technical Mono, Editorial Serif, Humanist Sans, Classic Serif).
-  - Organizer logo upload with automatic aspect-ratio-preserved centered watermark overlay.
-- **Robust CSV Ingestion:**
-  - Drag-and-drop file upload with raw CSV paste fallback.
-  - Automatic column detection for Name, Email, Ticket Tier, and Seat.
-  - In-browser validation, duplicate email detection, and row-level error reporting.
-- **High-Throughput Batch Generation:**
-  - Asynchronous background worker queue with real-time progress tracking.
-  - Multi-format batch generation with selective tier/attendee filtering.
-  - Unified zero-PII ZIP archive bundling with structured manifest metadata.
-  - Automatic directory retention and orphaned job cleanup.
+- **Robust CSV Ingestion:** Drag-and-drop file upload with raw CSV paste fallback.
+- **Intelligent Column Mapping:** Automatically detects and maps columns for Name, Email, Ticket Tier, and Seat Number.
+- **Attendee Validation:** Enforces RFC 5322 email syntax, detects duplicates, and isolates row-level errors without rejecting the entire file.
+- **Dual Design Themes:** Switch seamlessly between *Cyber Tech* (dark terminal aesthetic) and *Premium Editorial* (warm parchment gala aesthetic).
+- **Brand Kit Customization:** Real-time accent color picker, five typography presets, and optional logo watermark with preserve-aspect-ratio scaling and opacity control.
+- **Live Ticket Preview:** Instant browser preview across all four formats, desktop/mobile viewport toggle, and attendee selector.
+- **High-Throughput Bulk Generation:** Asynchronous background worker queue with bounded concurrency (3 concurrent workers).
+- **Failure Isolation & Selective Retry:** Per-ticket error boundaries ensure one malformed record cannot abort the batch; retry only failed outputs with zero re-rendering of completed tickets.
+- **Structured ZIP Export:** Automatically organizes completed files into clean format subdirectories (`email/`, `page/`, `pdf/`, `png/`) alongside a privacy-preserving `manifest.json`.
+- **Public Demo Safeguards:** Upload limits capped at 5MB and 500 rows, rate-limiting protection, and automatic orphaned directory cleanup.
 
 ---
 
-## 🏛️ Monorepo Architecture
+## How Hyper Elements Powers PassForge
 
-PassForge is structured as an **npm-workspaces monorepo**:
+### For Non-Technical Readers
+PassForge uses a shared React-based ticket design system powered by **Hyper Elements**. Instead of creating and maintaining four completely separate templates (an HTML email template, a web page, a PDF generation script, and a graphic canvas), organizers select one design and PassForge automatically renders it across email, web, PDF, and image badge formats. This guarantees visual consistency while saving hours of design coordination.
 
-```
-PassForge/
-├── apps/
-│   ├── frontend/         # React 19 + TypeScript + Vite Single Page Application
-│   │   ├── src/
-│   │   │   ├── components/layout/   # StepProgressBar, Header, Footer
-│   │   │   ├── components/ui/       # Design system primitives (Button, Card, Badge, Modal, Alert, Input)
-│   │   │   ├── features/event/      # Event configuration form & summary card
-│   │   │   ├── features/attendees/  # CSV drag-and-drop uploader, column mapper, table
-│   │   │   ├── features/tickets/    # DesignGallery, BrandingControls, LiveCanvas, StudioToolbar
-│   │   │   ├── hooks/               # useEvent, useAttendees, useDesignSystem, useTicketRender
-│   │   │   ├── services/api.ts      # Typed REST API client
-│   │   │   ├── App.tsx              # Guided workflow orchestrator & state manager
-│   │   │   └── main.tsx             # React entrypoint
-│   │   └── vite.config.ts           # Vite proxy configuration (/api -> http://localhost:3000)
-│   │
-│   └── backend/          # Node.js 24 + Express 5 + Hyper Elements SSR Service
-│       ├── src/
-│       │   ├── config/              # Constants and sample event/attendee data
-│       │   ├── modules/event/       # In-memory event configuration service
-│       │   ├── modules/attendee/    # Papa Parse ingestion, Zod validator, duplicate email filter
-│       │   ├── modules/ticket/      # TicketData synthesizer with QR code generation
-│       │   ├── modules/design/      # Design service holding template and branding state
-│       │   ├── modules/bulk/        # High-throughput background generation queue & ZIP archiver
-│       │   ├── templates/designs/   # Design Registry & Templates:
-│       │   │   ├── tech/            # TechEmail, TechPage, TechDocument, TechCanvas
-│       │   │   ├── editorial/       # EditorialEmail, EditorialPage, EditorialDocument, EditorialCanvas
-│       │   │   └── registry.ts      # Central Design Registry
-│       │   ├── services/rendering/  # Unified SSR rendering service for all 4 output formats
-│       │   ├── routes/              # Express API routers (event, attendee, ticket, design, bulk)
-│       │   ├── middleware/          # Multer file upload & validation middleware
-│       │   └── server.ts            # Express server (Port 3000)
-│       └── assets/fonts/            # Local TrueType fonts for offline rendering
-│
-├── packages/
-│   └── shared/           # Shared TypeScript domain contracts & Zod validation schemas
-│       ├── src/
-│       │   ├── types/               # EventInfo, AttendeeInfo, TicketData, DesignConfig, BulkJob
-│       │   ├── schemas/             # eventSchema, attendeeSchema, designConfigSchema, bulkSchema
-│       │   └── index.ts
-│       └── package.json
-│
-├── docs/                 # System architecture specification
-├── package.json          # Root workspace configuration
-└── tsconfig.base.json    # Shared TypeScript compiler options
-```
+### For Technical Readers
+Hyper Elements (`@hyper-elements/react`) acts as the unified multi-format compiler in PassForge:
+- **`render()`**: Compiles `<Email>` into email-safe table HTML and `<Page>` into responsive HTML web documents.
+- **`renderPdf()`**: Compiles `<Document>` into vector PDF binary buffers using `@hyper-elements/react/pdf`.
+- **`renderImage()`**: Compiles `<Canvas>` into 2x Retina PNG image buffers using `@hyper-elements/react/image` and `@resvg/resvg-js`.
+
+PassForge provides the business logic—CSV ingestion, state management, ticket data synthesis, QR matrix encoding, and the concurrent worker queue—while Hyper Elements provides the rendering primitives that translate typed React JSX trees into client-safe outputs.
+
+For detailed architecture diagrams, component trees, and rendering benchmarks, see [HYPER_ELEMENTS.md](HYPER_ELEMENTS.md).
 
 ---
 
-## 🚀 Getting Started
+## Technology Stack
 
-### 1. Install Dependencies
-```bash
-npm install
-```
-
-### 2. Start Development Servers
-Runs backend and frontend concurrently:
-```bash
-npm run dev
-```
-- **Frontend Studio & Landing Page:** [http://localhost:5173](http://localhost:5173)
-- **Backend REST API:** [http://localhost:3000](http://localhost:3000)
-
-Or run each service individually:
-```bash
-npm run dev:backend   # Express backend on port 3000
-npm run dev:frontend  # Vite frontend on port 5173
-```
-
-### 3. Run Automated Verification Tests
-Executes the comprehensive automated test suite verifying ticket rendering across all 4 formats, Zod schemas, CSV ingestion, background bulk processing, and ZIP archiving:
-```bash
-npm test
-```
-
-### 4. Build for Production
-```bash
-npm run build
-```
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS, Lucide React
+- **Backend:** Node.js 24, Express 5, TypeScript (`tsx`)
+- **Rendering Engine:** `@hyper-elements/react`, `@react-pdf/renderer`, `@resvg/resvg-js`, Satori, QRCode
+- **Validation & Processing:** Zod, Papa Parse, Archiver
+- **Monorepo Tooling:** npm workspaces, concurrently
 
 ---
 
-## 🌐 Deploy to Render
+## Project Limitations
 
-PassForge is configured for zero-friction deployment on [Render](https://render.com) using either Render Blueprints or manual setup.
-
-### Option A: 1-Click Blueprint (Recommended)
-1. Fork or push this repository to GitHub/GitLab.
-2. In the [Render Dashboard](https://dashboard.render.com), click **New +** → **Blueprint**.
-3. Connect your repository. Render automatically reads [`render.yaml`](render.yaml) and configures the build command, start script, health check, and environment variables.
-4. Click **Apply**. PassForge will build and deploy automatically!
-
-### Option B: Manual Web Service
-If setting up manually without a Blueprint:
-1. Click **New +** → **Web Service**.
-2. Connect your repository.
-3. Configure settings:
-   - **Environment:** `Node`
-   - **Build Command:** `npm install && npm run build`
-   - **Start Command:** `npm run start`
-   - **Health Check Path:** `/api/health`
-4. Under **Advanced** → **Environment Variables**, add:
-   - `NODE_ENV` = `production`
-   - `NODE_VERSION` = `20.18.0`
-5. Click **Create Web Service**.
-
-When built, the Express server serves both the high-performance API endpoints and the compiled React frontend client bundle on a unified port.
+- **In-Memory Storage:** Application state, attendee rosters, and bulk job tracking are stored in memory. Restarting the backend server resets state to the default sample event.
+- **Single-Session Workspaces:** User accounts, multi-tenant authentication, and persistent database storage are not implemented.
+- **Visual QR Identification:** QR codes encode attendee ticket identifiers for visual rendering; an on-site scanner or admission database is not included.
 
 ---
 
-## 📦 Output Formats & Verification
+## Documentation
 
-| Format | Technology | Dimensions / Spec | Use Case |
-|---|---|---|---|
-| **Email HTML** | `@hyper-elements/react` `<Email>` | Inline CSS, responsive tables | Dispatch via SMTP/SendGrid/SES |
-| **Web Ticket** | `@hyper-elements/react` `<Page>` | Responsive viewport (desktop + mobile) | Direct attendee check-in link |
-| **Printable PDF** | `@hyper-elements/react` `<Document>` | Vector A4/Letter (%PDF- header) | Physical badge printing / download |
-| **Retina PNG** | `@hyper-elements/react` `<Canvas>` | Exact-fit 720px card (PNG signature) | Digital wallet / social sharing |
-
----
-
-## 🔒 Security & Privacy
-
-- **Strict Input Validation:** Every CSV row and API payload is verified against strict Zod domain schemas.
-- **Upload Boundaries:** File uploads are limited to 5MB and 5,000 records to prevent memory exhaustion.
-- **Zero-PII Manifests:** ZIP export archives maintain strict privacy standards by omitting attendee emails and names from machine-readable manifest indices.
-- **No Unnecessary Infrastructure:** Zero mandatory external database or authentication services required for full core functionality.
-
----
-
-## 📄 License
-
-ISC License.
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Comprehensive system architecture, data flow diagrams, worker pool mechanics, and design trade-offs.
+- [HYPER_ELEMENTS.md](HYPER_ELEMENTS.md) — Technical deep dive into Hyper Elements integration, root components, and rendering pipeline.
+- [API_REFERENCE.md](API_REFERENCE.md) — Complete REST API specification with request schemas, response models, and error codes.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — Contribution guidelines, bug reporting, and code quality standards.
