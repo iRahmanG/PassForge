@@ -6,6 +6,21 @@ PassForge is a modern event ticketing engine and design studio. It helps event o
 
 ---
 
+## Project Preview
+
+![PassForge Multi-Format Ticket Generation](docs/assets/multi-format-demo.gif)
+
+*A single typed ticket model compiling seamlessly into Canvas Badge PNG, Responsive Web Pass, Email HTML, and Vector PDF formats via Hyper Elements.*
+
+<p align="center">
+  <img src="docs/assets/design-studio.png" alt="PassForge Ticket Design Studio" width="49%" />
+  <img src="docs/assets/bulk-export.png" alt="PassForge Bulk Generation & Export" width="49%" />
+</p>
+
+*Left: The interactive Ticket Design Studio with real-time live preview and branding controls. Right: High-throughput bounded background bulk generation with format-organized ZIP exports.*
+
+---
+
 ## The Problem
 
 Event organizers commonly manage attendee rosters using simple spreadsheets or CSV exports from registration forms. However, when it comes to generating and distributing admission passes:
